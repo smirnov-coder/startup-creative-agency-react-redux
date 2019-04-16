@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="ClientApp\components\" />
+    <Folder Include="ClientApp\fonts\" />
+    <Folder Include="ClientApp\images\" />
+    <Folder Include="ClientApp\favicon\" />
+    <Folder Include="ClientApp\lib\" />
+    <Folder Include="ClientApp\scripts\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.Abstractions\Domain.Abstractions.csproj" />
+    <ProjectReference Include="..\Domain.Logic\Domain.Logic.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
