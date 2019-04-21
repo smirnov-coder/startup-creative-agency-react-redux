@@ -1,4 +1,4 @@
-/// <reference path="../../styles/common/common" />
+﻿@import "../styles/_include.scss";
 
 .dash {
     margin: 0 auto;
@@ -7,10 +7,10 @@
     border-top: 2px solid;
 
     &--color {
-        
+
         &-grey {
             border-color: $primary-color;
-        }  
+        }
 
         &-white {
             border-color: $white-color;

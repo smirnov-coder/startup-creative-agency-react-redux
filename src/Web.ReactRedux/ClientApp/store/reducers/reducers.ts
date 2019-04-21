@@ -1,41 +1,79 @@
 ﻿import { IAppState } from "../state";
-import { ServicesActions, IShowErrorAction, IListEntitiesAction } from "../actions/actions";
+import { ServicesActions, IShowAction, IErrorAction } from "../actions/actions";
 import { commonActions } from "../actions/actionTypes";
-import IServiceInfo from "../../entities/IServiceInfo";
+import { IServiceInfo } from "../entities";
 
 const initialState: IAppState = {
     services: {
-        isFetching: false,
-        error: "",
-        items: []
-    }
+        isLoading: false,
+        items: [],
+        error: null
+    },
+    //teamMembers: {
+    //    isLoading: false,
+    //    items: [],
+    //    error: null
+    //},
+    //works: {
+    //    isLoading: false,
+    //    items: [],
+    //    error: null
+    //},
+    //blog: {
+    //    isLoading: false,
+    //    items: [],
+    //    error: null
+    //},
+    //brands: {
+    //    isLoading: false,
+    //    items: [],
+    //    error: null
+    //},
+    //testimonials: {
+    //    isLoading: false,
+    //    items: [],
+    //    error: null
+    //},
+    //contacts: {
+    //    isLoading: false,
+    //    items: [],
+    //    error: null
+    //},
+    //socialLinks: {
+    //    isLoading: false,
+    //    items: [],
+    //    error: null
+    //},
 }
 
 export function servicesReducer(state: IAppState = initialState, action: ServicesActions): IAppState {
     switch (action.type) {
-        case commonActions.FETCHING_DATA:
+        case commonActions.LOADING:
             return {
+                ...state,
                 services: {
                     ...state.services,
-                    isFetching: true
+                    isLoading: true
                 }
             }
 
-        case commonActions.LIST_ENTITIES:
+        case commonActions.SHOW:
             return {
+                ...state,
                 services: {
-                    isFetching: false,
-                    error: "",
-                    items: (action as IListEntitiesAction<IServiceInfo>).items
+                    isLoading: false,
+                    error: null,
+                    items: (action as IShowAction<IServiceInfo>).items
                 }
             }
 
-        case commonActions.SHOW_ERROR:
+        case commonActions.ERROR:
             return {
+                ...state,
                 services: {
                     ...state.services,
-                    isFetching: false,
-                    error: (action as IShowErrorAction).error
+                    isLoading: false,
+                    error: (action as IErrorAction).error
                 }
             }
 
@@ -43,3 +81,39 @@ export function servicesReducer(state: IAppState = initialState, action: Service
             return state;
     }
 }
+
+//export function teamMembersReducer(state: IAppState = initialState, action: TeamMembersActions): IAppState {
+//    switch (action.type) {
+//        case commonActions.LOADING:
+//            return {
+//                ...state,
+//                teamMembers: {
+//                    ...state.teamMembers,
+//                    isLoading: true
+//                }
+//            }
+
+//        case commonActions.SHOW:
+//            return {
+//                ...state,
+//                teamMembers: {
+//                    isLoading: false,
+//                    error: null,
+//                    items: (action as IShowAction<IDomainUser>).items
+//                }
+//            }
+
+//        case commonActions.ERROR:
+//            return {
+//                ...state,
+//                services: {
+//                    ...state.services,
+//                    isLoading: false,
+//                    error: (action as IErrorAction).error
+//                }
+//            }
+
+//        default:
+//            return state;
+//    }
+//}

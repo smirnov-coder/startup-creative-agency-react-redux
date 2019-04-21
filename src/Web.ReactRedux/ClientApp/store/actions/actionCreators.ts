@@ -1,41 +1,50 @@
 ﻿import { ServicesActions, CommonActions } from "./actions";
 import { Dispatch } from "redux";
-import IServiceInfo from "../../entities/IServiceInfo";
 import { commonActions } from "./actionTypes";
+import { IServiceInfo } from "../entities";
+import { IHomePageModel } from "../../components/HomePage";
 
-export function requestData(): CommonActions {
+export function load(): CommonActions {
     return {
-        type: commonActions.FETCHING_DATA
+        type: commonActions.LOADING
     };
 }
 
-export function showErrorMessage(message: string): CommonActions {
+export function handleError(error: Error): CommonActions {
     return {
-        type: commonActions.SHOW_ERROR,
-        error: message
+        type: commonActions.ERROR,
+        error: error
     };
 }
 
-export function listServices(services: IServiceInfo[]): ServicesActions {
+export function showServices(services: IServiceInfo[]): ServicesActions {
     return {
-        type: commonActions.LIST_ENTITIES,
+        type: commonActions.SHOW,
         items: services
     };
 }
 
-export function getServices() {
-    return (dispatch: Dispatch<ServicesActions>) => {
-        dispatch(requestData());
-        return fetch("/api/services")
+//export function getServices() {
+//    return {
+//        type: commonActions.GET,
+
+//    }
+//}
+
+export function getPageModel() {
+    return (dispatch: Dispatch<CommonActions>) => {
+        dispatch(load());
+        return fetch("/ViewModel")
             .then((response: Response) => {
                 if (response.ok) {
                     return response.json();
                 }
             }, (error: Error) => {
-                dispatch(showErrorMessage(error.message));
+                dispatch(handleError(error));
             })
-            .then((data: IServiceInfo[]) => {
-                dispatch(listServices(data));
+            .then((data: IHomePageModel) => {
+                dispatch(showServices(data.services));
+                //
             })
     }
 }

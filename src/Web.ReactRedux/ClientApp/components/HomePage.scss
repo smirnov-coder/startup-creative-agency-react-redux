@@ -4,11 +4,4 @@
 @import "../styles/_fonts.scss";
 @import "../styles/_custom-reset.scss";
 
-
-@import "_body.scss";
-@import "_dash.scss";
-@import "_section-header.scss";
-@import "_section.scss";
-@import "_service-list.scss";
-@import "_service.scss";
-@import "_services-section.scss";
+@import "../styles/blocks/_body.scss";
