@@ -1,21 +1,17 @@
 ﻿const keyMirror = require("keymirror");
 
-export interface IActionType {
+export interface IActionTypes {
     LOADING: string;
-    SHOW: string;
-    GET: string;
-    ADD: string;
-    UPDATE: string;
-    DELETE: string;
-    ERROR: string;
+    SHOW_ERROR: string;
+    SHOW_SERVICES: string;
+    SHOW_TEAM_MEMBERS: string;
+    SHOW_WORKS: string;
 }
 
-export const commonActions = keyMirror({
+export const ActionTypes = keyMirror({
     LOADING: null,
-    SHOW: null,
-    GET: null,
-    ADD: null,
-    UPDATE: null,
-    DELETE: null,
-    ERROR: null
-}) as IActionType;
+    SHOW_ERROR: null,
+    SHOW_SERVICES: null,
+    SHOW_TEAM_MEMBERS: null,
+    SHOW_WORKS: null,
+}) as IActionTypes;

@@ -1,21 +1,16 @@
 ﻿import * as React from "react";
 import "./Service.scss";
+import { IServiceInfo } from "../store/entities";
 
-export interface IServiceProps {
-    iconClass: string;
-    caption: string;
-    description: string;
-}
-
-export class Service extends React.Component<IServiceProps> {
+export class Service extends React.Component<IServiceInfo> {
     render(): JSX.Element {
         return (
             <article className="service">
                 <div className="service__icon">
-                    <i className={this.props.iconClass}></i>
+                    <i className={this.props.IconClass}></i>
                 </div>
-                <h4 className="service__caption">{this.props.caption}</h4>
-                <p className="service__description">{this.props.description}</p>
+                <h4 className="service__caption">{this.props.Caption}</h4>
+                <p className="service__description">{this.props.Description}</p>
             </article>
         );
     }

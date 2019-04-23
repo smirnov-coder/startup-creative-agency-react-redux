@@ -1,8 +1,10 @@
 ﻿import { combineReducers } from "redux";
-import { servicesReducer } from "./reducers";
+import { servicesReducer, teamMembersReducer, worksReducer } from "./reducers";
 
 export const rootReducer = combineReducers({
-    servicesReducer
+    servicesReducer,
+    teamMembersReducer,
+    worksReducer
 });
 
 export type AppState = ReturnType<typeof rootReducer>

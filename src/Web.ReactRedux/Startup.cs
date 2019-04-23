@@ -123,6 +123,7 @@ namespace WebApplication1
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.MaxDepth = 10;
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 import { IServiceInfo } from "../store/entities";
-import { Service } from "./Service";
+import { Service } from "../components/Service";
 import { AppState } from "../store/reducers/rootReducer";
 import { connect } from "react-redux";
 import "../assets/lib/bootstrap-customized/css/bootstrap.css";
@@ -13,14 +13,13 @@ interface IServiceListProps {
 
 class ServiceList extends React.Component<IServiceListProps> {
     render(): JSX.Element {
-        const { isLoading, items } = this.props;
+        let { isLoading, items } = this.props;
         return (
             <section className="service-list">
                 <h3 className="sr-only">Service List</h3>
                 {isLoading ? <div>Loading... Please wait.</div> : items.map(service => (
                     <div key={service.Id} className="col-md-4 service-list__item">
-                        <Service iconClass={service.IconClass} caption={service.Caption}
-                            description={service.Description} />
+                        <Service {...service} />
                     </div>
                 ))}
             </section>

@@ -1,7 +1,7 @@
 ﻿import { IAppState } from "../state";
-import { ServicesActions, IShowAction, IErrorAction } from "../actions/actions";
-import { commonActions } from "../actions/actionTypes";
-import { IServiceInfo } from "../entities";
+import { ServicesActions, IShowAction, IErrorAction, TeamMembersActions, WorksActions } from "../actions/actions";
+import { ActionTypes } from "../actions/actionTypes";
+import { IServiceInfo, IDomainUser, IWorkExample } from "../entities";
 
 const initialState: IAppState = {
     services: {
@@ -9,16 +9,16 @@ const initialState: IAppState = {
         items: [],
         error: null
     },
-    //teamMembers: {
-    //    isLoading: false,
-    //    items: [],
-    //    error: null
-    //},
-    //works: {
-    //    isLoading: false,
-    //    items: [],
-    //    error: null
-    //},
+    teamMembers: {
+        isLoading: false,
+        items: [],
+        error: null
+    },
+    works: {
+        isLoading: false,
+        items: [],
+        error: null
+    },
     //blog: {
     //    isLoading: false,
     //    items: [],
@@ -48,7 +48,7 @@ const initialState: IAppState = {
 
 export function servicesReducer(state: IAppState = initialState, action: ServicesActions): IAppState {
     switch (action.type) {
-        case commonActions.LOADING:
+        case ActionTypes.LOADING:
             return {
                 ...state,
                 services: {
@@ -57,7 +57,7 @@ export function servicesReducer(state: IAppState = initialState, action: Service
                 }
             }
 
-        case commonActions.SHOW:
+        case ActionTypes.SHOW_SERVICES:
             return {
                 ...state,
                 services: {
@@ -67,7 +67,7 @@ export function servicesReducer(state: IAppState = initialState, action: Service
                 }
             }
 
-        case commonActions.ERROR:
+        case ActionTypes.SHOW_ERROR:
             return {
                 ...state,
                 services: {
@@ -82,38 +82,74 @@ export function servicesReducer(state: IAppState = initialState, action: Service
     }
 }
 
-//export function teamMembersReducer(state: IAppState = initialState, action: TeamMembersActions): IAppState {
-//    switch (action.type) {
-//        case commonActions.LOADING:
-//            return {
-//                ...state,
-//                teamMembers: {
-//                    ...state.teamMembers,
-//                    isLoading: true
-//                }
-//            }
+export function teamMembersReducer(state: IAppState = initialState, action: TeamMembersActions): IAppState {
+    switch (action.type) {
+        case ActionTypes.LOADING:
+            return {
+                ...state,
+                teamMembers: {
+                    ...state.teamMembers,
+                    isLoading: true
+                }
+            }
 
-//        case commonActions.SHOW:
-//            return {
-//                ...state,
-//                teamMembers: {
-//                    isLoading: false,
-//                    error: null,
-//                    items: (action as IShowAction<IDomainUser>).items
-//                }
-//            }
+        case ActionTypes.SHOW_TEAM_MEMBERS:
+            return {
+                ...state,
+                teamMembers: {
+                    isLoading: false,
+                    error: null,
+                    items: (action as IShowAction<IDomainUser>).items
+                }
+            }
 
-//        case commonActions.ERROR:
-//            return {
-//                ...state,
-//                services: {
-//                    ...state.services,
-//                    isLoading: false,
-//                    error: (action as IErrorAction).error
-//                }
-//            }
+        case ActionTypes.SHOW_ERROR:
+            return {
+                ...state,
+                teamMembers: {
+                    ...state.teamMembers,
+                    isLoading: false,
+                    error: (action as IErrorAction).error
+                }
+            }
 
-//        default:
-//            return state;
-//    }
-//}
+        default:
+            return state;
+    }
+}
+
+export function worksReducer(state: IAppState = initialState, action: WorksActions): IAppState {
+    switch (action.type) {
+        case ActionTypes.LOADING:
+            return {
+                ...state,
+                works: {
+                    ...state.works,
+                    isLoading: true
+                }
+            }
+
+        case ActionTypes.SHOW_WORKS:
+            return {
+                ...state,
+                works: {
+                    isLoading: false,
+                    error: null,
+                    items: (action as IShowAction<IWorkExample>).items
+                }
+            }
+
+        case ActionTypes.SHOW_ERROR:
+            return {
+                ...state,
+                works: {
+                    ...state.works,
+                    isLoading: false,
+                    error: (action as IErrorAction).error
+                }
+            }
+
+        default:
+            return state;
+    }
+}

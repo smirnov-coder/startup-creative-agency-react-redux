@@ -89,13 +89,13 @@ module.exports = {
     },
 
     plugins: [
-        //// Повторно объявляем jQuery глобальной функцией, чтобы не приходилось
-        //// импортировать её в каждый пользовательский js-файл.
-        //new webpack.ProvidePlugin({
-        //    $: "jquery",
-        //    jQuery: "jquery",
-        //    "window.jQuery": "jquery"
-        //}),
+        // Повторно объявляем jQuery глобальной функцией, чтобы не приходилось
+        // импортировать её в каждый пользовательский js-файл.
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "window.jQuery": "jquery"
+        }),
         new webpack.DllReferencePlugin({
             context: ".",
             manifest: require("./wwwroot/lib/vendor-manifest.json"),

@@ -8,7 +8,6 @@
     ISocialLink,
     IDomainUser
 } from "../entities";
-import { IHomePageProps } from "../../components/HomePage";
 
 interface IAction {
     type: string
@@ -34,8 +33,3 @@ export type BrandsActions = CommonActions | IShowAction<IBrand>
 export type TestimonialsActions = CommonActions | IShowAction<ITestimonial>
 export type ContactsActions = CommonActions | IShowAction<IContactInfo>
 export type SocialLinksActions = CommonActions | IShowAction<ISocialLink>
-
-export interface IInitAction extends IAction {
-    pageData: IHomePageProps;
-}
-export type HomePageAction = CommonActions | IInitAction

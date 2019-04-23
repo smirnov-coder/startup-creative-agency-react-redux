@@ -1,4 +1,4 @@
-﻿import { IServiceInfo } from "./entities";
+﻿import { IServiceInfo, IDomainUser, IWorkExample } from "./entities";
 
 
 export interface IAppState {
@@ -8,16 +8,16 @@ export interface IAppState {
         items: IServiceInfo[],
         error: Error
     },
-    //teamMembers: {
-    //    isLoading: boolean,
-    //    items: IDomainUser[],
-    //    error: Error
-    //},
-    //works: {
-    //    isLoading: boolean,
-    //    items: IWorkExample[],
-    //    error: Error
-    //},
+    teamMembers: {
+        isLoading: boolean,
+        items: IDomainUser[],
+        error: Error
+    },
+    works: {
+        isLoading: boolean,
+        items: IWorkExample[],
+        error: Error
+    },
     //blog: {
     //    isLoading: boolean,
     //    items: IBlogPost[],

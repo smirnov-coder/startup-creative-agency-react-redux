@@ -4,12 +4,12 @@
 }
 
 export interface ICreatorEntity extends IBaseEntity {
-    CreatedBy: IDomaiUser
+    CreatedBy: IDomainUser
 }
 
 export interface IUpdatableEntity extends ICreatorEntity {
     LastUpdatedOn: Date,
-    LastUpdatedBy: IDomaiUser
+    LastUpdatedBy: IDomainUser
 }
 
 export interface IBlogPost extends IUpdatableEntity {

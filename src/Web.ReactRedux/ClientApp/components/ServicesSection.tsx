@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 import { Section } from "./Section";
 import { ISectionHeaderProps } from "./SectionHeader";
-import ServiceList from "./ServiceList";
+import ServiceList from "../containers/ServiceList";
 import "../assets/lib/bootstrap-customized/css/bootstrap.css";
 import "./ServicesSection.scss";
 

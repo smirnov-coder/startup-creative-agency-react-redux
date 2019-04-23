@@ -3,21 +3,22 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { ServicesActions } from "../store/actions/actions";
 import { getPageModel } from "../store/actions/actionCreators";
-import { IServiceInfo } from "../store/entities";
-import { Header } from "./Header";
-import { ServicesSection } from "./ServicesSection";
+import { IServiceInfo, IDomainUser, IWorkExample } from "../store/entities";
+import { Header } from "../components/Header";
+import { ServicesSection } from "../components/ServicesSection";
 import "../assets/lib/bootstrap-customized/css/bootstrap.css";
 import "./HomePage.scss";
+import { AboutSection } from "../components/AboutSection";
+import { WorksSection } from "../components/WorksSection";
+import { ParallaxSection } from "../components/ParallaxSection";
 
 export interface IHomePageModel {
     services: IServiceInfo[];
+    teamMembers: IDomainUser[];
+    works: IWorkExample[];
 }
 
 export interface IHomePageProps {
-    //isLoading: boolean;
-    //services: IServiceInfo[];
-    //teamMembers: IDomainUser[];
-    //works: IWorkExample[];
     //blog: IBlogPost[];
     //brands: IBrand[];
     //testimonials: ITestimonial[];
@@ -33,7 +34,6 @@ class HomePage extends React.Component<IHomePageProps> {
     }
 
     render(): JSX.Element {
-        //const { isLoading, services } = this.props; //console.log(this.props, "home page");
         return (
             <div className="body">
                 <div className="body__line">
@@ -41,7 +41,15 @@ class HomePage extends React.Component<IHomePageProps> {
                 </div>
                 <div className="body__line">
                     <ServicesSection />
-                    {/*<ServicesSection isLoading={isLoading} services={services} />*/}
+                </div>
+                <div className="body__line">
+                    <AboutSection />
+                </div>
+                <div className="body__line">
+                    <WorksSection />
+                </div>
+                <div className="body__line">
+                    <ParallaxSection />
                 </div>
             </div>
         );

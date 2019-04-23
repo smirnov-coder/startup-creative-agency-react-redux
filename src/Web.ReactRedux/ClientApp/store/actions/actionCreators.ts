@@ -1,26 +1,40 @@
-﻿import { ServicesActions, CommonActions } from "./actions";
+﻿import { ServicesActions, CommonActions, TeamMembersActions, WorksActions } from "./actions";
 import { Dispatch } from "redux";
-import { commonActions } from "./actionTypes";
-import { IServiceInfo } from "../entities";
-import { IHomePageModel } from "../../components/HomePage";
+import { ActionTypes } from "./actionTypes";
+import { IServiceInfo, IDomainUser, IWorkExample } from "../entities";
+import { IHomePageModel } from "../../containers/HomePage";
 
 export function load(): CommonActions {
     return {
-        type: commonActions.LOADING
+        type: ActionTypes.LOADING
     };
 }
 
-export function handleError(error: Error): CommonActions {
+export function showError(error: Error): CommonActions {
     return {
-        type: commonActions.ERROR,
+        type: ActionTypes.SHOW_ERROR,
         error: error
     };
 }
 
 export function showServices(services: IServiceInfo[]): ServicesActions {
     return {
-        type: commonActions.SHOW,
+        type: ActionTypes.SHOW_SERVICES,
         items: services
+    };
+}
+
+export function showTeam(teamMembers: IDomainUser[]): TeamMembersActions {
+    return {
+        type: ActionTypes.SHOW_TEAM_MEMBERS,
+        items: teamMembers
+    };
+}
+
+export function showWorks(works: IWorkExample[]): WorksActions {
+    return {
+        type: ActionTypes.SHOW_WORKS,
+        items: works
     };
 }
 
@@ -32,7 +46,7 @@ export function showServices(services: IServiceInfo[]): ServicesActions {
 //}
 
 export function getPageModel() {
-    return (dispatch: Dispatch<CommonActions>) => {
+    return (dispatch: Dispatch) => {
         dispatch(load());
         return fetch("/ViewModel")
             .then((response: Response) => {
@@ -40,11 +54,14 @@ export function getPageModel() {
                     return response.json();
                 }
             }, (error: Error) => {
-                dispatch(handleError(error));
+                dispatch(showError(error));
             })
             .then((data: IHomePageModel) => {
                 dispatch(showServices(data.services));
+                dispatch(showTeam(data.teamMembers));
+                dispatch(showWorks(data.works));
                 //
             })
+            
     }
 }

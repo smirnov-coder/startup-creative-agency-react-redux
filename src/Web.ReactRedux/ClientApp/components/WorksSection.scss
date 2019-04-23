@@ -1,0 +1,12 @@
+﻿@import "../styles/_include.scss";
+
+.works-section {
+
+    &__header {
+        margin: 0;
+    }
+
+    &__content {
+        margin: $gutter-width 0 0 0;
+    }
+}
