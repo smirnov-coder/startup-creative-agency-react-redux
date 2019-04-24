@@ -35,7 +35,8 @@ export class WorkExamplePreview extends React.Component<IWorkExamplePreviewProps
                         <div className="work-example-preview__overlay-inner">
                             <h4 className="work-example-preview__title">{Name}</h4>
                             <h5 className="work-example-preview__subtitle">{Category}</h5>
-                            <Button modifiers={[Size.SMALL, Color.WHITE, Border.THICK]} className="work-example-preview__button" onClick={this.handleClick}>
+                            <Button modifiers={[Size.SMALL, Color.WHITE, Border.THICK]}
+                                className="work-example-preview__button" onClick={this.handleClick}>
                                 View&nbsp;&nbsp;<i className="fa fa-angle-right work-example-preview__button-icon"></i>
                             </Button>
                         </div>

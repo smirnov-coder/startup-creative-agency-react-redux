@@ -9,6 +9,8 @@ using StartupCreativeAgency.Web.ReactRedux.ViewModels;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class MessagesController : ControllerBase
     {
         private readonly IMessageService _messageService;
@@ -40,6 +42,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // POST api/messages
         //
         [HttpPost]
+        [Consumes("application/json")]
         public async Task<IActionResult> SaveAsync(MessageViewModel message)
         {
             try

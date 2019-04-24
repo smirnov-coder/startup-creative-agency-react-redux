@@ -1,24 +1,65 @@
 ﻿import * as React from "react";
-import { Dash, DashColors } from "./Dash";
 import "./SectionHeader.scss";
+import { findByType } from "../scripts/utils";
 
-export interface ISectionHeaderProps {
-    mixinClass?: string;
-    title: string;
-    subtitle?: string;
-}
+const SectionHeaderTitle = (props: React.PropsWithChildren<{}>): JSX.Element => null;
+SectionHeaderTitle.displayName = "SectionHeaderTitle";
 
-export class SectionHeader extends React.Component<ISectionHeaderProps> {
-    render(): JSX.Element {
-        const { mixinClass, title, subtitle } = this.props;
+const SectionHeaderSeparator = (props: React.PropsWithChildren<{}>): JSX.Element => null;
+SectionHeaderSeparator.displayName = "SectionHeaderSeparator";
+
+const SectionHeaderSubtitle = (props: React.PropsWithChildren<{}>): JSX.Element => null;
+SectionHeaderSubtitle.displayName = "SectionHeaderSubtitle";
+
+export class SectionHeader extends React.Component {
+    static Title: (props: React.PropsWithChildren<{}>) => JSX.Element;
+    static Subtitle: (props: React.PropsWithChildren<{}>) => JSX.Element;
+    static Separator: (props: React.PropsWithChildren<{}>) => JSX.Element;
+
+    renderTitle(): JSX.Element {
+        let { children } = this.props;
+        const title: React.ReactNode = findByType(children, SectionHeaderTitle);
+        if (!title) {
+            return null;
+        }
         return (
-            <header className={`section-header ${mixinClass}`}>
-                <h2 className="section-header__title">{title}</h2>
-                <div className="section-header__separator">
-                    <Dash color={DashColors.GREY} />
-                </div>
-                {subtitle ? <h3 className="section-header__subtitle">{subtitle}</h3> : null}
+            <h2 className="section-header__title">{(title as React.ReactElement).props.children}</h2>
+        );
+    }
+
+    renderSeparator(): JSX.Element {
+        let { children } = this.props;
+        const separator: React.ReactNode = findByType(children, SectionHeaderSeparator);
+        if (!separator) {
+            return null;
+        }
+        return (
+            <div className="section-header__separator">{(separator as React.ReactElement).props.children}</div>
+        );
+    }
+
+    renderSubtitle(): JSX.Element {
+        let { children } = this.props;
+        const subtitle: React.ReactNode = findByType(children, SectionHeaderSubtitle);
+        if (!subtitle) {
+            return null;
+        }
+        return (
+            <h3 className="section-header__subtitle">{(subtitle as React.ReactElement).props.children}</h3>
+        );
+    }
+
+    render(): JSX.Element {
+        return (
+            <header className="section-header">
+                {this.renderTitle()}
+                {this.renderSeparator()}
+                {this.renderSubtitle()}
             </header>
         )
     }
 }
+
+SectionHeader.Title = SectionHeaderTitle;
+SectionHeader.Subtitle = SectionHeaderSubtitle;
+SectionHeader.Separator = SectionHeaderSeparator;

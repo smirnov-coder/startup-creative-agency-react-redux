@@ -1,5 +1,13 @@
-﻿import { IServiceInfo, IDomainUser, IWorkExample } from "./entities";
-
+﻿import {
+    IServiceInfo,
+    IDomainUser,
+    IWorkExample,
+    IBlogPost,
+    IBrand,
+    ITestimonial,    IContactInfo,
+    IMessage,
+    ISocialLink
+} from "./entities";
 
 export interface IAppState {
     // index
@@ -18,34 +26,40 @@ export interface IAppState {
         items: IWorkExample[],
         error: Error
     },
-    //blog: {
-    //    isLoading: boolean,
-    //    items: IBlogPost[],
-    //    error: Error
-    //},
-    //brands: {
-    //    isLoading: boolean,
-    //    items: IBrand[],
-    //    error: Error
-    //},
-    //testimonials: {
-    //    isLoading: boolean,
-    //    items: ITestimonial[],
-    //    error: Error
-    //},
-    //contacts: {
-    //    isLoading: boolean,
-    //    items: IContactInfo[],
-    //    error: Error
-    //},
-    //socialLinks: {
-    //    isLoading: boolean,
-    //    items: ISocialLink[],
-    //    error: Error
-    //},
+    blog: {
+        isLoading: boolean,
+        items: IBlogPost[],
+        error: Error
+    },
+    brands: {
+        isLoading: boolean,
+        items: IBrand[],
+        error: Error
+    },
+    testimonials: {
+        isLoading: boolean,
+        items: ITestimonial[],
+        error: Error
+    },
+    contacts: {
+        isLoading: boolean,
+        items: IContactInfo[],
+        error: Error
+    },
+    socialLinks: {
+        isLoading: boolean,
+        items: ISocialLink[],
+        error: Error
+    },
 
     //// admin
     //myProfile: IDomaiUser,
     //users: IDomaiUser[],
-    //messages: IMessage[]
+    messages: {
+        isLoading: boolean,
+        items: IMessage[],
+        error: Error
+    },
+
+    operationDetails: any
 }

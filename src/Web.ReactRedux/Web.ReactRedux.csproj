@@ -11,9 +11,8 @@
     <Folder Include="ClientApp\assets\fonts\" />
     <Folder Include="ClientApp\assets\images\" />
     <Folder Include="ClientApp\assets\favicon\" />
-    <Folder Include="ClientApp\assets\lib\" />
-    <Folder Include="ClientApp\scripts\" />
     <Folder Include="Attributes\" />
+    <Folder Include="ClientApp\assets\lib\owl.carousel-customized\" />
     <Folder Include="ClientApp\styles\blocks\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>

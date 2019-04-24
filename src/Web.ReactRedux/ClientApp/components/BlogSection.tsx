@@ -1,37 +1,35 @@
 ﻿import * as React from "react";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
-import ServiceList from "../containers/ServiceList";
-import "../assets/lib/bootstrap-customized/css/bootstrap.css";
-import "./ServicesSection.scss";
 import { Dash, DashColors } from "./Dash";
+import Blog from "../containers/Blog";
+import "./BlogSection.scss";
 
-export class ServicesSection extends React.Component {
+export class BlogSection extends React.Component {
     render(): JSX.Element {
         return (
-            <section className="services-section" id="services">
+            <section className="section blog-section" id="blog">
                 <Section>
                     <Section.Header>
                         <SectionHeader>
                             <SectionHeader.Title>
-                                Services
+                                Recent blog posts
                             </SectionHeader.Title>
                             <SectionHeader.Separator>
                                 <Dash color={DashColors.GREY} />
                             </SectionHeader.Separator>
                             <SectionHeader.Subtitle>
-                                We offer ipsum dolor sit amet, consetetur sadipscing elitr amet
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr amet
                             </SectionHeader.Subtitle>
                         </SectionHeader>
                     </Section.Header>
                     <Section.Content>
-                        <div className="services-section__content">
-                            <ServiceList />
+                        <div className="blog-section__content">
+                            <Blog />
                         </div>
                     </Section.Content>
                 </Section>
-                
             </section>
-        )
+        );
     }
 }

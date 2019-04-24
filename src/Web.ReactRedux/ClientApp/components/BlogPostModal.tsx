@@ -1,19 +1,18 @@
 ﻿import * as React from "react";
-import { IWorkExample } from "../store/entities";
+import { IBlogPost, IDomainUser } from "../store/entities";
 import { ModalCloseButton } from "./ModalCloseButton";
 import { ButtonModifiers } from "./Button";
 import "../assets/lib/bootstrap-customized/css/bootstrap.css";
-import "../assets/lib/bootstrap-customized/js/bootstrap";
-import "./WorkExampleModal.scss";
+import "./BlogPostModal.scss";
 
-interface IWorkExampleModalProps {
-    workExample: IWorkExample;
+interface IBlogPostModalProps {
+    blogPost: IBlogPost;
     showModal: boolean;
     onClose: () => void;
 }
 
-export class WorkExampleModal extends React.Component<IWorkExampleModalProps> {
-    constructor(props: IWorkExampleModalProps) {
+export class BlogPostModal extends React.Component<IBlogPostModalProps> {
+    constructor(props: IBlogPostModalProps) {
         super(props);
     }
 
@@ -30,10 +29,12 @@ export class WorkExampleModal extends React.Component<IWorkExampleModalProps> {
     private modal = React.createRef<HTMLDivElement>();
 
     render(): JSX.Element {
-        let { workExample } = this.props;
+        let { blogPost } = this.props;
+        let date: string = this.getBlogPostDateString(blogPost.CreatedOn);
+        let meta: string = this.getBlogPostMetadata(date, blogPost);
         return (
-            <div ref={this.modal} className="modal fade" tabIndex={-1} id="work-example-modal">
-                <div className="work-example custom-modal">
+            <div ref={this.modal} className="modal fade" tabIndex={-1} id="blog-post-modal">
+                <div className="blog-post custom-modal">
                     <div className="modal-dialog modal-lg custom-modal__inner">
                         <div className="container">
                             <div className="modal-content custom-modal__content">
@@ -41,13 +42,13 @@ export class WorkExampleModal extends React.Component<IWorkExampleModalProps> {
                                     <button type="button" className="close" data-dismiss="modal">
                                         <span>&times;</span>
                                     </button>
-                                    <div className="work-example__title">{workExample.Name}</div>
-                                    <div className="work-example__subtitle">{workExample.Category}</div>
+                                    <div className="blog-post__title">{blogPost.Title}</div>
+                                    <div className="blog-post__meta">{meta}</div>
                                 </div>
                                 <div className="modal-body clearfix">
-                                    <img src={workExample.ImagePath} alt={workExample.Name}
-                                        className="work-example__img img-responsive center-block" />
-                                    <div className="work-example__description">{workExample.Description}</div>
+                                    <img src={blogPost.ImagePath} alt={blogPost.Title}
+                                        className="blog-post__img img-responsive center-block" />
+                                    <div className="blog-post__content">{blogPost.Content}</div>
                                 </div>
                                 <div className="modal-footer custom-modal__footer">
                                     <ModalCloseButton modifiers={[ButtonModifiers.Size.SMALL]}
@@ -62,5 +63,21 @@ export class WorkExampleModal extends React.Component<IWorkExampleModalProps> {
             </div>
         );
     }
-}
 
+    getBlogPostDateString(date: Date): string {
+        let options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        };
+        return new Date(date).toLocaleDateString("en-US", options);
+    }
+
+    getBlogPostMetadata(date: string, blogPost: IBlogPost): string {
+        return `${date} By ${this.getFullName(blogPost.CreatedBy)} in ${blogPost.Category}`;
+    }
+
+    getFullName(user: IDomainUser): string {
+        return `${user.Profile.FirstName} ${user.Profile.LastName}`;
+    }
+}

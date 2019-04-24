@@ -1,37 +1,41 @@
 ﻿import * as React from "react";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
-import ServiceList from "../containers/ServiceList";
-import "../assets/lib/bootstrap-customized/css/bootstrap.css";
-import "./ServicesSection.scss";
 import { Dash, DashColors } from "./Dash";
+import Contacts from "../containers/Contacts";
+import "./ContactSection.scss";
+import ContactForm from "../containers/ContactForm";
 
-export class ServicesSection extends React.Component {
+export class ContactSection extends React.Component {
     render(): JSX.Element {
         return (
-            <section className="services-section" id="services">
+            <section className="contact-section" id="contact">
                 <Section>
                     <Section.Header>
                         <SectionHeader>
                             <SectionHeader.Title>
-                                Services
+                                Get in touch
                             </SectionHeader.Title>
                             <SectionHeader.Separator>
                                 <Dash color={DashColors.GREY} />
                             </SectionHeader.Separator>
                             <SectionHeader.Subtitle>
-                                We offer ipsum dolor sit amet, consetetur sadipscing elitr amet
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr amet
                             </SectionHeader.Subtitle>
                         </SectionHeader>
                     </Section.Header>
                     <Section.Content>
-                        <div className="services-section__content">
-                            <ServiceList />
+                        <div className="contact-section__content row">
+                            <div className="contact-section__contacts col-sm-4">
+                                <Contacts />
+                            </div>
+                            <div className="contact-section__contact-form col-sm-8">
+                                <ContactForm />
+                            </div>
                         </div>
                     </Section.Content>
                 </Section>
-                
             </section>
-        )
+        );
     }
 }

@@ -45,15 +45,16 @@ class Gallery extends React.Component<IGalleryProps, IGalleryState> {
                 </div>
                 <div className="gallery__items row">
                     {isLoading ? <div>Loading... Please wait</div> : items.map(workExample => (
-                        <div key={workExample.Id} className="gallery__item col-sm-6 col-md-4" data-group={workExample.Category.toLowerCase()}>
+                        <div key={workExample.Id} className="gallery__item col-sm-6 col-md-4"
+                            data-group={workExample.Category.toLowerCase()}>
                             <WorkExamplePreview key={workExample.Id} workExample={workExample}
                                 onView={this.viewWorkExample} />
                         </div>
                     ))}
                 </div>
                 {!showModal ? null :
-                    <WorkExampleModal workExample={this.state.workExample} showModal={showModal} onClose={this.closeModal}
-                        title={this.state.workExample.Name} subtitle={this.state.workExample.Category} />
+                    <WorkExampleModal workExample={this.state.workExample} showModal={showModal}
+                        onClose={this.closeModal} />
                 }
             </section>
         );

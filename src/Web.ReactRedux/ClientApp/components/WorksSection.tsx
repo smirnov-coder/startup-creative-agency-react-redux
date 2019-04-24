@@ -1,21 +1,30 @@
 ﻿import * as React from "react";
-import { ISectionHeaderProps } from "./SectionHeader";
 import { Section } from "./Section";
 import Gallery from "../containers/Gallery";
 import "./WorksSection.scss";
+import { SectionHeader } from "./SectionHeader";
+import { Dash, DashColors } from "./Dash";
 
 export class WorksSection extends React.Component {
     render(): JSX.Element {
-        const headerProps: ISectionHeaderProps = {
-            mixinClass: "works-section__header",
-            title: "Latest works",
-        };
         return (
             <section className="works-section" id="works">
-                <Section {...headerProps}>
-                    <div className="works-section__content">
-                        <Gallery />
-                    </div>
+                <Section>
+                    <Section.Header>
+                        <SectionHeader>
+                            <SectionHeader.Title>
+                                Latest works
+                            </SectionHeader.Title>
+                            <SectionHeader.Separator>
+                                <Dash color={DashColors.GREY} />
+                            </SectionHeader.Separator>
+                        </SectionHeader>
+                    </Section.Header>
+                    <Section.Content>
+                        <div className="works-section__content">
+                            <Gallery />
+                        </div>
+                    </Section.Content>
                 </Section>
             </section>
         );

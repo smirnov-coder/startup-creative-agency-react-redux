@@ -3,8 +3,8 @@ import { IDomainUser } from "../store/entities";
 import { AppState } from "../store/reducers/rootReducer";
 import { connect } from "react-redux";
 import { TeamMember } from "../components/TeamMember";
-const OwlCarousel = require("react-owl-carousel");
-import { Options } from "react-owl-carousel/umd/options";
+import OwlCarousel from "../assets/lib/owl.carousel-customized/OwlCarousel";
+import { Options } from "../assets/lib/owl.carousel-customized/OwlCarousel";
 import "../assets/lib/bootstrap-customized/css/bootstrap.css";
 import "./TeamCarousel.scss";
 

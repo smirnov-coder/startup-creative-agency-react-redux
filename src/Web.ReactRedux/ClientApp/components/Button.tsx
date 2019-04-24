@@ -53,7 +53,8 @@ export class Button extends React.Component<React.PropsWithChildren<IButtonProps
     render(): JSX.Element {
         let { className, children, modifiers, onClick } = this.props;
         return (
-            <button className={`button ${modifiers.join(" ")} ${className}`} onClick={(e) => onClick(e)}>
+            <button type="button" className={`button ${modifiers ? modifiers.join(" ") : null} ${className}`}
+                onClick={onClick ? (e) => onClick(e) : null}>
                 {children}
             </button>
         );
