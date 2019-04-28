@@ -12,6 +12,7 @@
             $weight: map-get($font-weights, 'semi-bold'),
             $color: $primary-color
         );
+        text-align: left;
     }
 
     &__subtitle {
@@ -23,6 +24,7 @@
             $weight: map-get($font-weights, 'normal'),
             $color: $primary-color
         );
+        text-align: left;
     }
 
     &__description {
@@ -35,5 +37,6 @@
             $line-height: $large-line-height,
             $color: $primary-color
         );
+        text-align: left;
     }
 }

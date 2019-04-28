@@ -4,6 +4,7 @@
     padding: 0;
 
     &__separator {
+        display: block;
         margin: 40px 0;
         border-color: $light-grey-color;
     }

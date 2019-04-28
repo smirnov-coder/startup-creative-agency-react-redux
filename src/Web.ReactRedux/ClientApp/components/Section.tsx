@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 import "./Section.scss";
-import { findByType } from "../scripts/utils";
+import findByType from "../scripts/findComponentsByType";
 
 const SectionHeader = (props: React.PropsWithChildren<{}>): JSX.Element => null;
 SectionHeader.displayName = "SectionHeader";
@@ -14,7 +14,7 @@ export class Section extends React.Component {
 
     renderHeader(): JSX.Element {
         let { children } = this.props;
-        const header: React.ReactNode = findByType(children, SectionHeader);
+        const header: React.ReactNode = findByType(children, SectionHeader)[0];
         if (!header) {
             return null;
         }
@@ -25,7 +25,7 @@ export class Section extends React.Component {
 
     renderContent(): JSX.Element {
         let { children } = this.props;
-        const content: React.ReactNode = findByType(children, SectionContent);
+        const content: React.ReactNode = findByType(children, SectionContent)[0];
         if (!content) {
             return null;
         }
@@ -36,7 +36,7 @@ export class Section extends React.Component {
 
     render(): JSX.Element {
         return (
-            <section className="section" >
+            <section className="section">
                 <div className="container">
                     {this.renderHeader()}
                     {this.renderContent()}

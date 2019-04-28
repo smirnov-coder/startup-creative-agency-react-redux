@@ -15,9 +15,9 @@ import { IServiceInfo, IDomainUser, IWorkExample, IBlogPost, IBrand, ITestimonia
 import { IHomePageModel } from "../../containers/HomePage";
 import { IContactMessage } from "../../containers/ContactForm";
 
-export function load(): CommonActions {
+export function loadAll(): CommonActions {
     return {
-        type: ActionTypes.LOADING
+        type: ActionTypes.LOADING_ALL
     };
 }
 
@@ -87,8 +87,8 @@ export function showSocialLinks(socialLinks: ISocialLink[]): SocialLinksActions 
 
 export function getPageModel() {
     return (dispatch: Dispatch) => {
-        dispatch(load());
-        return fetch("/ViewModel")
+        dispatch(loadAll());
+        return fetch("/viewmodel")
             .then((response: Response) => {
                 if (response.ok) {
                     return response.json();
@@ -149,4 +149,28 @@ export function sendMessage(message: IContactMessage) {
                 dispatch(showResponse(data.title));
             });
     }
+}
+
+/// TODO: Добавить в блог контроллер обработку сущностей перед возвратом (ссылки на картинки).
+export function getBlogPosts() {
+    return (dispatch: Dispatch) => {
+        dispatch(loadBlogPosts());
+        return fetch(`/api/blog`)
+            .then((response: Response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+            }, (error: Error) => {
+                dispatch(showError(error));
+            })
+            .then((data: IBlogPost[]) => {
+                dispatch(showBlog(data));
+            });
+    }
+}
+
+export function loadBlogPosts(): BlogActions {
+    return {
+        type: ActionTypes.LOADING_BLOG_POSTS
+    };
 }

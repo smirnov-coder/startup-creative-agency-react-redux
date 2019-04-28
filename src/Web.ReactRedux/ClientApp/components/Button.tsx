@@ -45,18 +45,16 @@ export interface IButtonProps {
     onClick?: (event: React.MouseEvent) => void;
 }
 
-export class Button extends React.Component<React.PropsWithChildren<IButtonProps>> {
-    constructor(props: any) {
+export class Button extends React.Component<IButtonProps> {
+    constructor(props: IButtonProps) {
         super(props);
     }
 
     render(): JSX.Element {
-        let { className, children, modifiers, onClick } = this.props;
+        let { className = "", modifiers, ...restProps } = this.props;
         return (
-            <button type="button" className={`button ${modifiers ? modifiers.join(" ") : null} ${className}`}
-                onClick={onClick ? (e) => onClick(e) : null}>
-                {children}
-            </button>
+            <button className={`button ${modifiers ? modifiers.join(" ") : ""} ${className}`}
+                type="button" {...restProps} />
         );
     }
 }

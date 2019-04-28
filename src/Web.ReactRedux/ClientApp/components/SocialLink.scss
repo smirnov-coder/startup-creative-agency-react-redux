@@ -12,7 +12,7 @@
 
     &--shape {
 
-        &-circle {
+        &-round {
             @include circle($footer-social-link-size);
             line-height: 32px;
             border: 2px solid $white-color;

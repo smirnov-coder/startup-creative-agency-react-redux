@@ -20,7 +20,7 @@ class TeamCarousel extends React.Component<ITeamCarouselProps> {
         return (
             <section className="team">
                 <h3 className="sr-only">Our Team</h3>
-                {isLoading ? <div>Loading... Please wait.</div> :
+                {/* /// TODO: Add loader. */isLoading ? <div>Loading... Please wait.</div> :
                     <OwlCarousel className="team__carousel" {...owlOptions} onRefreshed={this.addTeamMemberHover}>
                         {items.map(teamMember => (
                             <TeamMember key={teamMember.Id} {...teamMember} />
@@ -68,11 +68,17 @@ class TeamCarousel extends React.Component<ITeamCarouselProps> {
     addTeamMemberHover(): void {
         if ($) {
             let $teamMember = $(".team-member");
-            $teamMember.hover(function () {
-                $(this).find(".team-member__img-overlay").fadeToggle({ duration: 100 });
+            let overlaySelector = ".team-member__img-overlay";
+            let duration: number = 100;
+            // .hover() + .fadeToggle() работает как-то криво.
+            $teamMember.mouseenter(function () {
+                $(this).find(overlaySelector).fadeIn({ duration });
+            });
+            $teamMember.mouseleave(function () {
+                $(this).find(overlaySelector).fadeOut({ duration });
             });
         } else {
-            throw new Error("jQuery '$' not found.");
+            throw new Error("jQuery '$' is required.");
         }
     }
 }
@@ -88,15 +94,5 @@ const mapStateToProps = (state: AppState): IStateProps => {
         items: state.teamMembersReducer.teamMembers.items
     };
 }
-
-//interface IDispatchProps {
-//    getPageModel: () => void
-//}
-
-//const mapDispatchToProps = (dispatch: Dispatch<ServicesActions>): IDispatchProps => {
-//    return {
-//        getPageModel: bindActionCreators(getPageModel, dispatch)
-//    };
-//}
 
 export default connect(mapStateToProps, null)(TeamCarousel);

@@ -4,12 +4,12 @@ import { SectionHeader } from "./SectionHeader";
 import ServiceList from "../containers/ServiceList";
 import "../assets/lib/bootstrap-customized/css/bootstrap.css";
 import "./ServicesSection.scss";
-import { Dash, DashColors } from "./Dash";
+import { Dash, DashModifiers } from "./Dash";
 
 export class ServicesSection extends React.Component {
     render(): JSX.Element {
         return (
-            <section className="services-section" id="services">
+            <div className="services-section" id="services">
                 <Section>
                     <Section.Header>
                         <SectionHeader>
@@ -17,7 +17,7 @@ export class ServicesSection extends React.Component {
                                 Services
                             </SectionHeader.Title>
                             <SectionHeader.Separator>
-                                <Dash color={DashColors.GREY} />
+                                <Dash modifiers={[DashModifiers.Colors.GREY]} />
                             </SectionHeader.Separator>
                             <SectionHeader.Subtitle>
                                 We offer ipsum dolor sit amet, consetetur sadipscing elitr amet
@@ -30,8 +30,7 @@ export class ServicesSection extends React.Component {
                         </div>
                     </Section.Content>
                 </Section>
-                
-            </section>
+            </div>
         )
     }
 }

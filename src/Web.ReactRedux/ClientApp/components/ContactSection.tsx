@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
-import { Dash, DashColors } from "./Dash";
+import { Dash, DashModifiers } from "./Dash";
 import Contacts from "../containers/Contacts";
 import "./ContactSection.scss";
 import ContactForm from "../containers/ContactForm";
@@ -9,7 +9,7 @@ import ContactForm from "../containers/ContactForm";
 export class ContactSection extends React.Component {
     render(): JSX.Element {
         return (
-            <section className="contact-section" id="contact">
+            <div className="contact-section" id="contact">
                 <Section>
                     <Section.Header>
                         <SectionHeader>
@@ -17,7 +17,7 @@ export class ContactSection extends React.Component {
                                 Get in touch
                             </SectionHeader.Title>
                             <SectionHeader.Separator>
-                                <Dash color={DashColors.GREY} />
+                                <Dash modifiers={[DashModifiers.Colors.GREY]} />
                             </SectionHeader.Separator>
                             <SectionHeader.Subtitle>
                                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr amet
@@ -35,7 +35,7 @@ export class ContactSection extends React.Component {
                         </div>
                     </Section.Content>
                 </Section>
-            </section>
+            </div>
         );
     }
 }

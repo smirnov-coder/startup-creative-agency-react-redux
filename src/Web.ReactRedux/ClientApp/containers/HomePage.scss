@@ -1,7 +1,15 @@
-﻿@import "../styles/_variables.scss";
+﻿/*@import "../styles/_variables.scss";
 @import "../styles/_mixins.scss";
 @import "../styles/_functions.scss";
 @import "../styles/_fonts.scss";
-@import "../styles/_custom-reset.scss";
+@import "../styles/_custom-reset.scss";*/
 
-@import "../styles/blocks/_body.scss";
+.body {
+    margin: 0;
+    padding: 0;
+
+    &__line {
+        margin: 0;
+        padding: 0;
+    }
+}

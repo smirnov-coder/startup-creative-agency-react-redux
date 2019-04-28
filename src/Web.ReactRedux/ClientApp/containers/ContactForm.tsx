@@ -5,6 +5,7 @@ import { bindActionCreators, Dispatch } from "redux";
 import { sendMessage } from "../store/actions/actionCreators";
 import "./ContactForm.scss";
 import { AppState } from "../store/reducers/rootReducer";
+import { Loader } from "../components/Loader";
 
 export interface IContactMessage {
     name: string;

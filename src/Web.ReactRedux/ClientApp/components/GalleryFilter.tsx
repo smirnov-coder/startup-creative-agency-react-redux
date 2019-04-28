@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
-import { ButtonModifiers } from "./Button";
-import { FilterButton } from "./FilterButton";
+import { ButtonModifiers, Button } from "./Button";
 import "./GalleryFilter.scss";
+import { Menu } from "./Menu";
 
 interface IGalleryFilterProps {
     categories: string[];
@@ -19,20 +19,20 @@ export class GalleryFilter extends React.Component<IGalleryFilterProps> {
         let allCategories: string[] = this.props.categories;
         let uniqueCategories: string[] = [...new Set(allCategories)];
         uniqueCategories.unshift("*");
-        let buttonClass: string = "menu__item gallery-filter__item";
+        let itemClass: string = "gallery-filter__item";
         let activeClass: string = "gallery-filter__item--active";
         return (
-            <div className="menu menu--style-inline gallery-filter">
+            <Menu className="gallery-filter" modifiers={["menu--style-inline"]}>
                 {uniqueCategories.map(category => (
-                    <FilterButton key={category}
-                        className={this.isActive(category) ? `${buttonClass} ${activeClass}` : buttonClass}
-                        modifiers={[ButtonModifiers.Style.LINK]}
-                        dataFilter={category.toLowerCase()}
-                        onClick={this.handleClick}>
-                        {category === "*" ? "All" : category}
-                    </FilterButton>
+                    <Menu.Item key={category}>
+                        <Button modifiers={[ButtonModifiers.Style.LINK]}
+                            className={this.isActive(category) ? `${itemClass} ${activeClass}` : itemClass}
+                            data-filter={category.toLowerCase()}
+                            onClick={this.handleClick}
+                            children={category === "*" ? "All" : category} />
+                    </Menu.Item>
                 ))}
-            </div>
+            </Menu>
         );
     }
 

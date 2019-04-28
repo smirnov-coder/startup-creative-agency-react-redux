@@ -4,7 +4,7 @@ import { Options } from './options';
 
 import 'owl.carousel';
 
-const $: typeof jquery = (window as any).jQuery;
+const $: typeof jQuery = (window as any).jQuery;
 
 export type ComponentProps = Readonly<React.AllHTMLAttributes<HTMLDivElement> & { children: React.ReactNode }>;
 export type OwlCarouselProps = Options & ComponentProps;

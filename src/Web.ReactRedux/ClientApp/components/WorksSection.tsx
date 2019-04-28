@@ -3,12 +3,12 @@ import { Section } from "./Section";
 import Gallery from "../containers/Gallery";
 import "./WorksSection.scss";
 import { SectionHeader } from "./SectionHeader";
-import { Dash, DashColors } from "./Dash";
+import { Dash, DashModifiers } from "./Dash";
 
 export class WorksSection extends React.Component {
     render(): JSX.Element {
         return (
-            <section className="works-section" id="works">
+            <div className="works-section" id="works">
                 <Section>
                     <Section.Header>
                         <SectionHeader>
@@ -16,7 +16,7 @@ export class WorksSection extends React.Component {
                                 Latest works
                             </SectionHeader.Title>
                             <SectionHeader.Separator>
-                                <Dash color={DashColors.GREY} />
+                                <Dash modifiers={[DashModifiers.Colors.GREY]} />
                             </SectionHeader.Separator>
                         </SectionHeader>
                     </Section.Header>
@@ -26,7 +26,7 @@ export class WorksSection extends React.Component {
                         </div>
                     </Section.Content>
                 </Section>
-            </section>
+            </div>
         );
     }
 }

@@ -1,14 +1,14 @@
 ﻿import * as React from "react";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
-import { Dash, DashColors } from "./Dash";
+import { Dash, DashModifiers } from "./Dash";
 import Blog from "../containers/Blog";
 import "./BlogSection.scss";
 
 export class BlogSection extends React.Component {
     render(): JSX.Element {
         return (
-            <section className="section blog-section" id="blog">
+            <div className="blog-section" id="blog">
                 <Section>
                     <Section.Header>
                         <SectionHeader>
@@ -16,7 +16,7 @@ export class BlogSection extends React.Component {
                                 Recent blog posts
                             </SectionHeader.Title>
                             <SectionHeader.Separator>
-                                <Dash color={DashColors.GREY} />
+                                <Dash modifiers={[DashModifiers.Colors.GREY]} />
                             </SectionHeader.Separator>
                             <SectionHeader.Subtitle>
                                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr amet
@@ -29,7 +29,7 @@ export class BlogSection extends React.Component {
                         </div>
                     </Section.Content>
                 </Section>
-            </section>
+            </div>
         );
     }
 }

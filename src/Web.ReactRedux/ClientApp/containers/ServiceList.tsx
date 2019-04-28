@@ -17,7 +17,7 @@ class ServiceList extends React.Component<IServiceListProps> {
         return (
             <section className="service-list">
                 <h3 className="sr-only">Service List</h3>
-                {isLoading ? <div>Loading... Please wait.</div> : items.map(service => (
+                {/* /// TODO: Add loader. */isLoading ? <div>Loading... Please wait.</div> : items.map(service => (
                     <div key={service.Id} className="col-md-4 service-list__item">
                         <Service {...service} />
                     </div>
@@ -38,15 +38,5 @@ const mapStateToProps = (state: AppState): IStateProps => {
         items: state.servicesReducer.services.items
     };
 }
-
-//interface IDispatchProps {
-//    getPageModel: () => void
-//}
-
-//const mapDispatchToProps = (dispatch: Dispatch<ServicesActions>): IDispatchProps => {
-//    return {
-//        getServices: bindActionCreators(getServices, dispatch)
-//    };
-//}
 
 export default connect(mapStateToProps, null)(ServiceList);

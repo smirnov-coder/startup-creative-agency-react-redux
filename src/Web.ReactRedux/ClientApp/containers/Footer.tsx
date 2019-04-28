@@ -1,12 +1,13 @@
 ﻿import * as React from "react";
 import { Section } from "../components/Section";
 import { SectionHeader } from "../components/SectionHeader";
-import { Dash, DashColors } from "../components/Dash";
+import { Dash, DashModifiers } from "../components/Dash";
 import { ISocialLink } from "../store/entities";
 import { AppState } from "../store/reducers/rootReducer";
 import { connect } from "react-redux";
-import { SocialLink, SocialLinkShapes } from "../components/SocialLink";
+import { SocialLink, SocialLinkModifiers } from "../components/SocialLink";
 import "./Footer.scss";
+import { Menu } from "../components/Menu";
 
 interface IFooterProps {
     isLoading: boolean;
@@ -33,20 +34,21 @@ class Footer extends React.Component<IFooterProps> {
                         <div className="footer__content">
                             <SectionHeader>
                                 <SectionHeader.Title>
-                                    {isLoading ? <div>Loading... Please wait.</div> :
-                                        <ul className="menu menu--style-inline footer__socials">
+                                    {/* /// TODO: Add loader. */isLoading ? <div>Loading... Please wait.</div> :
+                                        <Menu className="footer__socials" modifiers={["menu--style-inline"]}>
                                             {items.map(socialLink => (
-                                                <li key={socialLink.NetworkName} className="menu__item footer__socials-item">
-                                                    <SocialLink icon={icons[socialLink.NetworkName]}
-                                                        shape={SocialLinkShapes.CIRCLE}
+                                                <Menu.Item key={socialLink.NetworkName} className="footer__socials-item">
+                                                    <SocialLink
+                                                        icon={icons[socialLink.NetworkName]}
+                                                        modifiers={[SocialLinkModifiers.Shape.ROUND]}
                                                         url={socialLink.Url} />
-                                                </li>
+                                                </Menu.Item>
                                             ))}
-                                        </ul>
+                                        </Menu>
                                     }
                                 </SectionHeader.Title>
                                 <SectionHeader.Separator>
-                                    <Dash color={DashColors.WHITE} />
+                                    <Dash modifiers={[DashModifiers.Colors.WHITE]} />
                                 </SectionHeader.Separator>
                                 <SectionHeader.Subtitle>
                                     <p className="footer__copyright">

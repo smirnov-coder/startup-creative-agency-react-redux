@@ -6,20 +6,6 @@
 
     &__filter {
         margin: 0;
-
-        /*&-item {
-            margin: 0 ($gutter-width / 2);
-            @include font(
-                $family: $text-font-family,
-                $size: px-to-rem(16px),
-                $weight: map-get($font-weights, 'normal'),
-                $line-height: $large-line-height
-            );
-
-            &--active {
-                color: $accent-color;
-            }
-        }*/
     }
 
     &__items {

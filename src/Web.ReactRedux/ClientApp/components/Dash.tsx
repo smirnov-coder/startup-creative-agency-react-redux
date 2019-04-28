@@ -1,25 +1,36 @@
 ﻿import * as React from "react";
 import "./Dash.scss";
 
-interface IDashProps {
-    size?: string;
-    color?: string;
-}
-
-export interface IDashColors {
+interface IDashColors {
     GREY: string;
     WHITE: string;
 }
 
-export const DashColors: IDashColors = {
-    GREY: "dash--color-grey",
-    WHITE: "dash--color-white"
+interface IDashModifiers {
+    Colors: IDashColors;
+}
+
+export const DashModifiers: IDashModifiers = {
+    Colors: {
+        GREY: "dash--color-grey",
+        WHITE: "dash--color-white"
+    }
+}
+
+interface IDashProps {
+    modifiers?: string[];
+    className?: string;
 }
 
 export class Dash extends React.Component<IDashProps> {
+    constructor(props: IDashProps) {
+        super(props);
+    }
+
     render(): JSX.Element {
+        let { className = "", modifiers, ...restProps } = this.props;
         return (
-            <hr className={`dash ${this.props.size} ${this.props.color}`} />
+            <hr className={`dash ${modifiers ? modifiers.join(" ") : ""} ${className}`} {...restProps} />
         );
     }
 }

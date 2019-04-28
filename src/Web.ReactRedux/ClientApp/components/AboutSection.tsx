@@ -5,12 +5,12 @@ import { AboutUs } from "./AboutUs";
 import TeamCarousel from "../containers/TeamCarousel";
 import "../assets/lib/bootstrap-customized/css/bootstrap.css";
 import "./AboutSection.scss";
-import { Dash, DashColors } from "./Dash";
+import { Dash, DashModifiers } from "./Dash";
 
 export class AboutSection extends React.Component {
     render(): JSX.Element {
         return (
-            <section className="about-section" id="about">
+            <div className="about-section" id="about">
                 <Section>
                     <Section.Header>
                         <SectionHeader>
@@ -18,7 +18,7 @@ export class AboutSection extends React.Component {
                                 About us
                             </SectionHeader.Title>
                             <SectionHeader.Separator>
-                                <Dash color={DashColors.GREY} />
+                                <Dash modifiers={[DashModifiers.Colors.GREY]} />
                             </SectionHeader.Separator>
                             <SectionHeader.Subtitle>
                                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr amet
@@ -36,7 +36,7 @@ export class AboutSection extends React.Component {
                         </div>
                     </Section.Content>
                 </Section>
-            </section>
+            </div>
         );
     }
 }

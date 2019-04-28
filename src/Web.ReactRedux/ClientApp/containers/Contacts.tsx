@@ -25,7 +25,7 @@ class Contacts extends React.Component<IContactsProps> {
         return (
             <section className="contacts">
                 <h3 className="sr-only">Contacts</h3>
-                {isLoading ? <div>Loading... Please wait</div> : items.map(contactInfo => (
+                {/* /// TODO: Add loader. */isLoading ? <div>Loading... Please wait</div> : items.map(contactInfo => (
                     <div key={contactInfo.Name} className="contacts__line">
                         <ContactLine {...contactInfo} icon={icons[contactInfo.Name]} />
                     </div>

@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 import "./SectionHeader.scss";
-import { findByType } from "../scripts/utils";
+import findByType from "../scripts/findComponentsByType";
 
 const SectionHeaderTitle = (props: React.PropsWithChildren<{}>): JSX.Element => null;
 SectionHeaderTitle.displayName = "SectionHeaderTitle";
@@ -18,7 +18,7 @@ export class SectionHeader extends React.Component {
 
     renderTitle(): JSX.Element {
         let { children } = this.props;
-        const title: React.ReactNode = findByType(children, SectionHeaderTitle);
+        const title: React.ReactNode = findByType(children, SectionHeaderTitle)[0];
         if (!title) {
             return null;
         }
@@ -29,7 +29,7 @@ export class SectionHeader extends React.Component {
 
     renderSeparator(): JSX.Element {
         let { children } = this.props;
-        const separator: React.ReactNode = findByType(children, SectionHeaderSeparator);
+        const separator: React.ReactNode = findByType(children, SectionHeaderSeparator)[0];
         if (!separator) {
             return null;
         }
@@ -40,7 +40,7 @@ export class SectionHeader extends React.Component {
 
     renderSubtitle(): JSX.Element {
         let { children } = this.props;
-        const subtitle: React.ReactNode = findByType(children, SectionHeaderSubtitle);
+        const subtitle: React.ReactNode = findByType(children, SectionHeaderSubtitle)[0];
         if (!subtitle) {
             return null;
         }

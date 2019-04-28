@@ -1,27 +1,33 @@
 ﻿import * as React from "react";
 import "./SocialLink.scss";
 
-export interface ISocialLinkProps {
-    url: string;
-    icon: string;
-    shape?: string;
-}
-
-export interface ISocialLinkShapes {
-    CIRCLE: string;
+interface ISocialLinkShapes {
+    ROUND: string;
     SQUARE: string;
 }
 
-export const SocialLinkShapes: ISocialLinkShapes = {
-    CIRCLE: "social-link--shape-circle",
-    SQUARE: "social-link--shape-square"
+interface ISocialLinkModifiers {
+    Shape: ISocialLinkShapes
+}
+
+export const SocialLinkModifiers: ISocialLinkModifiers = {
+    Shape: {
+        ROUND: "social-link--shape-round",
+        SQUARE: "social-link--shape-square"
+    }
+}
+
+interface ISocialLinkProps {
+    url: string;
+    icon: string;
+    modifiers?: string[];
 }
 
 export class SocialLink extends React.Component<ISocialLinkProps> {
     render(): JSX.Element {
-        const { url, icon, shape } = this.props;
+        const { url, icon, modifiers } = this.props;
         return (
-            <a href={url} target="_blank" className={`social-link ${shape}`}>
+            <a href={url} target="_blank" className={`social-link ${modifiers ? modifiers.join(" ") : ""}`}>
                 <i className={icon}></i>
             </a>
         );

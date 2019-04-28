@@ -76,7 +76,7 @@ const initialState: IAppState = {
 
 export function servicesReducer(state: IAppState = initialState, action: ServicesActions): IAppState {
     switch (action.type) {
-        case ActionTypes.LOADING:
+        case ActionTypes.LOADING_ALL: //console.log("services load");//
             return {
                 ...state,
                 services: {
@@ -112,7 +112,7 @@ export function servicesReducer(state: IAppState = initialState, action: Service
 
 export function teamMembersReducer(state: IAppState = initialState, action: TeamMembersActions): IAppState {
     switch (action.type) {
-        case ActionTypes.LOADING:
+        case ActionTypes.LOADING_ALL: //console.log("team members load");//
             return {
                 ...state,
                 teamMembers: {
@@ -148,7 +148,7 @@ export function teamMembersReducer(state: IAppState = initialState, action: Team
 
 export function worksReducer(state: IAppState = initialState, action: WorksActions): IAppState {
     switch (action.type) {
-        case ActionTypes.LOADING:
+        case ActionTypes.LOADING_ALL: //console.log("works load");//
             return {
                 ...state,
                 works: {
@@ -184,7 +184,8 @@ export function worksReducer(state: IAppState = initialState, action: WorksActio
 
 export function blogReducer(state: IAppState = initialState, action: BlogActions): IAppState {
     switch (action.type) {
-        case ActionTypes.LOADING:
+        case ActionTypes.LOADING_BLOG_POSTS:
+        case ActionTypes.LOADING_ALL: //console.log("blog load");//
             return {
                 ...state,
                 blog: {
@@ -220,7 +221,7 @@ export function blogReducer(state: IAppState = initialState, action: BlogActions
 
 export function brandsReducer(state: IAppState = initialState, action: BrandsActions): IAppState {
     switch (action.type) {
-        case ActionTypes.LOADING:
+        case ActionTypes.LOADING_ALL: //console.log("brands load");//
             return {
                 ...state,
                 brands: {
@@ -256,7 +257,7 @@ export function brandsReducer(state: IAppState = initialState, action: BrandsAct
 
 export function testimonialsReducer(state: IAppState = initialState, action: TestimonialsActions): IAppState {
     switch (action.type) {
-        case ActionTypes.LOADING:
+        case ActionTypes.LOADING_ALL: //console.log("testimonials load");//
             return {
                 ...state,
                 testimonials: {
@@ -292,7 +293,7 @@ export function testimonialsReducer(state: IAppState = initialState, action: Tes
 
 export function contactsReducer(state: IAppState = initialState, action: ContactsActions): IAppState {
     switch (action.type) {
-        case ActionTypes.LOADING:
+        case ActionTypes.LOADING_ALL: //console.log("contacts load");//
             return {
                 ...state,
                 contacts: {
@@ -328,7 +329,7 @@ export function contactsReducer(state: IAppState = initialState, action: Contact
 
 export function messagesReducer(state: IAppState = initialState, action: MessagesActions): IAppState {
     switch (action.type) {
-        case ActionTypes.SENDING_MESSAGE:
+        case ActionTypes.SENDING_MESSAGE: //console.log("messages load");//
             //console.log("sendingMessage");//
             return {
                 ...state,
@@ -367,7 +368,7 @@ export function messagesReducer(state: IAppState = initialState, action: Message
 
 export function socialLinksReducer(state: IAppState = initialState, action: SocialLinksActions): IAppState {
     switch (action.type) {
-        case ActionTypes.LOADING:
+        case ActionTypes.LOADING_ALL: //console.log("social links load");//
             return {
                 ...state,
                 socialLinks: {

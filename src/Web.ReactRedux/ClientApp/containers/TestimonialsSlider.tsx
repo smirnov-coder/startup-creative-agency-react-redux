@@ -17,7 +17,7 @@ class TestimonialsSlider extends React.Component<ITestimonialsSliderProps> {
     render(): JSX.Element {
         let { isLoading, items } = this.props;
         let owlOptions = this.getOwlCarouselOptions();
-        return isLoading ? <div>Loading...Please wait.</div> :
+        return /* /// TODO: Add loader. */isLoading ? <div>Loading...Please wait.</div> :
             <OwlCarousel className="testimonials-slider" {...owlOptions}>
                 {items.map(testimonial => (
                     <Testimonial key={testimonial.Id} {...testimonial} />
@@ -51,15 +51,5 @@ const mapStateToProps = (state: AppState): IStateProps => {
         items: state.testimonialsReducer.testimonials.items
     };
 }
-
-//interface IDispatchProps {
-//    getPageModel: () => void
-//}
-
-//const mapDispatchToProps = (dispatch: Dispatch<ServicesActions>): IDispatchProps => {
-//    return {
-//        getPageModel: bindActionCreators(getPageModel, dispatch)
-//    };
-//}
 
 export default connect(mapStateToProps, null)(TestimonialsSlider);

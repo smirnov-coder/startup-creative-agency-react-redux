@@ -1,8 +1,9 @@
 ﻿@import "../styles/_include.scss";
-@import "../styles/blocks/_menu.scss";
+@import "./Menu.scss";
 
 .custom-nav {
     @extend .menu;
+    margin: 0;
 
     @media (min-width: $screen-sm-min) {
         // Убираем пробел между инлайн-блоками

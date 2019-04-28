@@ -32,25 +32,40 @@ class Gallery extends React.Component<IGalleryProps, IGalleryState> {
         this.closeModal = this.closeModal.bind(this);
     }
 
+    private itemRefs: React.RefObject<HTMLDivElement>[] = [];
+
     render(): JSX.Element {
         let categories: string[] = this.props.items.map(workExample => workExample.Category);
         let { isLoading, items } = this.props;
         let { activeFilter, showModal } = this.state;
+        let elements: JSX.Element[] = [];
+        for (let index = 0; index < items.length; index++) {
+            if (!this.itemRefs[index]) {
+                this.itemRefs.push(React.createRef());
+            }
+            elements.push(
+                <div key={items[index].Id} ref={this.itemRefs[index]} className="gallery__item col-sm-6 col-md-4"
+                    data-group={items[index].Category.toLowerCase()}>
+                    <WorkExamplePreview key={items[index].Id} workExample={items[index]}
+                        onView={this.viewWorkExample} />
+                </div>
+            );
+        }
         return (
             <section className="gallery">
                 <h3 className="sr-only">Work Example Gallery</h3>
                 <div className="gallery__filter">
-                    <GalleryFilter categories={categories} activeFilter={activeFilter}
-                        onChangeFilter={this.changeFilter} />
+                    {/* /// TODO: Add loader. */isLoading
+                        ? <div>Loading... Please wait</div>
+                        : <GalleryFilter categories={categories} activeFilter={activeFilter}
+                            onChangeFilter={this.changeFilter} />
+                    }
                 </div>
                 <div className="gallery__items row">
-                    {isLoading ? <div>Loading... Please wait</div> : items.map(workExample => (
-                        <div key={workExample.Id} className="gallery__item col-sm-6 col-md-4"
-                            data-group={workExample.Category.toLowerCase()}>
-                            <WorkExamplePreview key={workExample.Id} workExample={workExample}
-                                onView={this.viewWorkExample} />
-                        </div>
-                    ))}
+                    {/* /// TODO: Add loader. */isLoading
+                        ? <div>Loading... Please wait</div>
+                        : elements.map(element => element)
+                    }
                 </div>
                 {!showModal ? null :
                     <WorkExampleModal workExample={this.state.workExample} showModal={showModal}
@@ -75,11 +90,14 @@ class Gallery extends React.Component<IGalleryProps, IGalleryState> {
     }
 
     changeFilter(activeFilter: string): void {
+        if (!$) {
+            throw new Error("jQuery '$' is required.");
+        }
         this.setState({
             activeFilter
         });
-        $(".gallery__item").each(function () {
-            let $galleryItem = $(this);
+        this.itemRefs.forEach(ref => {
+            let $galleryItem = $(ref.current);
             let itemGroup = $galleryItem.data("group");
             if (activeFilter === "*" || activeFilter.toUpperCase() === itemGroup.toUpperCase()) {
                 $galleryItem.show("slow");
@@ -101,15 +119,5 @@ const mapStateToProps = (state: AppState): IStateProps => {
         items: state.worksReducer.works.items
     };
 }
-
-//interface IDispatchProps {
-//    getPageModel: () => void
-//}
-
-//const mapDispatchToProps = (dispatch: Dispatch<ServicesActions>): IDispatchProps => {
-//    return {
-//        getPageModel: bindActionCreators(getPageModel, dispatch)
-//    };
-//}
 
 export default connect(mapStateToProps, null)(Gallery);

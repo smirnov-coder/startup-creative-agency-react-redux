@@ -6,7 +6,7 @@ import OwlCarousel from "../assets/lib/owl.carousel-customized/OwlCarousel";
 import { Options } from "../assets/lib/owl.carousel-customized/OwlCarousel";
 import "../assets/lib/bootstrap-customized/css/bootstrap.css";
 import "./BrandsCarousel.scss";
-import "owl.carousel/dist/assets/owl.carousel.css";
+//import "owl.carousel/dist/assets/owl.carousel.css";
 
 interface IBrandsCarouselProps {
     isLoading: boolean;
@@ -16,8 +16,8 @@ interface IBrandsCarouselProps {
 class BrandsCarousel extends React.Component<IBrandsCarouselProps> {
     render(): JSX.Element {
         let { isLoading, items } = this.props;
-        let owlOptions = this.getOwlCarouselOptions();
-        return isLoading ? <div>Loading...Please wait.</div> :
+        let owlOptions: Options = this.getOwlCarouselOptions();
+        return /* /// TODO: Add loader. */isLoading ? <div>Loading...Please wait.</div> :
             <OwlCarousel className="brands-carousel" {...owlOptions}>
                 {items.map(brand => (
                     <article key={brand.Id} className="brands-carousel__item">
@@ -76,15 +76,5 @@ const mapStateToProps = (state: AppState): IStateProps => {
         items: state.brandsReducer.brands.items
     };
 }
-
-//interface IDispatchProps {
-//    getPageModel: () => void
-//}
-
-//const mapDispatchToProps = (dispatch: Dispatch<ServicesActions>): IDispatchProps => {
-//    return {
-//        getPageModel: bindActionCreators(getPageModel, dispatch)
-//    };
-//}
 
 export default connect(mapStateToProps, null)(BrandsCarousel);

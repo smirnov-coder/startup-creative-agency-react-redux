@@ -1,7 +1,8 @@
 ﻿const keyMirror = require("keymirror");
 
 export interface IActionTypes {
-    LOADING: string;
+    LOADING_ALL: string;
+    LOADING_BLOG_POSTS: string;
     SHOW_ERROR: string;
     SHOW_SERVICES: string;
     SHOW_TEAM_MEMBERS: string;
@@ -15,7 +16,8 @@ export interface IActionTypes {
 }
 
 export const ActionTypes = keyMirror({
-    LOADING: null,
+    LOADING_ALL: null,
+    LOADING_BLOG_POSTS: null,
     SHOW_ERROR: null,
     SHOW_SERVICES: null,
     SHOW_TEAM_MEMBERS: null,

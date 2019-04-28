@@ -8,9 +8,7 @@ export class Testimonial extends React.Component<ITestimonial> {
         return (
             <article className="testimonial">
                 <p className="testimonial__text">{Text}</p>
-                <h4 className="testimonial__author">
-                    {`${Author}, ${Company}`}
-                </h4>
+                <h4 className="testimonial__author">{`${Author}, ${Company}`}</h4>
             </article>
         );
     }
