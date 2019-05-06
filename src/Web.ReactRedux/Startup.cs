@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,16 +15,16 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using StartupCreativeAgency.Domain.Abstractions.Repositories;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Domain.Logic.Services;
 using StartupCreativeAgency.Infrastructure;
+using StartupCreativeAgency.Web.ReactRedux.Attributes;
 using StartupCreativeAgency.Web.ReactRedux.Infrastructure;
 
-namespace WebApplication1
+namespace StartupCreativeAgency.Web.ReactRedux
 {
     public class Startup
     {
@@ -55,29 +56,29 @@ namespace WebApplication1
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddAuthentication(options => options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            // Отмена редиректа на AccessDenied и Login страницы, за который отвечает Identity. O_o
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Events = new CookieAuthenticationEvents
                 {
-                    //options.RequireHttpsMetadata = false;
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    // 403: Я вас узнал, но у вас нет прав доступа к ресурсу.
+                    OnRedirectToAccessDenied = redirectContext =>
                     {
-                        // укзывает, будет ли валидироваться издатель при валидации токена
-                        ValidateIssuer = true,
-                        // строка, представляющая издателя
-                        ValidIssuer = JwtOptions.ISSUER,
-                        // будет ли валидироваться потребитель токена
-                        ValidateAudience = true,
-                        // установка потребителя токена
-                        ValidAudience = JwtOptions.AUDIENCE,
-                        // будет ли валидироваться время существования
-                        ValidateLifetime = true,
+                        redirectContext.Response.StatusCode = 403;
+                        return Task.CompletedTask;
+                    },
+                    // 401: Вы кто такой? Я вас не знаю, предъявите auth-информацию, ваша отсутствует или просрочена.
+                    OnRedirectToLogin = redirectContext =>
+                    {
+                        redirectContext.Response.StatusCode = 401;
+                        return Task.CompletedTask;
+                    }
+                };
+            });
 
-                        // установка ключа безопасности
-                        IssuerSigningKey = JwtOptions.GetSymmetricSecurityKey(),
-                        // валидация ключа безопасности
-                        ValidateIssuerSigningKey = true
-                    };
-                });
+            // Настройка JWT.
+            services.AddAuthentication(options => options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => options.TokenValidationParameters = JwtHelper.GetValidationParameters());
 
             services.AddScoped<IRepository<ServiceInfo, int>, Repository<ApplicationDbContext, ServiceInfo, int>>();
             services.AddScoped<IRepository<WorkExample, int>, Repository<ApplicationDbContext, WorkExample, int>>();
@@ -99,13 +100,13 @@ namespace WebApplication1
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IUserService, UserService>();
 
-            services.AddRouting(options => options.LowercaseUrls = true);
-
+            // Политики авторизации.
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Administrator"));
             });
 
+            // Сжатие ответов сервера.
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
@@ -119,7 +120,7 @@ namespace WebApplication1
                 });
             });
 
-            services.AddMvc()
+            services.AddMvc(options => options.Filters.Add(new CustomExceptionFilterAttribute()))
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -140,13 +141,10 @@ namespace WebApplication1
             }
             else
             {
-                app.UseExceptionHandler("/Error");
                 app.UseHsts();
                 app.UseResponseCompression();
+                app.UseHttpsRedirection();
             }
-
-            app.UseHttpsRedirection();
-            app.UseStatusCodePagesWithReExecute("/{0}");
 
             // Для обслуживания favicon.
             FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();

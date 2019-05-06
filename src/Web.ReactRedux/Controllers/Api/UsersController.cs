@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StartupCreativeAgency.Domain.Abstractions.Exceptions;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Web.ReactRedux.ViewModels;
@@ -13,6 +13,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -25,12 +26,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         }
 
         //
-        // GET api/users/
+        // GET api/users
         //
         [HttpGet]
         public async Task<IEnumerable<DomainUser>> GetUsersAsync()
         {
-            return await _userService.GetUsersAsync();
+            return (await _userService.GetUsersAsync()).Select(user => PrepareForReturn(user));
         }
 
         //
@@ -43,8 +44,16 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             if (user == null)
             {
                 return NotFound($"The entity of type '{typeof(DomainUser)}' with value '{userName}' " +
-                    $"for '{nameof(DomainUser.Identity.UserName)}' not found.");
+                    $"for '{nameof(IUserIdentity.UserName)}' not found.");
             }
+            return PrepareForReturn(user);
+        }
+
+        private DomainUser PrepareForReturn(DomainUser user)
+        {
+            var profile = user.Profile;
+            profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition,
+                Url.Content(profile.PhotoFilePath));
             return user;
         }
 
@@ -52,6 +61,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // POST api/users/register
         //
         [HttpPost]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> RegisterAsync(RegisterUserViewModel newUser)
         {
             var user = await _userService.GetUserAsync(newUser.UserName);
@@ -71,7 +81,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // PUT api/users/user1/profile
         //
         [HttpPut("{userName}/profile")]
-        public async Task<IActionResult> UpdateProfileAsync(string userName, MyProfileViewModel profile)
+        public async Task<IActionResult> UpdateProfileAsync([FromRoute]string userName, [FromForm]MyProfileViewModel profile)
         {
             if (userName != User?.Identity?.Name)
                 return BadRequest($"{nameof(DomainUser.Identity.UserName)} mismatch.");
@@ -97,39 +107,26 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         }
 
         //
-        // PUT api/users/user1/displayStatus?isDisplayed=true
+        // PUT api/users/user1/displayStatus
         //
         [HttpPut("{userName}/displayStatus")]
-        public async Task<IActionResult> UpdateDisplayStatusAsync(string userName, bool isDisplayed)
+        [Authorize(Policy = "AdminPolicy")]
+        public async Task<IActionResult> UpdateDisplayStatusAsync([FromRoute]string userName, bool isDisplayed)
         {
-            try
-            {
-                await _userService.UpdateUserDisplayStatusAsync(userName, isDisplayed);
-                return Ok($"Display status for user '@{userName}' has been updated successfully.");
-
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            await _userService.UpdateUserDisplayStatusAsync(userName, isDisplayed);
+            return Ok($"Display status for user '@{userName}' has been updated successfully.");
         }
 
         //
         // DELETE api/users/user1
         //
         [HttpDelete("{userName}")]
+        [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> DeleteAsync(string userName)
         {
-            try
-            {
-                await _userService.DeleteUserAsync(userName);
-                return Ok($"The entity of type '{typeof(DomainUser)}' with value '{userName}' for " +
-                    $"'{nameof(DomainUser.Identity.UserName)}' deleted successfully.");
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            await _userService.DeleteUserAsync(userName);
+            return Ok($"The entity of type '{typeof(DomainUser)}' with value '{userName}' for " +
+                $"'{nameof(IUserIdentity.UserName)}' deleted successfully.");
         }
     }
 }

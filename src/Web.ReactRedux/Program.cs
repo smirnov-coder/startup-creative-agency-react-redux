@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using StartupCreativeAgency.Infrastructure;
 using StartupCreativeAgency.Web.ReactRedux.Infrastructure;
 
-namespace WebApplication1
+namespace StartupCreativeAgency.Web.ReactRedux
 {
     public class Program
     {

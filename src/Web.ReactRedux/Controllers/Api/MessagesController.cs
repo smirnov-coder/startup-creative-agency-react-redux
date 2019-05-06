@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
@@ -9,6 +10,9 @@ using StartupCreativeAgency.Web.ReactRedux.ViewModels;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    [Route("api/messages")]
+    [ApiController]
+    [Authorize(Policy = "AdminPolicy")]
     public class MessagesController : ControllerBase
     {
         private readonly IMessageService _messageService;
@@ -39,7 +43,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // POST api/messages
         //
-        [HttpPost]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> SaveAsync(MessageViewModel message)
         {
             try
@@ -66,7 +70,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // PUT api/messages
         //
         [HttpPut]
-        public async Task<IActionResult> UpdateReadStatusAsync(int[] ids, bool isRead)
+        public async Task<IActionResult> UpdateReadStatusAsync([FromForm]int[] ids, [FromForm]bool isRead)
         {
             return await PerformActionAsync(ids, async messageId =>
                 await _messageService.UpdateMessageReadStatusAsync(messageId, isRead), "updated");
