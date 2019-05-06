@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StartupCreativeAgency.Domain.Abstractions.Exceptions;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 
@@ -16,6 +16,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
     /// <typeparam name="TKey">Тип данных идентификатора сушности.</typeparam>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public abstract class ApiControllerBase<TModel, TEntity, TKey> : ControllerBase 
         where TModel : class, new()
         where TEntity : BaseEntity<TKey>
@@ -27,7 +28,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // GET api/[controller]
         //
-        public virtual async Task<IEnumerable<TEntity>> ListAsync() => await PerformGetManyAsync();
+        [AllowAnonymous]
+        public virtual async Task<IEnumerable<TEntity>> ListAsync()
+        {
+            return (await PerformGetManyAsync()).Select(entity => PrepareEntityForReturn(entity));
+        }
 
         protected abstract Task<IEnumerable<TEntity>> PerformGetManyAsync();
 
@@ -35,6 +40,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // GET api/[controller]/5
         //
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public virtual async Task<ActionResult<TEntity>> GetAsync(TKey id)
         {
             var entity = await PerformGetAsync(id);
@@ -43,8 +49,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                 return NotFound($"The entity of type '{typeof(TEntity)}' with key value '{id}' " +
                     $"for '{nameof(BaseEntity<TKey>.Id)}' not found.");
             }
-            PrepareEntityForReturn(entity);
-            return entity;
+            return PrepareEntityForReturn(entity);
         }
 
         /// <summary>
@@ -61,13 +66,13 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         /// Виртуальный метод. Может быть переопределён в производном классе. Базовая реализация не делает ничего.
         /// </summary>
         /// <param name="entity">Объект сущности типа <typeparamref name="TEntity"/>.</param>
-        protected virtual void PrepareEntityForReturn(TEntity entity) { }
+        protected virtual TEntity PrepareEntityForReturn(TEntity entity) => entity;
 
         //
         // POST api/[controller]
         //
         [HttpPost]
-        public virtual async Task<IActionResult> AddAsync(TModel model)
+        public virtual async Task<IActionResult> AddAsync([FromForm]TModel model)
         {
             var user = await _userService.GetUserAsync(User?.Identity?.Name);
             var entity = await CreateEntityFromModelAsync(model, user);
@@ -96,19 +101,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // PUT api/[controller]/5
         //
-        [HttpPut("{id}")]
-        public virtual async Task<IActionResult> UpdateAsync(TModel model)
+        [HttpPut("{id?}")]
+        public virtual async Task<IActionResult> UpdateAsync([FromForm]TModel model)
         {
             var user = await _userService.GetUserAsync(User?.Identity?.Name);
             var entity = await CreateEntityFromModelAsync(model, user);
-            try
-            {
-                await PerformUpdateAsync(entity);
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            await PerformUpdateAsync(entity);
             return Ok($"The entity of type '{typeof(TEntity)}' with key value '{entity.Id}' for " +
                 $"'{nameof(BaseEntity<TKey>.Id)}' updated successfully.");
         }
@@ -124,16 +122,9 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // DELETE api/[controller]/5
         //
         [HttpDelete("{id}")]
-        public virtual async Task<IActionResult> DeleteAsync(TKey id)
+        public virtual async Task<IActionResult> DeleteAsync([FromRoute]TKey id)
         {
-            try
-            {
-                await PerformDeleteAsync(id);
-            }
-            catch (EntityNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            await PerformDeleteAsync(id);
             return Ok($"The entity of type '{typeof(TEntity)}' with key value '{id}' for " +
                 $"'{nameof(BaseEntity<TKey>.Id)}' deleted successfully.");
         }

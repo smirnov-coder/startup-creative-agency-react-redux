@@ -57,7 +57,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             var result = actionResult.Result as NotFoundObjectResult;
             Assert.Equal(404, result.StatusCode);
             Assert.Equal($"The entity of type '{typeof(BaseEntity<int>)}' with key value '101' " +
-                    $"for 'Id' not found.", result.Value as string);
+                $"for 'Id' not found.", result.Value as string);
         }
 
         [Fact]
@@ -90,20 +90,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         }
 
         [Fact]
-        public async Task UpdateAsync_Bad_NotFound()
-        {
-            _mockUserService.Setup(x => x.GetUserAsync(It.IsAny<string>())).ReturnsAsync(default(DomainUser));
-            _target.IsFound = false;
-
-            var actionResult = await _target.UpdateAsync(new TestViewModel(101));
-
-            Assert.IsAssignableFrom<NotFoundObjectResult>(actionResult);
-            var result = actionResult as NotFoundObjectResult;
-            Assert.Equal(404, result.StatusCode);
-            Assert.Equal("test", result.Value as string);
-        }
-
-        [Fact]
         public async Task DeleteAsync_Good()
         {
             _target.IsFound = true;
@@ -115,19 +101,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.Equal(200, result.StatusCode);
             Assert.Equal($"The entity of type '{typeof(BaseEntity<int>)}' with key value '101' for " +
                 $"'Id' deleted successfully.", result.Value as string);
-        }
-
-        [Fact]
-        public async Task DeleteAsync_Bad_NotFound()
-        {
-            _target.IsFound = false;
-
-            var actionResult = await _target.DeleteAsync(101);
-
-            Assert.IsAssignableFrom<NotFoundObjectResult>(actionResult);
-            var result = actionResult as NotFoundObjectResult;
-            Assert.Equal(404, result.StatusCode);
-            Assert.Equal("test", result.Value as string);
         }
     }
 

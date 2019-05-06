@@ -68,9 +68,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             await _workExampleService.UpdateWorkExampleAsync(entity);
         }
 
-        protected override void PrepareEntityForReturn(WorkExample entity)
+        protected override WorkExample PrepareEntityForReturn(WorkExample entity)
         {
             entity.ImagePath = Url.Content(entity.ImagePath);
+            return entity;
         }
     }
 }

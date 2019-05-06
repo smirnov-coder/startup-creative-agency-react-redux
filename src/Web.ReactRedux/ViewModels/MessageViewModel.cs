@@ -5,9 +5,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 {
     public class MessageViewModel
     {
-        //[Required, HiddenInput]
-        //public int Id { get; set; }
-
         [Required]
         [StringLength(50)]
         public string Name { get; set; }

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using StartupCreativeAgency.Domain.Abstractions.Exceptions;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
@@ -19,11 +18,15 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
     {
         private Mock<IUserService> _mockUserService = new Mock<IUserService>();
         private Mock<IFileService> _mockFileService = new Mock<IFileService>();
+        private Mock<IUrlHelper> _mockUrlHelper = new Mock<IUrlHelper>();
         private UsersController _target;
 
         public UsersControllerTests()
         {
-            _target = new UsersController(_mockUserService.Object, _mockFileService.Object);
+            _target = new UsersController(_mockUserService.Object, _mockFileService.Object)
+            {
+                Url = _mockUrlHelper.Object
+            };
         }
 
         [Fact]
@@ -31,6 +34,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         {
             var testUser = GetTestUserCollection().First();
             _mockUserService.Setup(x => x.GetUserAsync("UserName #1")).ReturnsAsync(testUser);
+            _mockUrlHelper.Setup(x => x.Content(It.IsAny<string>())).Returns("Test Path");
 
             var actionResult = await _target.GetUserAsync("UserName #1");
 
@@ -52,7 +56,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.Equal(404, result.StatusCode);
             Assert.Equal($"The entity of type '{typeof(DomainUser)}' with value 'UserName #1' " +
                     $"for 'UserName' not found.", result.Value as string);
-
             Assert.Null(actionResult.Value);
         }
 
@@ -130,19 +133,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         }
 
         [Fact]
-        public async Task UpdateDisplayStatusAsync_Bad_NotFound()
-        {
-            _mockUserService.Setup(x => x.UpdateUserDisplayStatusAsync("Test UserName", true)).ThrowsAsync(new EntityNotFoundException("test"));
-
-            var actionResult = await _target.UpdateDisplayStatusAsync("Test UserName", true);
-
-            Assert.IsType<NotFoundObjectResult>(actionResult);
-            var result = actionResult as NotFoundObjectResult;
-            Assert.Equal(404, result.StatusCode);
-            Assert.Equal("test", result.Value as string);
-        }
-
-        [Fact]
         public async Task DeleteAsync_Good()
         {
             var actionResult = await _target.DeleteAsync("Test UserName");
@@ -153,19 +143,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.Equal(200, result.StatusCode);
             Assert.Equal($"The entity of type '{typeof(DomainUser)}' with value 'Test UserName' for " +
                 $"'UserName' deleted successfully.", result.Value as string);
-        }
-
-        [Fact]
-        public async Task DeleteAsync_Bad_NotFound()
-        {
-            _mockUserService.Setup(x => x.DeleteUserAsync("Test UserName")).ThrowsAsync(new EntityNotFoundException("test"));
-
-            var actionResult = await _target.DeleteAsync("Test UserName");
-
-            Assert.IsType<NotFoundObjectResult>(actionResult);
-            var result = actionResult as NotFoundObjectResult;
-            Assert.Equal(404, result.StatusCode);
-            Assert.Equal("test", result.Value as string);
         }
 
         private MyProfileViewModel GetTestProfileModel() =>
@@ -196,9 +173,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                 Role = "Test Role"
             };
 
-        private IList<DomainUser> GetTestUserCollection()
-        {
-            return new List<DomainUser>
+        private IList<DomainUser> GetTestUserCollection() =>
+            new List<DomainUser>
             {
                 new DomainUser(new UserIdentity("UserName #1", "Email #1"), new UserProfile("FirstName #1", "LastName #1",
                     "Job #1", "Path #1", new SocialLink("Name #1", "Url #1"))),
@@ -207,6 +183,5 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                 new DomainUser(new UserIdentity("UserName #3", "Email #3"), new UserProfile("FirstName #3", "LastName #3",
                     "Job #3", "Path #3", new SocialLink("Name #1", "Url #1")))
             };
-        }
     }
 }

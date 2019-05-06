@@ -13,7 +13,6 @@
     <Folder Include="ClientApp\favicon\" />
     <Folder Include="ClientApp\lib\" />
     <Folder Include="ClientApp\scripts\" />
-    <Folder Include="Attributes\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
