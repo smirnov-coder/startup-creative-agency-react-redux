@@ -88,7 +88,7 @@ export function showSocialLinks(socialLinks: ISocialLink[]): SocialLinksActions 
 export function getPageModel() {
     return (dispatch: Dispatch) => {
         dispatch(loadAll());
-        return fetch("/viewmodel")
+        return fetch("/model")
             .then((response: Response) => {
                 if (response.ok) {
                     return response.json();
@@ -151,7 +151,6 @@ export function sendMessage(message: IContactMessage) {
     }
 }
 
-/// TODO: Добавить в блог контроллер обработку сущностей перед возвратом (ссылки на картинки).
 export function getBlogPosts() {
     return (dispatch: Dispatch) => {
         dispatch(loadBlogPosts());

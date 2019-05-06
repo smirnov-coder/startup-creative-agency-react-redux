@@ -68,9 +68,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             await _brandService.UpdateBrandAsync(entity);
         }
 
-        protected override void PrepareEntityForReturn(Brand entity)
+        protected override Brand PrepareEntityForReturn(Brand entity)
         {
             entity.ImagePath = Url.Content(entity.ImagePath);
+            return entity;
         }
     }
 }

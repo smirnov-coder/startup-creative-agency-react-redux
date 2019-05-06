@@ -11,7 +11,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
     {
         public IActionResult Index() => View();
 
-        [HttpGet("viewModel")]
+        [HttpGet("model")]
         public async Task<IndexViewModel> ViewModelAsync(
             [FromServices]IServiceInfoService serviceInfoService,
             [FromServices]IUserService userService,
@@ -21,13 +21,18 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
             [FromServices]ITestimonialService testimonialService,
             [FromServices]IContactsService contactsService)
         {
+            const int BLOG_POST_COUNT = 2;
             return new IndexViewModel
             {
                 Services = await serviceInfoService.GetServiceInfosAsync(),
-                TeamMembers = (await userService.GetDisplayedTeamMembersAsync()).Select(user => 
+                TeamMembers = (await userService.GetDisplayedTeamMembersAsync()).Select(user =>
                 {
                     var profile = user.Profile;
-                    profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition, Url.Content(profile.PhotoFilePath));
+                    profile.UpdatePersonalInfo(
+                        profile.FirstName,
+                        profile.LastName,
+                        profile.JobPosition,
+                        Url.Content(profile.PhotoFilePath));
                     return user;
                 }),
                 Works = (await workExampleService.GetWorkExamplesAsync()).Select(workExample =>
@@ -35,7 +40,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
                     workExample.ImagePath = Url.Content(workExample.ImagePath);
                     return workExample;
                 }),
-                BlogPosts = (await blogService.GetBlogPostsAsync(skip: 0, take: 2)).Select(blogPost =>
+                BlogPosts = (await blogService.GetBlogPostsAsync(skip: 0, take: BLOG_POST_COUNT)).Select(blogPost =>
                 {
                     blogPost.ImagePath = Url.Content(blogPost.ImagePath);
                     return blogPost;
@@ -47,8 +52,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
                 }),
                 Testimonials = await testimonialService.GetTestimonialsAsync(),
                 Contacts = await contactsService.GetContactsAsync(),
-                SocialLinks = (await contactsService.GetSocialLinksAsync()).Select(x =>
-                    new SocialLink(x.Key, x.Value))
+                SocialLinks = (await contactsService.GetSocialLinksAsync()).Select(x => new SocialLink(x.Key, x.Value))
             };
         }
     }

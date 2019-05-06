@@ -8,7 +8,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 {
     public class UserCredentials
     {
-        [Required]
+        [Required]/// TODO: Добавить атрибуты валидации.
         public string UserName { get; set; }
 
         [Required]

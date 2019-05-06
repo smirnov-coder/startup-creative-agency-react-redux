@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Web.ReactRedux.ViewModels;
@@ -14,12 +16,25 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         private readonly IBlogService _blogService;
         private readonly IFileService _fileService;
 
-        public BlogController(IBlogService blogService, IFileService fileService, IUserService userService) 
+        public BlogController(IBlogService blogService, IFileService fileService, IUserService userService)
             : base(userService)
         {
             _blogService = blogService;
             _fileService = fileService;
         }
+
+        //
+        // GET api/blog?skip=0&take=2
+        //
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IEnumerable<BlogPost>> ListAsync(int skip = 0, int take = 0)
+        {
+            return (await _blogService.GetBlogPostsAsync(skip, take)).Select(blogPost => PrepareEntityForReturn(blogPost));
+        }
+
+        [NonAction]
+        public override Task<IEnumerable<BlogPost>> ListAsync() => throw new NotSupportedException();
 
         protected override async Task<BlogPost> CreateEntityFromModelAsync(BlogPostViewModel model, DomainUser creator)
         {
@@ -68,9 +83,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             await _blogService.UpdateBlogPostAsync(entity);
         }
 
-        protected override void PrepareEntityForReturn(BlogPost entity)
+        protected override BlogPost PrepareEntityForReturn(BlogPost entity)
         {
             entity.ImagePath = Url.Content(entity.ImagePath);
+            return entity;
         }
     }
 }
