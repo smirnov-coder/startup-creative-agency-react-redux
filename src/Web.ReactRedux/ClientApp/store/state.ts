@@ -61,5 +61,6 @@ export interface IAppState {
         error: Error
     },
 
-    operationDetails: any
+    operationDetails: any,
+    isError: boolean
 }

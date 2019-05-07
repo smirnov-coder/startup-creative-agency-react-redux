@@ -43,6 +43,7 @@ export interface IButtonProps {
     modifiers?: string[];
     className?: string;
     onClick?: (event: React.MouseEvent) => void;
+    type?: "button" | "reset" | "submit"
 }
 
 export class Button extends React.Component<IButtonProps> {
@@ -51,10 +52,10 @@ export class Button extends React.Component<IButtonProps> {
     }
 
     render(): JSX.Element {
-        let { className = "", modifiers, ...restProps } = this.props;
+        let { className = "", modifiers, type, ...restProps } = this.props;
         return (
             <button className={`button ${modifiers ? modifiers.join(" ") : ""} ${className}`}
-                type="button" {...restProps} />
+                type={type ? type : "button"} {...restProps} />
         );
     }
 }

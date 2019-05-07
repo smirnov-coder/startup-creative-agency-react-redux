@@ -13,6 +13,7 @@ export interface IActionTypes {
     SHOW_CONTACTS: string;
     SENDING_MESSAGE: string;
     SHOW_SOCIAL_LINKS: string;
+    APPEND_BLOG_POSTS: string;
 }
 
 export const ActionTypes = keyMirror({
@@ -27,5 +28,6 @@ export const ActionTypes = keyMirror({
     SHOW_TESTIMONIALS: null,
     SHOW_CONTACTS: null,
     SENDING_MESSAGE: null,
-    SHOW_SOCIAL_LINKS: null
+    SHOW_SOCIAL_LINKS: null,
+    APPEND_BLOG_POSTS: null,
 }) as IActionTypes;

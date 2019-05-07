@@ -11,7 +11,8 @@ import {
     ContactsActions,
     MessagesActions,
     IShowResponse,
-    SocialLinksActions
+    SocialLinksActions,
+    IAppendAction
 } from "../actions/actions";
 import { ActionTypes } from "../actions/actionTypes";
 import {
@@ -71,7 +72,8 @@ const initialState: IAppState = {
         items: [],
         error: null
     },
-    operationDetails: null
+    operationDetails: null,
+    isError: false
 }
 
 export function servicesReducer(state: IAppState = initialState, action: ServicesActions): IAppState {
@@ -214,6 +216,16 @@ export function blogReducer(state: IAppState = initialState, action: BlogActions
                 }
             }
 
+        case ActionTypes.APPEND_BLOG_POSTS:
+            return {
+                ...state,
+                blog: {
+                    isLoading: false,
+                    error: null,
+                    items: state.blog.items.concat((action as IAppendAction).items)
+                }
+            }
+
         default:
             return state;
     }
@@ -339,7 +351,7 @@ export function messagesReducer(state: IAppState = initialState, action: Message
                 }
             }
 
-        case "SHOW_RESPONSE":
+        case "SHOW_RESPONSE_MESSAGE":
             //console.log("showResponse");//
             return {
                 ...state,
@@ -348,7 +360,8 @@ export function messagesReducer(state: IAppState = initialState, action: Message
                     isLoading: false,
                     error: null
                 },
-                operationDetails: (action as IShowResponse).text
+                operationDetails: (action as IShowResponse).text,
+                isError: (action as IShowResponse).isError
             }
 
         case ActionTypes.SHOW_ERROR:

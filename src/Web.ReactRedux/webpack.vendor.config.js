@@ -19,7 +19,6 @@ module.exports = {
             "./ClientApp/assets/lib/bootstrap-customized/js/bootstrap.js",
             "owl.carousel/dist/owl.carousel.js",
             "jquery-validation/dist/jquery.validate.js",
-            "jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"
         ]
     },
     output: {

@@ -16,14 +16,12 @@ export class BlogPostModal extends React.Component<IBlogPostModalProps> {
         this.handleClose = this.handleClose.bind(this);
     }
 
-    componentDidMount(): void {
+    componentWillReceiveProps(nextProps: IBlogPostModalProps): void {
         if (!$) {
             throw new Error("jQuery '$' is required.");
         }
-        if (this.props.showModal) {
-            let $modal = $(this.modal.current);
-            $modal.modal("show");
-            //$(this.modal.current).on("hidden.bs.modal", this.props.onClose());
+        if (nextProps.showModal) {
+            $(this.modal.current).modal("show");
         }
     }
 
@@ -72,6 +70,9 @@ export class BlogPostModal extends React.Component<IBlogPostModalProps> {
     }
 
     getBlogPostDateString(date: Date): string {
+        if (!date) {
+            date = new Date();
+        }
         let options = {
             year: "numeric",
             month: "long",
@@ -85,6 +86,9 @@ export class BlogPostModal extends React.Component<IBlogPostModalProps> {
     }
 
     getFullName(user: IDomainUser): string {
+        if (!user || !user.Profile) {
+            return "NULL";
+        }
         return `${user.Profile.FirstName} ${user.Profile.LastName}`;
     }
 }

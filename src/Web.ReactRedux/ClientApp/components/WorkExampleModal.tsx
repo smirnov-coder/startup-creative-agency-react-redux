@@ -17,14 +17,12 @@ export class WorkExampleModal extends React.Component<IWorkExampleModalProps> {
         this.handleClose = this.handleClose.bind(this);
     }
 
-    componentDidMount(): void {
+    componentWillReceiveProps(nextProps: IWorkExampleModalProps): void {
         if (!$) {
             throw new Error("jQuery '$' is required.");
         }
-        if (this.props.showModal) {
-            let $modal = $(this.modal.current);
-            $modal.modal("show");
-            //$modal.on("hidden.bs.modal", this.props.onClose());
+        if (nextProps.showModal) {
+            $(this.modal.current).modal("show");
         }
     }
 
@@ -51,8 +49,7 @@ export class WorkExampleModal extends React.Component<IWorkExampleModalProps> {
                                     <div className="work-example__description">{workExample.Description}</div>
                                 </div>
                                 <div className="modal-footer custom-modal__footer">
-                                    <Button
-                                        modifiers={[ButtonModifiers.Size.SMALL]}
+                                    <Button modifiers={[ButtonModifiers.Size.SMALL]}
                                         className="custom-modal__close"
                                         children="Close"
                                         onClick={this.handleClose} />

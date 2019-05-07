@@ -7,6 +7,7 @@ import { WorkExamplePreview } from "../components/WorkExamplePreview";
 import { WorkExampleModal } from "../components/WorkExampleModal";
 import "../assets/lib/bootstrap-customized/css/bootstrap.css";
 import "./Gallery.scss";
+import { Loader } from "../components/Loader";
 
 interface IGalleryProps {
     isLoading: boolean;
@@ -25,7 +26,17 @@ class Gallery extends React.Component<IGalleryProps, IGalleryState> {
         this.state = {
             activeFilter: "*",
             showModal: false,
-            workExample: null
+            workExample: {
+                Id: 0,
+                Name: "",
+                Category: "",
+                Description: "",
+                ImagePath: "",
+                CreatedBy: null,
+                CreatedOn: null,
+                LastUpdatedBy: null,
+                LastUpdatedOn: null
+            }
         };
         this.changeFilter = this.changeFilter.bind(this);
         this.viewWorkExample = this.viewWorkExample.bind(this);
@@ -55,22 +66,17 @@ class Gallery extends React.Component<IGalleryProps, IGalleryState> {
             <section className="gallery">
                 <h3 className="sr-only">Work Example Gallery</h3>
                 <div className="gallery__filter">
-                    {/* /// TODO: Add loader. */isLoading
-                        ? <div>Loading... Please wait</div>
+                    {isLoading
+                        ? <Loader />
                         : <GalleryFilter categories={categories} activeFilter={activeFilter}
-                            onChangeFilter={this.changeFilter} />
+                                onChangeFilter={this.changeFilter} />
                     }
                 </div>
                 <div className="gallery__items row">
-                    {/* /// TODO: Add loader. */isLoading
-                        ? <div>Loading... Please wait</div>
-                        : elements.map(element => element)
-                    }
+                    { isLoading ? <Loader /> : elements.map(element => element) }
                 </div>
-                {!showModal ? null :
-                    <WorkExampleModal workExample={this.state.workExample} showModal={showModal}
-                        onClose={this.closeModal} />
-                }
+                <WorkExampleModal workExample={this.state.workExample} showModal={showModal}
+                    onClose={this.closeModal} />
             </section>
         );
     }

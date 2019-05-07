@@ -1,11 +1,13 @@
 ﻿import * as React from "react";
-import { Button } from "../components/Button";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
+import { Button } from "../components/Button";
+import { AppState } from "../store/reducers/rootReducer";
 import { sendMessage } from "../store/actions/actionCreators";
 import "./ContactForm.scss";
-import { AppState } from "../store/reducers/rootReducer";
+import "jquery-validation";
 import { Loader } from "../components/Loader";
+import { ContactFormModal } from "../components/ContactFormModal";
 
 export interface IContactMessage {
     name: string;
@@ -17,7 +19,8 @@ export interface IContactMessage {
 
 interface IContactFormProps {
     isLoading: boolean;
-    responseMessage?: string;
+    responseMessage: string;
+    isError: boolean;
     sendMessage: (message: IContactMessage) => void;
 }
 
@@ -40,17 +43,63 @@ class ContactForm extends React.Component<IContactFormProps, IContactFormState> 
             showModal: false
         };
         this.handleChange = this.handleChange.bind(this);
-        this.handleSend = this.handleSend.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+    }
+
+    private contactForm = React.createRef<HTMLFormElement>();
+
+    componentDidMount(): void {
+        $(this.contactForm.current).validate({
+            rules: {
+                name: {
+                    required: true,
+                    maxlength: 50
+                },
+                email: {
+                    required: true,
+                    maxlength: 50,
+                    email: true
+                },
+                subject: {
+                    maxlength: 100
+                },
+                company: {
+                    maxlength: 100
+                },
+                text: {
+                    required: true,
+                    maxlength: 5000
+                }
+            },
+            errorElement: "span",
+            errorClass: "field-validation-error",
+            highlight: (element, errorClass, validClass) => {
+                $(element).addClass("input-validation-error");
+            },
+            submitHandler: (form, event) => {
+                event.preventDefault();
+                this.props.sendMessage(this.state.message);
+            },
+            invalidHandler: (event, validator) => {
+                console.log("Form data is invalid.");
+            }
+        });
+    }
+
+    componentWillReceiveProps(nextProps: IContactFormProps): void {
+        this.setState({
+            showModal: nextProps.responseMessage ? true : false
+        });
     }
 
     render(): JSX.Element {
         let { name, email, company, subject, text } = this.state.message;
-        let { isLoading } = this.props; //console.log(isLoading, "isLoading");//
+        let { isLoading, responseMessage, isError } = this.props; //console.log(isLoading, "isLoading");//
         return (
             <section className="contact-form">
                 <h3 className="sr-only">Send Us a Message</h3>
                 <div className="row">
-                    <form id="contactForm">
+                    <form ref={this.contactForm}>
                         <div className="contact-form__line col-md-6">
                             <label htmlFor="name" className="sr-only">Name</label>
                             <input id="name" name="name" className="contact-form__text-input" placeholder="Your Name"
@@ -80,7 +129,7 @@ class ContactForm extends React.Component<IContactFormProps, IContactFormState> 
                                 onChange={(e) => this.handleChange(e, "text")}></textarea>
                         </div>
                         <div className="contact-form__line col-xs-12">
-                            <Button className="contact-form__button" onClick={this.handleSend}>
+                            <Button className="contact-form__button" type="submit">
                                 Send Message
                             </Button>
                             <span className="contact-form__note">
@@ -88,16 +137,27 @@ class ContactForm extends React.Component<IContactFormProps, IContactFormState> 
                             </span>
                         </div>
                     </form>
+                    {isLoading ? <Loader modifiers={["loader--behavior-fill", "loader--bg-translucent"]} /> : null}
                 </div>
-                {isLoading ?
-                    <div className="contact-form__overlay contact-form__overlay--visible">
-                        <i className="contact-form__loader fa fa-spinner fa-pulse fa-3x"></i>
-                    </div>
-                    : null
-                }
-                {/*this.props.responseMessage ? console.log(this.props.responseMessage, "response") : null*/}
+                <ContactFormModal showModal={this.state.showModal}
+                    text={responseMessage}
+                    isError={isError}
+                    onClose={this.closeModal} />
             </section>
         );
+    }
+
+    closeModal(): void {
+        this.setState({
+            message: {
+                name: "",
+                email: "",
+                company: "",
+                subject: "",
+                text: ""
+            },
+            showModal: false
+        });
     }
 
     handleChange(event: React.ChangeEvent, inputName: string): void {
@@ -109,24 +169,19 @@ class ContactForm extends React.Component<IContactFormProps, IContactFormState> 
             }
         }); //console.log(this.state.message);//
     }
-
-    handleSend(event: React.MouseEvent): void {
-        //console.log("send");//
-        event.preventDefault();
-        this.props.sendMessage(this.state.message);
-    }
-
 }
 
 interface IStateProps {
     isLoading: boolean;
     responseMessage: string;
+    isError: boolean;
 }
 
 const mapStateToProps = (state: AppState): IStateProps => {
     return {
         isLoading: state.messagesReducer.messages.isLoading,
-        responseMessage: state.messagesReducer.operationDetails
+        responseMessage: state.messagesReducer.operationDetails,
+        isError: state.messagesReducer.isError
     };
 }
 

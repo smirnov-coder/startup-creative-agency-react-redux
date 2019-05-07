@@ -30,14 +30,17 @@ export interface ISendAction extends IAction {
 
 export interface IShowResponse extends IAction {
     text: string;
+    isError: boolean;
 }
+
+export interface IAppendAction extends IShowAction<IBlogPost> { }
 
 export type CommonActions = ILoadingAction | IErrorAction
 
 export type ServicesActions = CommonActions | IShowAction<IServiceInfo>
 export type TeamMembersActions = CommonActions | IShowAction<IDomainUser>
 export type WorksActions = CommonActions | IShowAction<IWorkExample>
-export type BlogActions = CommonActions | IShowAction<IBlogPost>
+export type BlogActions = CommonActions | IShowAction<IBlogPost> | IAppendAction
 export type BrandsActions = CommonActions | IShowAction<IBrand>
 export type TestimonialsActions = CommonActions | IShowAction<ITestimonial>
 export type ContactsActions = CommonActions | IShowAction<IContactInfo>

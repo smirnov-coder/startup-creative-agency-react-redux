@@ -14,13 +14,14 @@ import { getBlogPosts } from "../store/actions/actionCreators";
 interface IBlogProps {
     isLoading: boolean;
     items: IBlogPost[];
-    getBlogPosts: () => void;
+    getBlogPosts: (skip: number, take: number) => void;
 }
 
 interface IBlogState {
     showModal: boolean;
-    blogPostToShow: IBlogPost;
-    displayedItems: IBlogPost[];
+    blogPost: IBlogPost;
+    itemsCount: number;
+    showButton: boolean;
 }
 
 class Blog extends React.Component<IBlogProps, IBlogState> {
@@ -28,55 +29,80 @@ class Blog extends React.Component<IBlogProps, IBlogState> {
         super(props);
         this.state = {
             showModal: false,
-            blogPostToShow: null,
-            displayedItems: this.props.items
+            blogPost: {
+                Id: 0,
+                Title: "",
+                Category: "",
+                Content: "",
+                ImagePath: "",
+                CreatedBy: null,
+                CreatedOn: null,
+                LastUpdatedBy: null,
+                LastUpdatedOn: null
+            },
+            itemsCount: 0,
+            showButton: false
         };
         this.onViewBlogPost = this.onViewBlogPost.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.loadBlogPosts = this.loadBlogPosts.bind(this);
     }
 
     componentWillReceiveProps(nextProps: IBlogProps): void {
         this.setState({
-            displayedItems: nextProps.items
+            itemsCount: nextProps.items.length,
+            // Скрыть кнопку загрузки блог постов, если кол-во отображаемых постов равно общему кол-ву загруженных постов,
+            // или если всего загружено нечётное кол-во постов (блог посты подгружаются по 2).
+            showButton: this.state.itemsCount === nextProps.items.length || nextProps.items.length % 2 !== 0 ? false : true
         });
     }
 
     render(): JSX.Element {
-        let { isLoading } = this.props;
-        let { showModal, displayedItems } = this.state;
+        let { isLoading, items } = this.props;
+        let { showModal, showButton, blogPost } = this.state;
+
+        // Сформировать массив элементов для вывода. В массиве будут чередоваться блог посты и резделитель.
         let elements: JSX.Element[] = [];
-        for (var index = 0; index < displayedItems.length; index++) {
+        for (var index = 0; index < items.length; index++) {
             elements.push(
-                <div key={displayedItems[index].Id} className="blog-post-list__item row">
-                    <BlogPostPreview blogPost={displayedItems[index]} onView={this.onViewBlogPost} />
+                <div key={items[index].Id} className="blog-post-list__item row">
+                    <BlogPostPreview blogPost={items[index]} onView={this.onViewBlogPost} />
                 </div>
             );
-            if (index !== displayedItems.length - 1) {
-                elements.push(<hr key={displayedItems[index].Id * 10} className="blog-post-list__separator" />);
+            if (index !== items.length - 1) {
+                elements.push(<hr key={items[index].Id * 100} className="blog-post-list__separator" />);
             }
         }
+
+        let separator: JSX.Element = <hr className="blog-post-list__separator" />;
         return (
             <section className="blog-post-list">
                 <h3 className="sr-only">Blog Post List</h3>
                 <div className="blog-post-list__items">
-                    {/* /// TODO: Add loader. */isLoading && displayedItems.length === 0
-                        ? <Loader />
-                        : elements.map(element => element)
-                    }
+                    { isLoading && items.length === 0 ? <Loader /> : elements.map(element => element) }
                 </div>
                 <div className="blog-post-list__loading">
-                    <hr className="blog-post-list__separator" />
-                    {isLoading ? <Loader /> :
-                        <Button className="blog-post-list__button" onClick={this.props.getBlogPosts}>
-                            Load More
-                        </Button>
+                    {isLoading
+                        ? <div>{separator}<Loader /></div>
+                        : !showButton 
+                            ? null
+                            : <div>
+                                {separator}
+                                <Button className="blog-post-list__button" onClick={this.loadBlogPosts}>
+                                    Load More
+                                </Button>
+                              </div>
                     }
                 </div>
-                {!showModal ? null :
-                    <BlogPostModal blogPost={this.state.blogPostToShow} showModal={showModal} onClose={this.closeModal} />
-                }
+                <BlogPostModal blogPost={blogPost} showModal={showModal} onClose={this.closeModal} />
             </section>
         );
+    }
+
+    loadBlogPosts(): void {
+        let skip: number = this.props.items.length;
+        let take: number = 2;
+        this.props.getBlogPosts(skip, take);
     }
 
     closeModal(): void {
@@ -86,10 +112,9 @@ class Blog extends React.Component<IBlogProps, IBlogState> {
     }
 
     onViewBlogPost(id: number): void {
-        let blogPostToShow = this.props.items.find(x => x.Id === id);
         this.setState({
             showModal: true,
-            blogPostToShow
+            blogPost: this.props.items.find(x => x.Id === id)
         });
     }
 }
@@ -107,7 +132,7 @@ const mapStateToProps = (state: AppState): IStateProps => {
 }
 
 interface IDispatchProps {
-    getBlogPosts: () => void
+    getBlogPosts: (skip: number, take: number) => void
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => {

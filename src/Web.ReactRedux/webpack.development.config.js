@@ -3,7 +3,6 @@
 const webpack = require("webpack");
 const path = require("path");
 const CheckerPlugin = require("awesome-typescript-loader").CheckerPlugin;
-//const globImporter = require("node-sass-glob-importer");
 const CleanPlugin = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
@@ -59,14 +58,7 @@ module.exports = {
             {
                 test: /\.s(c|a)ss$/,
                 exclude: /node_modules/,
-                use: [
-                    { loader: "style-loader" },
-                    { loader: "css-loader" },
-                    {
-                        loader: "sass-loader",
-                        //options: { importer: globImporter() } // А надо ли?
-                    }
-                ]
+                use: ["style-loader", "css-loader", "sass-loader"]
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
