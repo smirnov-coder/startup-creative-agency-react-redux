@@ -1,21 +1,48 @@
-﻿import IServiceInfo from "../../entities/IServiceInfo";
+﻿import {
+    IServiceInfo,
+    IWorkExample,
+    IBlogPost,
+    IBrand,
+    ITestimonial,
+    IContactInfo,
+    ISocialLink,
+    IDomainUser
+} from "../entities";
+import { IContactMessage } from "../../containers/ContactForm";
 
 interface IAction {
     type: string
 }
 
-export interface IFetchingDataAction extends IAction { }
+export interface ILoadingAction extends IAction { }
 
-export interface IShowErrorAction extends IAction {
-    error: string;
+export interface IErrorAction extends IAction {
+    error: Error;
 }
 
-export interface IListEntitiesAction<T> extends IAction {
+export interface IShowAction<T> extends IAction {
     items: T[];
 }
 
-export type CommonActions = IFetchingDataAction
-    | IShowErrorAction
+export interface ISendAction extends IAction {
+    message: IContactMessage;
+}
 
-export type ServicesActions = CommonActions
-    | IListEntitiesAction<IServiceInfo>
+export interface IShowResponse extends IAction {
+    text: string;
+    isError: boolean;
+}
+
+export interface IAppendAction extends IShowAction<IBlogPost> { }
+
+export type CommonActions = ILoadingAction | IErrorAction
+
+export type ServicesActions = CommonActions | IShowAction<IServiceInfo>
+export type TeamMembersActions = CommonActions | IShowAction<IDomainUser>
+export type WorksActions = CommonActions | IShowAction<IWorkExample>
+export type BlogActions = CommonActions | IShowAction<IBlogPost> | IAppendAction
+export type BrandsActions = CommonActions | IShowAction<IBrand>
+export type TestimonialsActions = CommonActions | IShowAction<ITestimonial>
+export type ContactsActions = CommonActions | IShowAction<IContactInfo>
+export type SocialLinksActions = CommonActions | IShowAction<ISocialLink>
+export type MessagesActions = CommonActions | ISendAction | IShowResponse

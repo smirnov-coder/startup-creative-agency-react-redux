@@ -1,0 +1,12 @@
+﻿@import "../styles/_include.scss";
+
+.services-section {
+
+    &__header {
+        margin: 0;
+    }
+
+    &__content {
+        margin-top: $content-margin;
+    }
+}

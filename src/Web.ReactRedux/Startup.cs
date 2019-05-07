@@ -124,6 +124,7 @@ namespace StartupCreativeAgency.Web.ReactRedux
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.MaxDepth = 10;
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -157,9 +158,14 @@ namespace StartupCreativeAgency.Web.ReactRedux
             app.UseAuthentication();
             app.UseMvc(routes =>
             {
+                //routes.MapRoute(
+                //    name: "api",
+                //    template: "api/{controller}");
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
+
 
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",

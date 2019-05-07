@@ -1,8 +1,8 @@
 "use strict";
 
+const webpack = require("webpack");
 const path = require("path");
 const CheckerPlugin = require("awesome-typescript-loader").CheckerPlugin;
-const globImporter = require("node-sass-glob-importer");
 const CleanPlugin = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
@@ -10,7 +10,7 @@ module.exports = {
     mode: "development",
     devtool: "inline-source-map",
     entry: {
-        index: "./ClientApp/index.tsx",
+        app: "./ClientApp/index.tsx",
     },
     output: {
         filename: "js/[name].bundle.js",
@@ -58,14 +58,7 @@ module.exports = {
             {
                 test: /\.s(c|a)ss$/,
                 exclude: /node_modules/,
-                use: [
-                    { loader: "style-loader" },
-                    { loader: "css-loader" },
-                    {
-                        loader: "sass-loader",
-                        options: { importer: globImporter() } // А надо ли?
-                    }
-                ]
+                use: ["style-loader", "css-loader", "sass-loader"]
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
@@ -78,7 +71,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(woff|woff2|ttf|otf|eot)$/,
+                test: /\.(woff2?|ttf|otf|eot)$/,
                 use: {
                     loader: "file-loader",
                     options: { name: "fonts/[name].[ext]" }
@@ -88,6 +81,18 @@ module.exports = {
     },
 
     plugins: [
+        // Повторно объявляем jQuery глобальной функцией, чтобы не приходилось
+        // импортировать её в каждый пользовательский js-файл.
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "window.jQuery": "jquery"
+        }),
+        new webpack.DllReferencePlugin({
+            context: ".",
+            manifest: require("./wwwroot/lib/vendor-manifest.json"),
+            name: "vendor_lib"
+        }),
         new CleanPlugin([
             "wwwroot/*.*",
             //"wwwroot/images",
@@ -97,11 +102,11 @@ module.exports = {
         ]),
         new CopyPlugin([
             {
-                from: "./ClientApp/images",
+                from: "./ClientApp/assets/images",
                 to: "./images"
             },
             {
-                from: "./ClientApp/favicon",
+                from: "./ClientApp/assets/favicon",
                 to: "./"
             }
         ]),

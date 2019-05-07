@@ -12,14 +12,13 @@ module.exports = {
     devtool: '',
     entry: {
         vendor: [
-            "./StaticContent/lib/bootstrap-customized/css/bootstrap.css",
+            "./ClientApp/assets/lib/bootstrap-customized/css/bootstrap.css",
             "font-awesome/css/font-awesome.css",
             "owl.carousel/dist/assets/owl.carousel.css",
             "jquery/dist/jquery.js",
-            "./StaticContent/lib/bootstrap-customized/js/bootstrap.js",
+            "./ClientApp/assets/lib/bootstrap-customized/js/bootstrap.js",
             "owl.carousel/dist/owl.carousel.js",
             "jquery-validation/dist/jquery.validate.js",
-            "jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"
         ]
     },
     output: {
@@ -45,7 +44,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(woff|woff2|ttf|otf|eot|svg)$/,
+                test: /\.(woff2?|ttf|otf|eot|svg)$/,
                 use: {
                     loader: "file-loader",
                     options: { name: "fonts/[name].[ext]" }

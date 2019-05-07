@@ -1,0 +1,17 @@
+﻿@import "../styles/_include.scss";
+@import "../styles/blocks/_custom-link.scss";
+
+.logo {
+    padding: 0;
+
+    &__text {
+        margin: 0;
+        padding: 0;
+        @include font(
+            $family: $heading-font-family,
+            $size: px-to-rem(24px),
+            $weight: map-get($font-weights, 'bold'),
+            $color: $white-color
+        );
+    }
+}

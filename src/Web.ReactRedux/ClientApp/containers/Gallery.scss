@@ -1,0 +1,29 @@
+﻿@import "../styles/_include.scss";
+
+.gallery {
+    padding: 0;
+    text-align: center;
+
+    &__filter {
+        margin: 0;
+    }
+
+    &__items {
+        /*
+            Марджин должен быть 70px, но из-за верхнего отступа
+            элементов галереи пришлось его урезать на величину
+            этого отступа. В сумме получается всё те же 70px.
+        */
+        margin-top: $content-margin - $gutter-width;
+    }
+
+    &__item {
+        // Тот самый пресловутый верхний марджин элементов.
+        margin-top: $gutter-width;
+    }
+}
+
+// Просто инфа как получить первые 3 элемента.
+// &:nth-child(-n+3) {
+//     margin-top: 0;
+// }

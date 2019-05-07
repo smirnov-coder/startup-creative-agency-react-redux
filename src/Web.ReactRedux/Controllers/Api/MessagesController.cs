@@ -10,7 +10,7 @@ using StartupCreativeAgency.Web.ReactRedux.ViewModels;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
-    [Route("api/messages")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize(Policy = "AdminPolicy")]
     public class MessagesController : ControllerBase
