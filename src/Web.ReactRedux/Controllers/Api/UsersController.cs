@@ -43,8 +43,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var user = await _userService.GetUserAsync(userName);
             if (user == null)
             {
-                return NotFound($"The entity of type '{typeof(DomainUser)}' with value '{userName}' " +
-                    $"for '{nameof(IUserIdentity.UserName)}' not found.");
+                return NotFound(OperationDetails.Error($"The entity of type '{typeof(DomainUser)}' with value '{userName}' " +
+                    $"for '{nameof(IUserIdentity.UserName)}' not found."));
             }
             return PrepareForReturn(user);
         }
@@ -52,7 +52,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         private DomainUser PrepareForReturn(DomainUser user)
         {
             var profile = user.Profile;
-            profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition,
+            profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition, 
                 Url.Content(profile.PhotoFilePath));
             return user;
         }
@@ -69,11 +69,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 var creator = await _userService.GetUserAsync(User?.Identity?.Name);
                 await _userService.CreateUserAsync(newUser.UserName, newUser.Password, newUser.Email, newUser.Role, creator);
-                return Ok($"User '@{newUser.UserName}' has been registered successfully.");
+                return Ok(OperationDetails.Success($"User '@{newUser.UserName}' has been registered successfully."));
             }
             else
             {
-                return BadRequest($"User '@{newUser.UserName}' already exists.");
+                return BadRequest(OperationDetails.Error($"User '@{newUser.UserName}' already exists."));
             }
         }
 
@@ -84,7 +84,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         public async Task<IActionResult> UpdateProfileAsync([FromRoute]string userName, [FromForm]MyProfileViewModel profile)
         {
             if (userName != User?.Identity?.Name)
-                return BadRequest($"{nameof(DomainUser.Identity.UserName)} mismatch.");
+                return BadRequest(OperationDetails.Error($"{nameof(IUserIdentity.UserName)} mismatch."));
+
             var user = await _userService.GetUserAsync(userName);
             string photoFilePath = profile.PersonalInfo.PhotoFilePath;
             if (profile.PersonalInfo.Image != null)
@@ -103,7 +104,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var socialLinks = profile.SocialLinks.Select(x => new SocialLink(x.NetworkName, x.Url));
             await _userService.UpdateUserSocialLinksAsync(user.Identity.UserName, socialLinks.ToArray());
 
-            return Ok("Your profile has been updated successfully.");
+            return Ok(OperationDetails.Success("Your profile has been updated successfully."));
         }
 
         //
@@ -114,7 +115,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         public async Task<IActionResult> UpdateDisplayStatusAsync([FromRoute]string userName, bool isDisplayed)
         {
             await _userService.UpdateUserDisplayStatusAsync(userName, isDisplayed);
-            return Ok($"Display status for user '@{userName}' has been updated successfully.");
+            return Ok(OperationDetails.Success($"Display status for user '@{userName}' has been updated successfully."));
         }
 
         //
@@ -125,8 +126,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         public async Task<IActionResult> DeleteAsync(string userName)
         {
             await _userService.DeleteUserAsync(userName);
-            return Ok($"The entity of type '{typeof(DomainUser)}' with value '{userName}' for " +
-                $"'{nameof(IUserIdentity.UserName)}' deleted successfully.");
+            return Ok(OperationDetails.Success($"The entity of type '{typeof(DomainUser)}' with value '{userName}' for " +
+                $"'{nameof(IUserIdentity.UserName)}' deleted successfully."));
         }
     }
 }
