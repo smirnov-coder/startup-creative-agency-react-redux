@@ -59,7 +59,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var socialLinksData = model.SocialLinks.ToDictionary(socialLink => socialLink.NetworkName, socialLink => socialLink.Url);
             await _contactsService.SaveSocialLinksAsync(socialLinksData);
 
-            return Ok("Company contacts saved successfully.");
+            return Ok(OperationDetails.Success("Company contacts saved successfully."));
         }
     }
 }

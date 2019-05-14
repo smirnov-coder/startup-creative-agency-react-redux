@@ -29,7 +29,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     Assert.True(response.IsSuccessStatusCode);
                     Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
                     var resultJson = await response.Content.ReadAsStringAsync();
-                    var pageModel = JsonConvert.DeserializeObject<IndexViewModel>(resultJson);
+                    var pageModel = JsonConvert.DeserializeObject<HomePageModel>(resultJson);
                     Assert.Equal(3, pageModel.Services.Count());
                     Assert.Equal(4, pageModel.TeamMembers.Count());
                     Assert.Equal(4, pageModel.TeamMembers.First().Profile.SocialLinks.Count);

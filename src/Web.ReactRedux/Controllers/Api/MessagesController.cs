@@ -34,8 +34,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var message = await _messageService.GetMessageAsync(id);
             if (message == null)
             {
-                return NotFound($"The entity of type '{typeof(Message)}' with key value '{id}' " +
-                    $"for '{nameof(Message.Id)}' not found.");
+                return NotFound(OperationDetails.Error($"The entity of type '{typeof(Message)}' with key value '{id}' " +
+                    $"for '{nameof(Message.Id)}' not found."));
             }
             return message;
         }
@@ -58,11 +58,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                     IPAddress = Request?.HttpContext?.Connection?.RemoteIpAddress?.ToString()
                 };
                 await _messageService.SaveMessageAsync(entity);
-                return Ok("Thank you for your message!");
+                return Ok(OperationDetails.Success("Thank you for your message!"));
             }
             catch
             {
-                return BadRequest("Oops! We are sorry. Something went wrong on the server side. Try again later.");
+                return BadRequest(OperationDetails.Error("Oops! We are sorry. Something went wrong on the server side. Try again later."));
             }
         }
 
@@ -92,8 +92,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 action.Invoke(messageId);
             }
-            return Task.FromResult<IActionResult>(Ok($"A set of entities of type '{typeof(Message)}' has been " +
-                $"{messagePart} successfully."));
+            return Task.FromResult<IActionResult>(Ok(OperationDetails.Error($"A set of entities of type '{typeof(Message)}' has been " +
+                $"{messagePart} successfully.")));
         }
     }
 }
