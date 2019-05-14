@@ -1,66 +1,61 @@
 ﻿import {
-    IServiceInfo,
-    IDomainUser,
-    IWorkExample,
-    IBlogPost,
-    IBrand,
-    ITestimonial,    IContactInfo,
-    IMessage,
-    ISocialLink
+    ServiceInfo,
+    DomainUser,
+    WorkExample,
+    BlogPost,
+    Brand,
+    Testimonial,    ContactInfo,
+    Message,
+    SocialLink,
+    BaseEntity
 } from "./entities";
+import { RouterState } from "connected-react-router";
 
-export interface IAppState {
-    // index
-    services: {
-        isLoading: boolean,
-        items: IServiceInfo[],
-        error: Error
-    },
-    teamMembers: {
-        isLoading: boolean,
-        items: IDomainUser[],
-        error: Error
-    },
-    works: {
-        isLoading: boolean,
-        items: IWorkExample[],
-        error: Error
-    },
-    blog: {
-        isLoading: boolean,
-        items: IBlogPost[],
-        error: Error
-    },
-    brands: {
-        isLoading: boolean,
-        items: IBrand[],
-        error: Error
-    },
-    testimonials: {
-        isLoading: boolean,
-        items: ITestimonial[],
-        error: Error
-    },
-    contacts: {
-        isLoading: boolean,
-        items: IContactInfo[],
-        error: Error
-    },
-    socialLinks: {
-        isLoading: boolean,
-        items: ISocialLink[],
-        error: Error
-    },
+interface PartialState<T = BaseEntity> {
+    isLoading: boolean;
+    items: T[];
+    error: Error;
+}
 
-    //// admin
-    //myProfile: IDomaiUser,
-    //users: IDomaiUser[],
-    messages: {
-        isLoading: boolean,
-        items: IMessage[],
-        error: Error
-    },
+export type ServicesState = PartialState<ServiceInfo>;
+export type TeamMembersState = PartialState<DomainUser>;
+export type WorksState = PartialState<WorkExample>;
+export type BlogState = PartialState<BlogPost>;
+export type BrandsState = PartialState<Brand>;
+export type TestimonialsState = PartialState<Testimonial>;
+export type ContactsState = PartialState<ContactInfo>;
+export type SocialLinksState = PartialState<SocialLink>;
+export type MessagesState = PartialState<Message>;
 
-    operationDetails: any,
-    isError: boolean
+export interface ValidationProblemDetails {
+    title: string;
+    errors: any;
+}
+
+export interface OperationDetailsState {
+    isError: boolean,
+    message: string,
+    validationError: ValidationProblemDetails
+}
+
+export interface AuthState {
+    isAuthenticated: boolean,
+    userName: string,
+    photo: string,
+    isAdmin: boolean
+}
+
+export interface AppState {
+    services: ServicesState,
+    teamMembers: TeamMembersState,
+    works: WorksState,
+    blog: BlogState,
+    brands: BrandsState,
+    testimonials: TestimonialsState,
+    contacts: ContactsState,
+    socialLinks: SocialLinksState,
+    messages: MessagesState,
+    operationDetails: OperationDetailsState,
+    auth: AuthState,
+    router: RouterState
 }

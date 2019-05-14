@@ -1,16 +1,16 @@
 ﻿import * as React from "react";
 
-interface INamedComponent {
+interface NamedComponent {
     displayName?: string;
     name?: string;
 }
 
-export default function (children: React.ReactNode, component: INamedComponent): React.ReactNodeArray {
+export default function (children: React.ReactNode, component: NamedComponent): React.ReactNodeArray {
     const result: React.ReactNodeArray = [];
     /* This is the array of result since Article can have multiple times the same sub-component */
     const type = [component.displayName] || [component.name];
     /* We can store the actual name of the component through the displayName or name property of our sub-component */
-    React.Children.forEach(children, (child: { type?: INamedComponent }) => {
+    React.Children.forEach(children, (child: { type?: NamedComponent }) => {
         const childType = child && child.type && (child.type.displayName || child.type.name);
         if (type.indexOf(childType) !== -1) {
             result.push(child);

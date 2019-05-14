@@ -13,6 +13,7 @@
     <Folder Include="ClientApp\assets\favicon\" />
     <Folder Include="Attributes\" />
     <Folder Include="ClientApp\assets\lib\owl.carousel-customized\" />
+    <Folder Include="ClientApp\components\Admin\" />
     <Folder Include="ClientApp\styles\blocks\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>

@@ -2,13 +2,13 @@
 
 const webpack = require("webpack");
 const path = require("path");
-const CheckerPlugin = require("awesome-typescript-loader").CheckerPlugin;
+//const CheckerPlugin = require("awesome-typescript-loader").CheckerPlugin;
 const CleanPlugin = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     mode: "development",
-    devtool: "inline-source-map",
+    devtool: "eval-source-map",
     entry: {
         app: "./ClientApp/index.tsx",
     },
@@ -34,23 +34,27 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
-                include: /ClientApp/,
-                exclude: /node_modules/,
-                loader: [
-                    {
-                        loader: "awesome-typescript-loader",
-                        options: {
-                            useCache: true,
-                            useBabel: true,
-                            babelOptions: {
-                                babelrc: false,
-                                plugins: ["react-hot-loader/babel"],
-                            }
-                        }
-                    }
-                ]
+                test: /\.tsx?/,
+                loader: "ts-loader"
             },
+            //{
+            //    test: /\.tsx?$/,
+            //    include: /ClientApp/,
+            //    exclude: /node_modules/,
+            //    loader: [
+            //        {
+            //            loader: "awesome-typescript-loader",
+            //            options: {
+            //                useCache: true,
+            //                useBabel: true,
+            //                babelOptions: {
+            //                    babelrc: false,
+            //                    plugins: ["react-hot-loader/babel"],
+            //                }
+            //            }
+            //        }
+            //    ]
+            //},
             {
                 test: /\.css$/,
                 use: ["style-loader", "css-loader"]
@@ -110,6 +114,7 @@ module.exports = {
                 to: "./"
             }
         ]),
-        new CheckerPlugin()
+        //new CheckerPlugin()
+        new webpack.HotModuleReplacementPlugin(),
     ]
 };

@@ -1,41 +1,41 @@
-﻿export interface IBaseEntity {
+﻿export interface BaseEntity {
     Id: number,
     CreatedOn: Date
 }
 
-export interface ICreatorEntity extends IBaseEntity {
-    CreatedBy: IDomainUser
+export interface CreatorEntity extends BaseEntity {
+    CreatedBy: DomainUser
 }
 
-export interface IUpdatableEntity extends ICreatorEntity {
+export interface UpdatableEntity extends CreatorEntity {
     LastUpdatedOn: Date,
-    LastUpdatedBy: IDomainUser
+    LastUpdatedBy: DomainUser
 }
 
-export interface IBlogPost extends IUpdatableEntity {
+export interface BlogPost extends UpdatableEntity {
     ImagePath: string,
     Title: string,
     Category: string,
     Content: string
 }
 
-export interface IBrand extends IUpdatableEntity {
+export interface Brand extends UpdatableEntity {
     Name: string,
     ImagePath: string
 }
 
-export interface IContactInfo {
+export interface ContactInfo {
     Name: string,
     Caption: string,
     Values: string[]
 }
 
-export interface IDomainUser extends IUpdatableEntity {
-    Identity: IUserIdentity,
-    Profile: IUserProfile
+export interface DomainUser extends UpdatableEntity {
+    Identity: UserIdentity,
+    Profile: UserProfile
 }
 
-export interface IMessage extends IBaseEntity {
+export interface Message extends BaseEntity {
     Name: string,
     Email: string,
     Subject: string,
@@ -45,39 +45,39 @@ export interface IMessage extends IBaseEntity {
     IsRead: boolean
 }
 
-export interface IServiceInfo extends IUpdatableEntity {
+export interface ServiceInfo extends UpdatableEntity {
     Caption: string,
     Description: string,
     IconClass: string
 }
 
-export interface ISocialLink extends IBaseEntity {
+export interface SocialLink extends BaseEntity {
     NetworkName: string,
     Url: string
 }
 
-export interface ITestimonial extends IUpdatableEntity {
+export interface Testimonial extends UpdatableEntity {
     Author: string,
     Company: string,
     Text: string
 }
 
-export interface IUserIdentity {
+export interface UserIdentity {
     UserName: string,
     Email: string
 }
 
-export interface IUserProfile extends IBaseEntity {
+export interface UserProfile extends BaseEntity {
     FirstName: string,
     LastName: string,
     PhotoFilePath: string,
     JobPosition: string,
     IsReadyForDisplay: boolean,
     DisplayAsTeamMember: boolean,
-    SocialLinks: ISocialLink[]
+    SocialLinks: SocialLink[]
 }
 
-export interface IWorkExample extends IUpdatableEntity {
+export interface WorkExample extends UpdatableEntity {
     Name: string,
     Category: string,
     Description: string,
