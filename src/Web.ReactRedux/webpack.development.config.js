@@ -8,7 +8,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     mode: "development",
-    devtool: "inline-source-map",
+    devtool: "eval-source-map",
     entry: {
         app: "./ClientApp/index.tsx",
     },
@@ -33,6 +33,10 @@ module.exports = {
     },
     module: {
         rules: [
+            //{
+            //    test: /\.tsx?/,
+            //    loader: "ts-loader"
+            //},
             {
                 test: /\.tsx?$/,
                 include: /ClientApp/,
@@ -111,5 +115,6 @@ module.exports = {
             }
         ]),
         new CheckerPlugin()
+        //new webpack.HotModuleReplacementPlugin(),
     ]
 };

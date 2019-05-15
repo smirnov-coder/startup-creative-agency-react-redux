@@ -1,48 +1,67 @@
-﻿import {
-    IServiceInfo,
-    IWorkExample,
-    IBlogPost,
-    IBrand,
-    ITestimonial,
-    IContactInfo,
-    ISocialLink,
-    IDomainUser
+﻿import { Action } from "redux";
+import {
+    ServiceInfo,
+    WorkExample,
+    BlogPost,
+    Brand,
+    Testimonial,
+    ContactInfo,
+    SocialLink,
+    DomainUser
 } from "../entities";
-import { IContactMessage } from "../../containers/ContactForm";
+import { ContactMessage } from "../../containers/Home/ContactForm";
+import { ValidationProblemDetails } from "../state";
 
-interface IAction {
-    type: string
-}
+export interface RequestAction extends Action { }
 
-export interface ILoadingAction extends IAction { }
-
-export interface IErrorAction extends IAction {
+export interface ErrorAction extends Action {
     error: Error;
 }
 
-export interface IShowAction<T> extends IAction {
+export interface AssignManyAction<T> extends Action {
     items: T[];
 }
 
-export interface ISendAction extends IAction {
-    message: IContactMessage;
+export interface SendAction extends Action {
+    message: ContactMessage;
 }
 
-export interface IShowResponse extends IAction {
+export interface ShowResponse extends Action {
     text: string;
     isError: boolean;
 }
 
-export interface IAppendAction extends IShowAction<IBlogPost> { }
+export interface AppendAction extends AssignManyAction<BlogPost> { }
 
-export type CommonActions = ILoadingAction | IErrorAction
+export type CommonActions = RequestAction | ErrorAction
 
-export type ServicesActions = CommonActions | IShowAction<IServiceInfo>
-export type TeamMembersActions = CommonActions | IShowAction<IDomainUser>
-export type WorksActions = CommonActions | IShowAction<IWorkExample>
-export type BlogActions = CommonActions | IShowAction<IBlogPost> | IAppendAction
-export type BrandsActions = CommonActions | IShowAction<IBrand>
-export type TestimonialsActions = CommonActions | IShowAction<ITestimonial>
-export type ContactsActions = CommonActions | IShowAction<IContactInfo>
-export type SocialLinksActions = CommonActions | IShowAction<ISocialLink>
-export type MessagesActions = CommonActions | ISendAction | IShowResponse
+export type ServicesActions = CommonActions | AssignManyAction<ServiceInfo>
+export type TeamMembersActions = CommonActions | AssignManyAction<DomainUser>
+export type WorksActions = CommonActions | AssignManyAction<WorkExample>
+export type BlogActions = CommonActions | AssignManyAction<BlogPost> | AppendAction
+export type BrandsActions = CommonActions | AssignManyAction<Brand>
+export type TestimonialsActions = CommonActions | AssignManyAction<Testimonial>
+export type ContactsActions = CommonActions | AssignManyAction<ContactInfo>
+export type SocialLinksActions = CommonActions | AssignManyAction<SocialLink>
+export type MessagesActions = CommonActions | SendAction | ShowResponse
+
+export interface InitPageAction extends Action {
+    userName: string;
+    photo: string;
+    isAuthenticated: boolean;
+}
+
+export interface SignOutAction extends Action { }
+
+export interface SignInAction extends Action {
+    isAdmin: boolean;
+}
+
+export type AuthActions = CommonActions | SignInAction | SignOutAction
+
+export interface OperationDetailsAction extends Action {
+    isError: boolean;
+    message: string;
+    validationError: ValidationProblemDetails
+}
+

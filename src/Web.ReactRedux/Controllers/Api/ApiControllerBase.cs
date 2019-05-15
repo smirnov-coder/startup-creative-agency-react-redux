@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
+using StartupCreativeAgency.Web.ReactRedux.ViewModels;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
@@ -46,8 +47,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var entity = await PerformGetAsync(id);
             if (entity == null)
             {
-                return NotFound($"The entity of type '{typeof(TEntity)}' with key value '{id}' " +
-                    $"for '{nameof(BaseEntity<TKey>.Id)}' not found.");
+                return NotFound(OperationDetails.Error($"The entity of type '{typeof(TEntity)}' with key value '{id}' " +
+                    $"for '{nameof(BaseEntity<TKey>.Id)}' not found."));
             }
             return PrepareEntityForReturn(entity);
         }
@@ -77,8 +78,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var user = await _userService.GetUserAsync(User?.Identity?.Name);
             var entity = await CreateEntityFromModelAsync(model, user);
             var result = await PerformAddAsync(entity);
-            return Ok($"The entity of type '{typeof(TEntity)}' with key value '{result.Id}' for " +
-                $"'{nameof(BaseEntity<TKey>.Id)}' saved successfully.");
+            return Ok(OperationDetails.Success($"The entity of type '{typeof(TEntity)}' with key value '{result.Id}' for " +
+                $"'{nameof(BaseEntity<TKey>.Id)}' saved successfully."));
         }
 
         /// <summary>
@@ -107,8 +108,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var user = await _userService.GetUserAsync(User?.Identity?.Name);
             var entity = await CreateEntityFromModelAsync(model, user);
             await PerformUpdateAsync(entity);
-            return Ok($"The entity of type '{typeof(TEntity)}' with key value '{entity.Id}' for " +
-                $"'{nameof(BaseEntity<TKey>.Id)}' updated successfully.");
+            return Ok(OperationDetails.Success($"The entity of type '{typeof(TEntity)}' with key value '{entity.Id}' for " +
+                $"'{nameof(BaseEntity<TKey>.Id)}' updated successfully."));
         }
 
         /// <summary>
@@ -125,8 +126,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         public virtual async Task<IActionResult> DeleteAsync([FromRoute]TKey id)
         {
             await PerformDeleteAsync(id);
-            return Ok($"The entity of type '{typeof(TEntity)}' with key value '{id}' for " +
-                $"'{nameof(BaseEntity<TKey>.Id)}' deleted successfully.");
+            return Ok(OperationDetails.Success($"The entity of type '{typeof(TEntity)}' with key value '{id}' for " +
+                $"'{nameof(BaseEntity<TKey>.Id)}' deleted successfully."));
         }
 
         /// <summary>

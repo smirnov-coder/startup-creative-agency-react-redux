@@ -1,0 +1,18 @@
+﻿@import "../../styles/_include.scss";
+
+.brands-carousel {
+
+    &__item {
+        margin: 0;
+        padding: 0;
+        height: $brands-carousel-item-height;
+    }
+
+    &__img {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: scale-down;
+    }
+}
