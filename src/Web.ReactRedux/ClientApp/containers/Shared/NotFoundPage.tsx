@@ -5,12 +5,14 @@ import { Layout } from "../../components/Shared/Layout";
 import { AdminHeader } from "../../components/Shared/AdminHeader";
 import { AdminFooter } from "../../components/Shared/AdminFooter";
 import { AppState } from "../../store/state";
+import { Dispatch, bindActionCreators } from "redux";
+import { getNotFoundPageModel } from "../../store/actions/actionCreators";
 
-type NotFoundPageProps = StateProps;
+type NotFoundPageProps = StateProps & DispatchProps;
 
 export class NotFoundPage extends React.Component<NotFoundPageProps> {
-    constructor(props: NotFoundPageProps) {
-        super(props);
+    componentWillMount(): void {
+        this.props.getPageModel();
     }
 
     componentDidMount(): void {
@@ -49,4 +51,14 @@ const mapStateToProps = (state: AppState): StateProps => {
     };
 }
 
-export default connect(mapStateToProps, null)(NotFoundPage);
+interface DispatchProps {
+    getPageModel: () => void;
+}
+
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+    return {
+        getPageModel: bindActionCreators(getNotFoundPageModel, dispatch)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NotFoundPage);

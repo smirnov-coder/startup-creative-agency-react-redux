@@ -137,7 +137,12 @@ namespace StartupCreativeAgency.Web.ReactRedux
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
                     ConfigFile = "webpack.development.config.js",
-                    HotModuleReplacement = true
+                    HotModuleReplacement = true,
+                    HotModuleReplacementClientOptions = new Dictionary<string, string>
+                    {
+                        ["timeout"] = "30000", // my computer is too slow :(
+                        ["reload"] = "true"
+                    }
                 });
             }
             else

@@ -1,30 +1,63 @@
 import * as React from "react";
-import { History } from "history";
+import { hot } from "react-hot-loader";
+import { Provider } from "react-redux";
+import configureStore, { history } from "./store/configureStore";
 import { ConnectedRouter } from "connected-react-router";
 import { Switch, Route } from "react-router";
 import HomePage from "./containers/Home/HomePage";
-import { AuthArea } from "./components/Auth/AuthArea";
+import AuthArea from "./components/Auth/AuthArea";
 import NotFoundPage from "./containers/Shared/NotFoundPage";
 
-interface AppProps {
-    history: History;
-}
+const store = configureStore();
 
-const App = ({ history }: AppProps) => {
+const App: React.SFC = () => {
     return (
-        <ConnectedRouter history={history}>
-            <Switch>
-                <Route exact path="/" component={HomePage} />
-                <Route path="/auth" component={AuthArea} />
-                <Route component={NotFoundPage} />
-            </Switch>
-        </ConnectedRouter>
+        <Provider key={Date.now()} store={store}>
+            <ConnectedRouter history={history}>
+                <Switch>
+                    <Route exact path="/" component={HomePage} />
+                    <Route path="/auth" component={AuthArea} />
+                    <Route component={NotFoundPage} />
+                </Switch>
+            </ConnectedRouter>
+        </Provider>
     );
 }
 
-export default App;
+export default hot(module)(App);
 
 
+////////////////////////////// #2
+
+//import * as React from "react";
+//import { History } from "history";
+//import { ConnectedRouter } from "connected-react-router";
+//import { Switch, Route } from "react-router";
+//import HomePage from "./containers/Home/HomePage";
+//import { AuthArea } from "./components/Auth/AuthArea";
+//import NotFoundPage from "./containers/Shared/NotFoundPage";
+
+//interface AppProps {
+//    history: History;
+//}
+
+//const App = ({ history }: AppProps) => {
+//    return (
+//        <ConnectedRouter history={history}>
+//            <Switch>
+//                <Route exact path="/" component={HomePage} />
+//                <Route path="/auth" component={AuthArea} />
+//                <Route component={NotFoundPage} />
+//            </Switch>
+//        </ConnectedRouter>
+//    );
+//}
+
+//export default App;
+
+
+
+////////////////////////////////// #1
 
 //import * as React from "react";
 //import { hot } from "react-hot-loader";

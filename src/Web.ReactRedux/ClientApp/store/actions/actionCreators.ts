@@ -8,9 +8,10 @@
     TestimonialsActions,    ContactsActions,
     MessagesActions,
     SocialLinksActions,
-    AuthActions,
-    LoginPageActions,
     OperationDetailsAction,
+    InitPageAction,
+    SignOutAction,
+    SignInAction,
 } from "./actions";
 import { Dispatch } from "redux";
 import { ActionTypes } from "./actionTypes";
@@ -117,18 +118,66 @@ export const getLoginPageModel = () => (dispatch: Dispatch) => {
         headers: !accessToken ? {} : {
             Authorization: `Bearer ${accessToken}`
         }
-    };
+    }; //console.log("options", options);//
     return fetch("/api/pagemodels/login", options)
         .then((response: Response) => {
+            //console.log("response", response);//
             return response.json();
         })
-        .then((data: { userName: string, photoFilePath: string }) => {
-            dispatch(initLoginPage(data));
+        .then((data: UserInfo) => {
+            //console.log("data", data);//
+            dispatch(initSimplePage("INIT_LOGIN_PAGE", { ...data }));
         })
         .catch((error: Error) => {
             console.error(error, "getLoginPageModel error");//
         });
 }
+
+export const getNotFoundPageModel = () => (dispatch: Dispatch) => {
+    dispatch(request());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        }
+    }; //console.log("options", options);//
+    return fetch("/api/pagemodels/notfound", options)
+        .then((response: Response) => {
+            //console.log("response", response);//
+            return response.json();
+        })
+        .then((data: UserInfo) => {
+            //console.log("data", data);//
+            dispatch(initSimplePage("INIT_NOT_FOUND_PAGE", { ...data }));
+        })
+        .catch((error: Error) => {
+            console.error(error, "getNotFoundPageModel error");//
+        });
+}
+
+export const getAccessDeniedPageModel = () => (dispatch: Dispatch) => {
+    dispatch(request());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        }
+    }; //console.log("options", options);//
+    return fetch("/api/pagemodels/accessdenied", options)
+        .then((response: Response) => {
+            //console.log("response", response);//
+            return response.json();
+        })
+        .then((data: UserInfo) => {
+            //console.log("data", data);//
+            dispatch(initSimplePage("INIT_ACCESS_DENIED_PAGE", { ...data }));
+        })
+        .catch((error: Error) => {
+            console.error(error, "getAccessDeniedPageModel error");//
+        });
+}
+
+const STORAGE_KEY: string = "accessToken";
 
 function readAccessToken(): string {
     let token: string = window.sessionStorage.getItem(STORAGE_KEY);
@@ -140,33 +189,28 @@ function readAccessToken(): string {
 
 interface UserInfo {
     userName: string;
-    photoFilePath: string;
+    photo: string;
 }
 
-const initLoginPage = ({ userName, photoFilePath }: UserInfo): LoginPageActions => {
+const initSimplePage = (type: string, { userName, photo }: UserInfo): InitPageAction => {
     return {
-        type: "INIT_LOGIN_PAGE",
+        type,
         userName,
-        photo: photoFilePath
-    }
+        photo,
+        isAuthenticated: userName ? true : false
+    };
 }
-
-const STORAGE_KEY: string = "accessToken";
 
 export const signOut = () => (dispatch: Dispatch) => {
     dispatch(doSignOut());
     dispatch(push("/"));
 }
 
-const doSignOut = (): AuthActions => {
+const doSignOut = (): SignOutAction => {
     window.sessionStorage.removeItem(STORAGE_KEY);
     window.localStorage.removeItem(STORAGE_KEY);
     return {
-        type: "SIGN_OUT",
-        userName: "",
-        photo: "",
-        isAdmin: false,
-        isAuthenticated: false,
+        type: "SIGN_OUT"
     };
 }
 
@@ -183,7 +227,7 @@ interface OperationDetails {
 }
 
 export const signIn = ({ userName, password, rememberMe, returnUrl }: SignInInfo) => (dispatch: Dispatch) => {
-    dispatch(request());
+    dispatch(request()); //console.log("signIn action creator");//
     let options: RequestInit = {
         method: "POST",
         headers: {
@@ -193,34 +237,49 @@ export const signIn = ({ userName, password, rememberMe, returnUrl }: SignInInfo
     };
     return fetch("/api/auth/token", options)
         .then((response: Response) => {
+            //console.log("response", response);//
             return response.json();
         })
         .then((data: any) => {
+            //console.log("data", data);//
+            let { accessToken, isAdmin } = data;
+            if (accessToken) {
+                //console.log("sign in success");//
+                dispatch(doSignIn(accessToken, isAdmin, rememberMe));
+                dispatch(push(returnUrl ? returnUrl : "/admin/myprofile"));
+                return;
+            }
             let details: OperationDetails;
             if (details = data as OperationDetails) {
-                if (!details.isError) {
-                    if (rememberMe) {
-                        window.localStorage.setItem(STORAGE_KEY, data)
-                    } else {
-                        window.sessionStorage.setItem(STORAGE_KEY, data);
-                    }
-                    dispatch(push(returnUrl ? returnUrl : "/admin/myprofile"));
-                } else {
-                    dispatch(assignOperationDetails({ ...details, validationError: null }));
-                }
+                //console.log("sign in error");//
+                dispatch(assignOperationDetails({ ...details, validationError: null }));
+                return;
             }
             let validationError: ValidationProblemDetails
             if (validationError = data as ValidationProblemDetails) {
+                //console.log("validation problem");//
                 details = {
                     isError: true,
                     message: validationError.title
-                }
+                };
                 dispatch(assignOperationDetails({ ...details, validationError }))
             }
         })
         .catch((error: Error) => {
             console.error(error, "signIn error");//
         });
+}
+
+const doSignIn = (accessToken: string, isAdmin: boolean, rememberMe: boolean): SignInAction => {
+    if (rememberMe) {
+        window.localStorage.setItem(STORAGE_KEY, accessToken)
+    } else {
+        window.sessionStorage.setItem(STORAGE_KEY, accessToken);
+    }
+    return {
+        type: "SIGN_IN",
+        isAdmin
+    };
 }
 
 const assignOperationDetails = ({ isError, message, validationError }: OperationDetailsState): OperationDetailsAction => {

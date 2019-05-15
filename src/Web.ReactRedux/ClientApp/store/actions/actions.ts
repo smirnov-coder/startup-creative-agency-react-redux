@@ -1,5 +1,4 @@
 ﻿import { Action } from "redux";
-
 import {
     ServiceInfo,
     WorkExample,
@@ -13,17 +12,13 @@ import {
 import { ContactMessage } from "../../containers/Home/ContactForm";
 import { ValidationProblemDetails } from "../state";
 
-//interface IAction {
-//    type: string
-//}
-
 export interface RequestAction extends Action { }
 
 export interface ErrorAction extends Action {
     error: Error;
 }
 
-export interface ShowAction<T> extends Action {
+export interface AssignManyAction<T> extends Action {
     items: T[];
 }
 
@@ -36,37 +31,32 @@ export interface ShowResponse extends Action {
     isError: boolean;
 }
 
-export interface AppendAction extends ShowAction<BlogPost> { }
+export interface AppendAction extends AssignManyAction<BlogPost> { }
 
 export type CommonActions = RequestAction | ErrorAction
 
-export type ServicesActions = CommonActions | ShowAction<ServiceInfo>
-export type TeamMembersActions = CommonActions | ShowAction<DomainUser>
-export type WorksActions = CommonActions | ShowAction<WorkExample>
-export type BlogActions = CommonActions | ShowAction<BlogPost> | AppendAction
-export type BrandsActions = CommonActions | ShowAction<Brand>
-export type TestimonialsActions = CommonActions | ShowAction<Testimonial>
-export type ContactsActions = CommonActions | ShowAction<ContactInfo>
-export type SocialLinksActions = CommonActions | ShowAction<SocialLink>
+export type ServicesActions = CommonActions | AssignManyAction<ServiceInfo>
+export type TeamMembersActions = CommonActions | AssignManyAction<DomainUser>
+export type WorksActions = CommonActions | AssignManyAction<WorkExample>
+export type BlogActions = CommonActions | AssignManyAction<BlogPost> | AppendAction
+export type BrandsActions = CommonActions | AssignManyAction<Brand>
+export type TestimonialsActions = CommonActions | AssignManyAction<Testimonial>
+export type ContactsActions = CommonActions | AssignManyAction<ContactInfo>
+export type SocialLinksActions = CommonActions | AssignManyAction<SocialLink>
 export type MessagesActions = CommonActions | SendAction | ShowResponse
 
-
-export interface ShowLoginPageAction extends Action {
+export interface InitPageAction extends Action {
     userName: string;
     photo: string;
+    isAuthenticated: boolean;
 }
 
-export interface SignOutAction extends ShowLoginPageAction {
-    isAuthenticated: boolean;
-    isAdmin: boolean;
-    //returnUrl: string;
-}
+export interface SignOutAction extends Action { }
 
 export interface SignInAction extends Action {
-    accessToken: string;
+    isAdmin: boolean;
 }
 
-export type LoginPageActions = CommonActions | ShowLoginPageAction
 export type AuthActions = CommonActions | SignInAction | SignOutAction
 
 export interface OperationDetailsAction extends Action {

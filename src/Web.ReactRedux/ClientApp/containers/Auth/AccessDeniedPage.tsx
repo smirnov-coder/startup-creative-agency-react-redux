@@ -5,12 +5,14 @@ import { AdminHeader } from "../../components/Shared/AdminHeader";
 import { AdminFooter } from "../../components/Shared/AdminFooter";
 import "../Shared/NotFoundPage.scss";
 import { AppState } from "../../store/state";
+import { bindActionCreators, Dispatch } from "redux";
+import { getAccessDeniedPageModel } from "../../store/actions/actionCreators";
 
-type AccessDeniedPageProps = StateProps;
+type AccessDeniedPageProps = StateProps & DispatchProps;
 
 export class AccessDeniedPage extends React.Component<AccessDeniedPageProps> {
-    constructor(props: AccessDeniedPageProps) {
-        super(props);
+    componentWillMount(): void {
+        this.props.getPageModel();
     }
 
     componentDidMount(): void {
@@ -49,4 +51,14 @@ const mapStateToProps = (state: AppState): StateProps => {
     };
 }
 
-export default connect(mapStateToProps, null)(AccessDeniedPage);
+interface DispatchProps {
+    getPageModel: () => void;
+}
+
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+    return {
+        getPageModel: bindActionCreators(getAccessDeniedPageModel, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccessDeniedPage);

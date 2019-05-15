@@ -34,6 +34,7 @@ class HomePage extends React.Component<HomePageProps> {
     }
 
     componentDidMount(): void {
+        document.title = "Startup ReactRedux Home";
         this.props.getPageModel();
     }
 

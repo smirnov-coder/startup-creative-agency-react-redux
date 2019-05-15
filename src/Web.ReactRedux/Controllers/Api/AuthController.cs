@@ -29,7 +29,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // POST api/auth/token
         //
         [HttpPost("token")]
-        public async Task<IActionResult> AccessTokenAsync(UserCredentials credentials)
+        public async Task<ActionResult<AuthInfo>> AccessTokenAsync(UserCredentials credentials)
         {
             var user = await _userService.GetUserAsync(credentials.UserName);
             if (user == null)
@@ -37,14 +37,16 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                 return NotFound(OperationDetails.Error($"The entity of type '{typeof(DomainUser)}' with value '{credentials.UserName}' " +
                     $"for '{nameof(IUserIdentity.UserName)}' not found."));
             }
-            var identityResult = await _signInManager.CheckPasswordSignInAsync(user.Identity as UserIdentity, credentials.Password, false);
+            var identity = user.Identity as UserIdentity;
+            var identityResult = await _signInManager.CheckPasswordSignInAsync(identity, credentials.Password, false);
             if (identityResult.Succeeded)
             {
-                var result = new
+                var userManager = _signInManager.UserManager;
+                return new AuthInfo
                 {
-                    accessToken = await JwtHelper.GetEncodedJwtAsync(user.Identity as UserIdentity, _signInManager.UserManager)
+                    AccessToken = await JwtHelper.GetEncodedJwtAsync(identity, userManager),
+                    IsAdmin = await userManager.IsInRoleAsync(user.Identity as UserIdentity, "Administrator")
                 };
-                return Ok(result);
             }
             return BadRequest(OperationDetails.Error($"Unable to authenticate user with value '{credentials.UserName}' " +
                 $"for '{nameof(IUserIdentity.UserName)}'."));

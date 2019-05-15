@@ -11,7 +11,7 @@ using StartupCreativeAgency.Web.ReactRedux.ViewModels;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class PageModelsController : ControllerBase
@@ -45,7 +45,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             _messageService = messageService;
         }
 
-        [HttpGet]
+        [HttpGet("Home")]
         [AllowAnonymous]
         public async Task<HomePageModel> HomeAsync()
         {
@@ -84,12 +84,15 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             };
         }
 
+        [HttpGet("Login")]
         [AllowAnonymous]
         public async Task<UserWidgetViewModel> LoginAsync() => await GetUserWidgetModelAsync();
 
+        [HttpGet("AccessDenied")]
         [AllowAnonymous]
         public async Task<UserWidgetViewModel> AccessDeniedAsync() => await GetUserWidgetModelAsync();
 
+        [HttpGet("NotFound")]
         [AllowAnonymous]
         public async Task<UserWidgetViewModel> NotFoundAsync() => await GetUserWidgetModelAsync();
 
@@ -105,6 +108,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             return result;
         }
 
+        [HttpGet("MyProfile")]
         public async Task<MyProfilePageModel> MyProfileAsync()
         {
             var user = await _userService.GetUserAsync(User?.Identity?.Name);
@@ -117,7 +121,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                 JobPosition = user.Profile.JobPosition,
                 PhotoFilePath = Url.Content(user.Profile.PhotoFilePath),
                 SocialLinks = user.Profile.SocialLinks.ToList(),
-                IsAdmin = IsCurrentUserAdmin(),
+                //IsAdmin = IsCurrentUserAdmin(),
                 NewMessagesCount = await GetNewMessagesCount()
             };
         }
@@ -129,15 +133,16 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             return !IsCurrentUserAdmin() ? 0 : (await _messageService.GetMessagesAsync()).Where(x => !x.IsRead).Count();
         }
 
+        [HttpGet("Services")]
         public async Task<ListPageModel<ServiceInfo, int>> ServicesAsync() => new ListPageModel<ServiceInfo, int>
         {
             UserWidget = await GetUserWidgetModelAsync(),
             Items = await _serviceInfoService.GetServiceInfosAsync(),
-            IsAdmin = IsCurrentUserAdmin(),
+            //IsAdmin = IsCurrentUserAdmin(),
             NewMessagesCount = await GetNewMessagesCount()
         };
 
-        [HttpGet("{id:int}")]
+        [HttpGet("EditService/{id:int}")]
         public async Task<ActionResult<EditPageModel<ServiceInfo, int>>> EditServiceAsync(int id)
         {
             var serviceInfo = await _serviceInfoService.GetServiceInfoAsync(id);
@@ -146,7 +151,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 UserWidget = await GetUserWidgetModelAsync(),
                 Item = serviceInfo,
-                IsAdmin = IsCurrentUserAdmin(),
+                //IsAdmin = IsCurrentUserAdmin(),
                 NewMessagesCount = await GetNewMessagesCount()
             };
         }
@@ -160,15 +165,17 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             }
         }
 
+        [HttpGet("AddService")]
         public async Task<BasePageModel> AddServiceAsync() => await GetAddPageModelAsync();
 
         private async Task<BasePageModel> GetAddPageModelAsync() => new BasePageModel
         {
             UserWidget = await GetUserWidgetModelAsync(),
-            IsAdmin = IsCurrentUserAdmin(),
+            //IsAdmin = IsCurrentUserAdmin(),
             NewMessagesCount = await GetNewMessagesCount()
         };
 
+        [HttpGet("Users")]
         public async Task<UsersPageModel> UsersAsync() => new UsersPageModel
         {
             UserWidget = await GetUserWidgetModelAsync(),
@@ -182,11 +189,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                     Url.Content(profile.PhotoFilePath));
                 return user;
             }),
-            IsAdmin = IsCurrentUserAdmin(),
+            //IsAdmin = IsCurrentUserAdmin(),
             NewMessagesCount = await GetNewMessagesCount()
         };
 
-        [HttpGet("{userName}")]
+        [HttpGet("ManageUser/{userName}")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<ActionResult<ManageUserPageModel>> ManageUserAsync(string userName)
         {
@@ -200,6 +207,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             };
         }
 
+        [HttpGet("RegisterUser")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<RegisterUserPageModel> RegisterUserAsync() => new RegisterUserPageModel
         {
@@ -207,6 +215,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             NewMessagesCount = await GetNewMessagesCount()
         };
 
+        [HttpGet("Works")]
         public async Task<WorksPageModel> WorksAsync() => new WorksPageModel
         {
             UserWidget = await GetUserWidgetModelAsync(),
@@ -215,12 +224,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                 workExample.ImagePath = Url.Content(workExample.ImagePath);
                 return workExample;
             }),
-            IsAdmin = IsCurrentUserAdmin(),
+            //IsAdmin = IsCurrentUserAdmin(),
             NewMessagesCount = await GetNewMessagesCount()
         };
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<EditPageModel<WorkExample, int>>> EditWorkExample(int id)
+        [HttpGet("EditWorkExample/{id:int}")]
+        public async Task<ActionResult<EditPageModel<WorkExample, int>>> EditWorkExampleAsync(int id)
         {
             var workExample = await _workExampleService.GetWorkExampleAsync(id);
             EnsureEntityNotNull(workExample);
@@ -229,13 +238,15 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 UserWidget = await GetUserWidgetModelAsync(),
                 Item = workExample,
-                IsAdmin = IsCurrentUserAdmin(),
+                //IsAdmin = IsCurrentUserAdmin(),
                 NewMessagesCount = await GetNewMessagesCount()
             };
         }
 
-        public async Task<BasePageModel> AddWorkExample() => await GetAddPageModelAsync();
+        [HttpGet("AddWorkExample")]
+        public async Task<BasePageModel> AddWorkExampleAsync() => await GetAddPageModelAsync();
 
+        [HttpGet("Blog")]
         public async Task<BlogPageModel> BlogAsync() => new BlogPageModel
         {
             UserWidget = await GetUserWidgetModelAsync(),
@@ -244,11 +255,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                 blogPost.ImagePath = Url.Content(blogPost.ImagePath);
                 return blogPost;
             }),
-            IsAdmin = IsCurrentUserAdmin(),
+            //IsAdmin = IsCurrentUserAdmin(),
             NewMessagesCount = await GetNewMessagesCount()
         };
 
-        [HttpGet("{id:int}")]
+        [HttpGet("EditBlogPost/{id:int}")]
         public async Task<ActionResult<EditPageModel<BlogPost, int>>> EditBlogPostAsync(int id)
         {
             var blogPost = await _blogService.GetBlogPostAsync(id);
@@ -258,13 +269,15 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 UserWidget = await GetUserWidgetModelAsync(),
                 Item = blogPost,
-                IsAdmin = IsCurrentUserAdmin(),
+                //IsAdmin = IsCurrentUserAdmin(),
                 NewMessagesCount = await GetNewMessagesCount()
             };
         }
 
+        [HttpGet("AddBlogPost")]
         public async Task<BasePageModel> AddBlogPostAsync() => await GetAddPageModelAsync();
 
+        [HttpGet("Brands")]
         public async Task<BrandsPageModel> BrandsAsync() => new BrandsPageModel
         {
             UserWidget = await GetUserWidgetModelAsync(),
@@ -273,11 +286,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                 brand.ImagePath = Url.Content(brand.ImagePath);
                 return brand;
             }),
-            IsAdmin = IsCurrentUserAdmin(),
+            //IsAdmin = IsCurrentUserAdmin(),
             NewMessagesCount = await GetNewMessagesCount()
         };
 
-        [HttpGet("{id:int}")]
+        [HttpGet("EditBrand/{id:int}")]
         public async Task<ActionResult<EditPageModel<Brand, int>>> EditBrandAsync(int id)
         {
             var brand = await _brandService.GetBrandAsync(id);
@@ -287,22 +300,24 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 UserWidget = await GetUserWidgetModelAsync(),
                 Item = brand,
-                IsAdmin = IsCurrentUserAdmin(),
+                //IsAdmin = IsCurrentUserAdmin(),
                 NewMessagesCount = await GetNewMessagesCount()
             };
         }
 
+        [HttpGet("AddBrand")]
         public async Task<BasePageModel> AddBrandAsync() => await GetAddPageModelAsync();
 
+        [HttpGet("Testimonials")]
         public async Task<TestimonialsPageModel> TestimonialsAsync() => new TestimonialsPageModel
         {
             UserWidget = await GetUserWidgetModelAsync(),
             Testimonials = await _testimonialService.GetTestimonialsAsync(),
-            IsAdmin = IsCurrentUserAdmin(),
+            //IsAdmin = IsCurrentUserAdmin(),
             NewMessagesCount = await GetNewMessagesCount()
         };
 
-        [HttpGet("{id:int}")]
+        [HttpGet("EditTestimonial/{id:int}")]
         public async Task<ActionResult<EditPageModel<Testimonial, int>>> EditTestimonialAsync(int id)
         {
             var testimonial = await _testimonialService.GetTestimonialAsync(id);
@@ -311,11 +326,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 UserWidget = await GetUserWidgetModelAsync(),
                 Item = testimonial,
-                IsAdmin = IsCurrentUserAdmin(),
+                //IsAdmin = IsCurrentUserAdmin(),
                 NewMessagesCount = await GetNewMessagesCount()
             };
         }
 
+        [HttpGet("Contacts")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<ContactsPageModel> ContactsAsync() => new ContactsPageModel
         {
@@ -325,6 +341,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             NewMessagesCount = await GetNewMessagesCount()
         };
 
+        [HttpGet("Messages")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<MessagesPageModel> MessagesAsync() => new MessagesPageModel
         {
@@ -333,7 +350,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             NewMessagesCount = await GetNewMessagesCount()
         };
 
-        [HttpGet("{id:int}")]
+        [HttpGet("Message/{id:int}")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<EditPageModel<Message, int>> MessageAsync(int id)
         {
@@ -343,7 +360,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 UserWidget = await GetUserWidgetModelAsync(),
                 Item = message,
-                IsAdmin = IsCurrentUserAdmin(),
+                //IsAdmin = IsCurrentUserAdmin(),
                 NewMessagesCount = await GetNewMessagesCount()
             };
         }

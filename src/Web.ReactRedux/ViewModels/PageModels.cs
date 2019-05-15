@@ -10,7 +10,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
     public class BasePageModel
     {
         public UserWidgetViewModel UserWidget { get; set; }
-        public bool IsAdmin { get; set; }
+        //public bool IsAdmin { get; set; }
         public int NewMessagesCount { get; set; }
     }
 
@@ -108,6 +108,5 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
         public UserWidgetViewModel UserWidget { get; set; }
         public IEnumerable<Message> Messages { get; set; }
         public int NewMessagesCount { get; set; }
-
     }
 }

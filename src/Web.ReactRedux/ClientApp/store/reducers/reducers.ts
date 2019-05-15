@@ -1,7 +1,7 @@
 ﻿import { AppState, ServicesState, TeamMembersState, WorksState, BlogState, BrandsState, TestimonialsState, ContactsState, MessagesState, SocialLinksState, AuthState, OperationDetailsState } from "../state";
 import {
     ServicesActions,
-    ShowAction,
+    AssignManyAction,
     ErrorAction,
     TeamMembersActions,
     WorksActions,
@@ -11,11 +11,10 @@ import {
     ContactsActions,
     MessagesActions,
     SocialLinksActions,    AppendAction,
-    ShowLoginPageAction,
     AuthActions,
-    SignOutAction,
-    LoginPageActions,
     OperationDetailsAction,
+    SignInAction,
+    InitPageAction,
 } from "../actions/actions";
 import { ActionTypes } from "../actions/actionTypes";
 import {
@@ -26,8 +25,7 @@ import {
     Brand,
     Testimonial,
     ContactInfo,
-    SocialLink,    Message
-} from "../entities";
+    SocialLink,} from "../entities";
 
 const initialState: AppState = {
     services: {
@@ -101,7 +99,7 @@ export function servicesReducer(state: ServicesState = initialState.services, ac
             return {
                 isLoading: false,
                 error: null,
-                items: (action as ShowAction<ServiceInfo>).items
+                items: (action as AssignManyAction<ServiceInfo>).items
             };
 
         case ActionTypes.ASSIGN_ERROR:
@@ -128,7 +126,7 @@ export function teamMembersReducer(state: TeamMembersState = initialState.teamMe
             return {
                 isLoading: false,
                 error: null,
-                items: (action as ShowAction<DomainUser>).items
+                items: (action as AssignManyAction<DomainUser>).items
             };
 
         case ActionTypes.ASSIGN_ERROR:
@@ -155,7 +153,7 @@ export function worksReducer(state: WorksState = initialState.works, action: Wor
             return {
                 isLoading: false,
                 error: null,
-                items: (action as ShowAction<WorkExample>).items
+                items: (action as AssignManyAction<WorkExample>).items
             };
 
         case ActionTypes.ASSIGN_ERROR:
@@ -183,7 +181,7 @@ export function blogReducer(state: BlogState = initialState.blog, action: BlogAc
             return {
                 isLoading: false,
                 error: null,
-                items: (action as ShowAction<BlogPost>).items
+                items: (action as AssignManyAction<BlogPost>).items
             };
 
         case ActionTypes.ASSIGN_ERROR:
@@ -217,7 +215,7 @@ export function brandsReducer(state: BrandsState = initialState.brands, action: 
             return {
                 isLoading: false,
                 error: null,
-                items: (action as ShowAction<Brand>).items
+                items: (action as AssignManyAction<Brand>).items
             };
 
         case ActionTypes.ASSIGN_ERROR:
@@ -244,7 +242,7 @@ export function testimonialsReducer(state: TestimonialsState = initialState.test
             return {
                 isLoading: false,
                 error: null,
-                items: (action as ShowAction<Testimonial>).items
+                items: (action as AssignManyAction<Testimonial>).items
             };
 
         case ActionTypes.ASSIGN_ERROR:
@@ -271,7 +269,7 @@ export function contactsReducer(state: ContactsState = initialState.contacts, ac
             return {
                 isLoading: false,
                 error: null,
-                items: (action as ShowAction<ContactInfo>).items
+                items: (action as AssignManyAction<ContactInfo>).items
             };
 
         case ActionTypes.ASSIGN_ERROR:
@@ -340,7 +338,7 @@ export function socialLinksReducer(state: SocialLinksState = initialState.social
             return {
                 isLoading: false,
                 error: null,
-                items: (action as ShowAction<SocialLink>).items
+                items: (action as AssignManyAction<SocialLink>).items
             };
 
         case ActionTypes.ASSIGN_ERROR:
@@ -355,33 +353,30 @@ export function socialLinksReducer(state: SocialLinksState = initialState.social
     }
 }
 
-export function authReducer(state: AuthState = initialState.auth, action: AuthActions): AuthState {
+export function authReducer(state: AuthState = initialState.auth, action: AuthActions | InitPageAction): AuthState {
     switch (action.type) {
-        case "SIGN_OUT":
-            let { userName, photo, isAdmin, isAuthenticated } = action as SignOutAction;
+        case "SIGN_IN":
             return {
-                isAuthenticated,
-                userName,
-                photo,
-                isAdmin
+                userName: "",
+                photo: "",
+                isAuthenticated: true,
+                isAdmin: (action as SignInAction).isAdmin
             };
 
-        default:
-            return state;
-    }
-}
+        case "SIGN_OUT":
+            return {
+                userName: "",
+                photo: "",
+                isAuthenticated: false,
+                isAdmin: false
+            };
 
-export function pageModelsReducer(state: AppState = initialState, action: LoginPageActions): AppState {
-    switch (action.type) {
-
-        case "SHOW_LOGIN_PAGE":
+        case "INIT_LOGIN_PAGE":
+        case "INIT_NOT_FOUND_PAGE": //console.log("state", state); console.log("action", action);//
+        case "INIT_ACCESS_DENIED_PAGE":
             return {
                 ...state,
-                auth: {
-                    userName: (action as ShowLoginPageAction).userName,
-                    photo: (action as ShowLoginPageAction).photo,
-                    ...state.auth
-                }
+                ...action
             };
 
         default:

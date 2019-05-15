@@ -39,9 +39,9 @@ export interface OperationDetailsState {
 }
 
 export interface AuthState {
-    isAuthenticated: boolean,
     userName: string,
     photo: string,
+    isAuthenticated: boolean,
     isAdmin: boolean
 }
 

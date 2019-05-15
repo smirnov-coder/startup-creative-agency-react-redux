@@ -8,10 +8,6 @@ interface AdminHeaderProps {
 }
 
 export class AdminHeader extends React.Component<AdminHeaderProps> {
-    constructor(props: AdminHeaderProps) {
-        super(props);
-    }
-
     render(): JSX.Element {
         let { isAuthenticated } = this.props;
         return (

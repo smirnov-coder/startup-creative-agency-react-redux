@@ -11,7 +11,6 @@ import {
     messagesReducer,
     socialLinksReducer,
     authReducer,
-    pageModelsReducer,
     operationDetailsReducer,
 } from "./reducers";
 
@@ -26,7 +25,6 @@ const rootReducer = (history: History) => combineReducers({
     messages: messagesReducer,
     socialLinks: socialLinksReducer,
     auth: authReducer,
-    pageModels: pageModelsReducer,
     operationDetails: operationDetailsReducer,
 
     router: connectRouter(history)

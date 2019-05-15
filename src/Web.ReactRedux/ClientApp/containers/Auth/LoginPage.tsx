@@ -11,17 +11,16 @@ import { AppState } from "../../store/state";
 type LoginPageProps = StateProps & DispatchProps;
 
 export class LoginPage extends React.Component<LoginPageProps> {
-    constructor(props: LoginPageProps) {
-        super(props);
+    componentWillMount(): void {
+        this.props.getPageModel();
     }
 
     componentDidMount(): void {
         document.title = "Startup ReactRedux Login";
-        this.props.getPageModel();
     }
 
     render(): JSX.Element {
-        let { isAuthenticated } = this.props;
+        let { isAuthenticated } = this.props; //console.log("login page isAuth", isAuthenticated);//
         return (
             <Layout>
                 <Layout.Header>
@@ -43,6 +42,7 @@ interface StateProps {
 }
 
 const mapStateToProps = (state: AppState): StateProps => {
+    //console.log("login page state", state);//
     return {
         isAuthenticated: state.auth.isAuthenticated
     };

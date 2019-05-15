@@ -3,10 +3,9 @@ import { connect } from "react-redux";
 import { Dispatch, bindActionCreators } from "redux";
 import { Button, ButtonModifiers } from "../../components/Home/Button";
 import { signIn } from "../../store/actions/actionCreators";
-//import { RouteComponentProps, withRouter } from "react-router";
 import "./LoginForm.scss";
 
-type LoginFormProps = /*StateProps &*/ DispatchProps /*& RouteComponentProps*/;
+type LoginFormProps = DispatchProps;
 
 interface LoginFormState {
     userName: string;
@@ -36,9 +35,6 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
                 },
                 password: {
                     required: true
-                },
-                "remember-me": {
-                    required: true
                 }
             },
             errorElement: "span",
@@ -49,17 +45,10 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
             submitHandler: (form, event) => {
                 event.preventDefault();
                 // dispatch sign in here
-                //let { userName, password, rememberMe } = this.state;
-                //let { signIn, returnUrl, history } = this.props;
-                //signIn(userName, password, rememberMe); console.log(returnUrl, "returnUrl");//
-                //if (returnUrl && returnUrl !== "") {
-                //    history.push(returnUrl);
-                //} else {
-                //    history.push("/admin/myprofile");
-                //}
+                this.props.signIn({ ...this.state }); //console.log("login form submitted");//
             },
             invalidHandler: (event, validator) => {
-                console.log("Form data is invalid.");//
+                console.error("Form data is invalid.");//
             }
         })
     }
@@ -73,7 +62,7 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
                 <h3>Log in to Admin area.</h3>
                 <hr />
                 <form ref={this.loginForm}>
-                    //<div asp-validation-summary="ModelOnly"></div>
+                    {/*<div asp-validation-summary="ModelOnly"></div>*/}
                     <div className="form-group">
                         <label htmlFor="user-name" className="control-label">User Name</label>
                         <input id="user-name" name="user-name" className="login-form__user-name form-control"
@@ -111,16 +100,6 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
     }
 }
 
-//interface StateProps {
-//    returnUrl: string;
-//}
-
-//const mapStateToProps = (state: AppState): StateProps => {
-//    return {
-//        returnUrl: state.auth.returnUrl
-//    };
-//}
-
 interface SignInInfo {
     userName: string;
     password: string;
@@ -138,4 +117,4 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     }
 }
 
-export default /*withRouter(*/connect(null, mapDispatchToProps)(LoginForm)/*)*/;
+export default connect(null, mapDispatchToProps)(LoginForm);

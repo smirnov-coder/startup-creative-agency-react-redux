@@ -15,9 +15,9 @@ export default function configureStore(preloadedState?: any) {
             applyMiddleware(
                 routerMiddleware(history),
                 thunk
-            ),
-        ),
-    )
+            )
+        )
+    );
 
     // Hot reloading
     if (module.hot) {
