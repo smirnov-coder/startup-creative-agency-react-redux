@@ -18,8 +18,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 
     public class PersonalInfoViewModel
     {
-        [BindNever]
-        public string UserName { get; set; }
+        //[BindNever]
+        //public string UserName { get; set; }
 
         [StringLength(30)]
         public string FirstName { get; set; }

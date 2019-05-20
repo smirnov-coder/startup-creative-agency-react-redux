@@ -1,16 +1,17 @@
 "use strict";
 
+const webpack = require("webpack");
 const path = require("path");
 const CheckerPlugin = require("awesome-typescript-loader").CheckerPlugin;
-const globImporter = require("node-sass-glob-importer");
+const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 const CleanPlugin = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     mode: "development",
-    devtool: "inline-source-map",
+    devtool: "eval-source-map",
     entry: {
-        index: "./ClientApp/index.tsx",
+        app: "./ClientApp/index.tsx",
     },
     output: {
         filename: "js/[name].bundle.js",
@@ -29,10 +30,33 @@ module.exports = {
 
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],
-        alias: { "react-dom": "@hot-loader/react-dom" }
+        alias: {
+            "react-dom": "@hot-loader/react-dom",
+            //"components": path.resolve(__dirname, "ClientApp", "components"),
+            //"containers": path.resolve(__dirname, "ClientApp", "containers"),
+            //"store": path.resolve(__dirname, "ClientApp", "store"),
+            //"scripts": path.resolve(__dirname, "ClientApp", "scripts"),
+            //"styles": path.resolve(__dirname, "ClientApp", "styles"),
+            //"bootstrap/css": path.resolve(__dirname, "ClientApp", "assets/lib/bootstrap-customized/css/bootstrap.css"),
+            //"bootstrap/js": path.resolve(__dirname, "ClientApp", "assets/lib/bootstrap-customized/js/bootstrap.js")
+        },
+        plugins: [
+            new TsConfigPathsPlugin()
+        ],
     },
+    //resolveLoader: {
+    //    plugins: [
+    //        TsConfigPathsPlugin,
+    //        //PnpWebpackPlugin.moduleLoader(module),
+    //    ],
+    //},
+
     module: {
         rules: [
+            //{
+            //    test: /\.tsx?/,
+            //    loader: "ts-loader"
+            //},
             {
                 test: /\.tsx?$/,
                 include: /ClientApp/,
@@ -58,14 +82,7 @@ module.exports = {
             {
                 test: /\.s(c|a)ss$/,
                 exclude: /node_modules/,
-                use: [
-                    { loader: "style-loader" },
-                    { loader: "css-loader" },
-                    {
-                        loader: "sass-loader",
-                        options: { importer: globImporter() } // А надо ли?
-                    }
-                ]
+                use: ["style-loader", "css-loader", "sass-loader"]
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/,
@@ -78,7 +95,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(woff|woff2|ttf|otf|eot)$/,
+                test: /\.(woff2?|ttf|otf|eot)$/,
                 use: {
                     loader: "file-loader",
                     options: { name: "fonts/[name].[ext]" }
@@ -88,6 +105,18 @@ module.exports = {
     },
 
     plugins: [
+        // Повторно объявляем jQuery глобальной функцией, чтобы не приходилось
+        // импортировать её в каждый пользовательский js-файл.
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "window.jQuery": "jquery"
+        }),
+        new webpack.DllReferencePlugin({
+            context: ".",
+            manifest: require("./wwwroot/lib/vendor-manifest.json"),
+            name: "vendor_lib"
+        }),
         new CleanPlugin([
             "wwwroot/*.*",
             //"wwwroot/images",
@@ -97,14 +126,16 @@ module.exports = {
         ]),
         new CopyPlugin([
             {
-                from: "./ClientApp/images",
+                from: "./ClientApp/assets/images",
                 to: "./images"
             },
             {
-                from: "./ClientApp/favicon",
+                from: "./ClientApp/assets/favicon",
                 to: "./"
             }
         ]),
-        new CheckerPlugin()
+        //new TsConfigPathsPlugin(),
+        new CheckerPlugin(),
+        //new webpack.HotModuleReplacementPlugin(),
     ]
 };

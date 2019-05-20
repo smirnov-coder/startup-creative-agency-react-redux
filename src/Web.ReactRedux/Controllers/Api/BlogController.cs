@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Web.ReactRedux.ViewModels;
@@ -31,11 +30,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         [AllowAnonymous]
         public async Task<IEnumerable<BlogPost>> ListAsync(int skip = 0, int take = 0)
         {
-            return await _blogService.GetBlogPostsAsync(skip, take);
+            return (await _blogService.GetBlogPostsAsync(skip, take)).Select(blogPost => PrepareEntityForReturn(blogPost));
         }
 
         [NonAction]
-        public override Task<IEnumerable<BlogPost>> ListAsync() => base.ListAsync();
+        public override Task<IEnumerable<BlogPost>> ListAsync() => throw new NotSupportedException();
 
         protected override async Task<BlogPost> CreateEntityFromModelAsync(BlogPostViewModel model, DomainUser creator)
         {

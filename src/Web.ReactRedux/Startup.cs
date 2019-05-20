@@ -124,6 +124,7 @@ namespace StartupCreativeAgency.Web.ReactRedux
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.MaxDepth = 100;////////////////////////
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -136,7 +137,12 @@ namespace StartupCreativeAgency.Web.ReactRedux
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
                     ConfigFile = "webpack.development.config.js",
-                    HotModuleReplacement = true
+                    HotModuleReplacement = true,
+                    HotModuleReplacementClientOptions = new Dictionary<string, string>
+                    {
+                        ["timeout"] = "30000", // my computer is too slow :(
+                        ["reload"] = "true"
+                    }
                 });
             }
             else
@@ -157,9 +163,14 @@ namespace StartupCreativeAgency.Web.ReactRedux
             app.UseAuthentication();
             app.UseMvc(routes =>
             {
+                //routes.MapRoute(
+                //    name: "api",
+                //    template: "api/{controller}");
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
+
 
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",

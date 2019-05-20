@@ -1,0 +1,30 @@
+﻿@import "../../styles/_include.scss";
+
+.loader {
+    display: block;
+    margin: 0;
+    padding: 5px;
+    text-align: center;
+    color: $accent-color;
+    z-index: 99999;
+
+    &--color-white {
+        color: $white-color;
+    }
+
+    &--behavior-fill {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: px-to-rem(20px) + 3rem;
+    }
+
+    &--bg-translucent {
+        background-color: rgba($white-color, 0.5);
+    }
+}
