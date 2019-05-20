@@ -45,11 +45,19 @@ export type ContactsActions = CommonActions | AssignManyAction<ContactInfo>
 export type SocialLinksActions = CommonActions | AssignManyAction<SocialLink>
 export type MessagesActions = CommonActions | SendAction | ShowResponse
 
-export interface InitPageAction extends Action {
+export interface InitSimplePageAction extends Action {
     userName: string;
     photo: string;
     isAuthenticated: boolean;
 }
+
+export interface InitMyProfilePageAction extends InitSimplePageAction {
+    user: DomainUser;
+    isAdmin: boolean;
+    newMessagesCount: number;
+}
+
+export type PagesActions = InitSimplePageAction | InitMyProfilePageAction
 
 export interface SignOutAction extends Action { }
 
@@ -62,6 +70,10 @@ export type AuthActions = CommonActions | SignInAction | SignOutAction
 export interface OperationDetailsAction extends Action {
     isError: boolean;
     message: string;
-    validationError: ValidationProblemDetails
 }
 
+export interface AssignSingleAction<T> extends Action {
+    item: T
+}
+
+export type UsersActions = CommonActions | AssignSingleAction<DomainUser>

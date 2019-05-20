@@ -1,18 +1,18 @@
 ﻿import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { getHomePageModel } from "../../store/actions/actionCreators";
-import { ServiceInfo, DomainUser, WorkExample, BlogPost, Brand, Testimonial, ContactInfo, SocialLink } from "../../store/entities";
-import { Header } from "../../components/Home/Header";
-import { ServicesSection } from "../../components/Home/ServicesSection";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import { getHomePageModel } from "@store/actions/actionCreators";
+import { ServiceInfo, DomainUser, WorkExample, BlogPost, Brand, Testimonial, ContactInfo, SocialLink } from "@store/entities";
+import { Header } from "@components/Home/Header";
+import { ServicesSection } from "@components/Home/ServicesSection";
+import "@bootstrap/css";
 import "./HomePage.scss";
-import { AboutSection } from "../../components/Home/AboutSection";
-import { WorksSection } from "../../components/Home/WorksSection";
-import { ParallaxSection } from "../../components/Home/ParallaxSection";
-import { BlogSection } from "../../components/Home/BlogSection";
-import { ClientsSection } from "../../components/Home/ClientsSection";
-import { ContactSection } from "../../components/Home/ContactSection";
+import { AboutSection } from "@components/Home/AboutSection";
+import { WorksSection } from "@components/Home/WorksSection";
+import { ParallaxSection } from "@components/Home/ParallaxSection";
+import { BlogSection } from "@components/Home/BlogSection";
+import { ClientsSection } from "@components/Home/ClientsSection";
+import { ContactSection } from "@components/Home/ContactSection";
 import Footer from "./Footer";
 
 export interface HomePageModel {
@@ -33,9 +33,12 @@ class HomePage extends React.Component<HomePageProps> {
         super(props);
     }
 
+    componentWillMount(): void {
+        this.props.getPageModel();
+    }
+
     componentDidMount(): void {
         document.title = "Startup ReactRedux Home";
-        this.props.getPageModel();
     }
 
     render(): JSX.Element {

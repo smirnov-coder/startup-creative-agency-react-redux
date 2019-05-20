@@ -1,9 +1,9 @@
 ﻿import * as React from "react";
-import { Logo } from "./Logo";
 import { Nav } from "./Nav";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
-import "../../assets/lib/bootstrap-customized/js/bootstrap";
+import "@bootstrap/css";
+import "@bootstrap/js";
 import "./Navbar.scss";
+import { Logo } from "@components/Shared/Logo";
 
 interface NavbarProps {
     containerRef: React.RefObject<HTMLElement>;

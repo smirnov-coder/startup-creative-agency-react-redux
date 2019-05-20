@@ -10,7 +10,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
     public class BasePageModel
     {
         public UserWidgetViewModel UserWidget { get; set; }
-        //public bool IsAdmin { get; set; }
+        public bool IsAdmin { get; set; }
         public int NewMessagesCount { get; set; }
     }
 
@@ -38,12 +38,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 
     public class MyProfilePageModel : BasePageModel
     {
-        public string UserName { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string JobPosition { get; set; }
-        public string PhotoFilePath { get; set; }
-        public IEnumerable<SocialLink> SocialLinks { get; set; }
+        public DomainUser User { get; set; }
     }
 
     public class ServicePageModel : BasePageModel

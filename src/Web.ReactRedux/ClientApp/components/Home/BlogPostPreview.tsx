@@ -1,9 +1,9 @@
 ﻿import * as React from "react";
-import { BlogPost, DomainUser } from "../../store/entities";
-import { Button, ButtonModifiers } from "./Button";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import { BlogPost, DomainUser } from "@store/entities";
+import "@bootstrap/css";
 import "./BlogPostPreview.scss";
-import smoothScroll from "../../scripts/smoothScroll";
+import smoothScroll from "@scripts/smoothScroll";
+import { Button, ButtonModifiers } from "@components/Shared/Button";
 
 interface BlogPostPreviewProps {
     blogPost: BlogPost;

@@ -124,7 +124,7 @@ namespace StartupCreativeAgency.Web.ReactRedux
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    options.SerializerSettings.MaxDepth = 10;
+                    options.SerializerSettings.MaxDepth = 100;////////////////////////
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

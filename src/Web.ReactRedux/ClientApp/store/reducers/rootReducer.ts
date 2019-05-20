@@ -12,6 +12,7 @@ import {
     socialLinksReducer,
     authReducer,
     operationDetailsReducer,
+    usersReducer,    notificationsReducer
 } from "./reducers";
 
 const rootReducer = (history: History) => combineReducers({
@@ -26,6 +27,8 @@ const rootReducer = (history: History) => combineReducers({
     socialLinks: socialLinksReducer,
     auth: authReducer,
     operationDetails: operationDetailsReducer,
+    users: usersReducer,
+    notifications: notificationsReducer,
 
     router: connectRouter(history)
 });

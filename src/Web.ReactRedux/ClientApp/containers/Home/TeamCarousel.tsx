@@ -1,13 +1,13 @@
 ﻿import * as React from "react";
-import { DomainUser } from "../../store/entities";
+import { DomainUser } from "@store/entities";
 import { connect } from "react-redux";
-import { TeamMember } from "../../components/Home/TeamMember";
+import { TeamMember } from "@components/Home/TeamMember";
 import OwlCarousel from "../../assets/lib/owl.carousel-customized/OwlCarousel";
 import { Options } from "../../assets/lib/owl.carousel-customized/OwlCarousel";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import "@bootstrap/css";
 import "./TeamCarousel.scss";
-import { Loader } from "../../components/Home/Loader";
-import { AppState } from "../../store/state";
+import { AppState } from "@store/state";
+import Loader from "@components/Shared/Loader";
 
 type TeamCarouselProps = StateProps;
 

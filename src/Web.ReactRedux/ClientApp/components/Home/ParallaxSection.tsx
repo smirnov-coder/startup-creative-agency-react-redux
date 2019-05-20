@@ -1,10 +1,10 @@
 ﻿import * as React from "react";
 import { Section } from "./Section";
-import { ButtonModifiers } from "./Button";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import "@bootstrap/css";
 import "./ParallaxSection.scss";
-import smoothScroll from "../../scripts/smoothScroll";
-import { LinkButton } from "./LinkButton";
+import smoothScroll from "@scripts/smoothScroll";
+import { LinkButton } from "@components/Shared/LinkButton";
+import { ButtonModifiers } from "@components/Shared/Button";
 
 export class ParallaxSection extends React.Component {
     render(): JSX.Element {

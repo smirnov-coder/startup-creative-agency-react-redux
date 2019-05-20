@@ -9,21 +9,32 @@
     MessagesActions,
     SocialLinksActions,
     OperationDetailsAction,
-    InitPageAction,
+    InitSimplePageAction,
     SignOutAction,
     SignInAction,
+    InitMyProfilePageAction,
 } from "./actions";
 import { Dispatch } from "redux";
 import { ActionTypes } from "./actionTypes";
-import { ServiceInfo, DomainUser, WorkExample, BlogPost, Brand, Testimonial, ContactInfo, SocialLink } from "../entities";
-import { HomePageModel } from "../../containers/Home/HomePage";
-import { ContactMessage } from "../../containers/Home/ContactForm";
-import { push } from "connected-react-router";
-import { ValidationProblemDetails, OperationDetailsState } from "../state";
+import { ServiceInfo, DomainUser, WorkExample, BlogPost, Brand, Testimonial, ContactInfo, SocialLink } from "@store/entities";
+import { HomePageModel } from "@containers/Home/HomePage";
+import { ContactMessage } from "@containers/Home/ContactForm";
+import { push, replace } from "connected-react-router";
+import { OperationDetailsState, Notification } from "@store/state";
+import { MyProfilePageModel } from "@containers/Admin/MyProfilePage";
+import { Map } from "immutable";
+import { encodeHTML } from "@scripts/utils";
+import { Date } from "core-js";
 
-export const request = (): CommonActions => {
+export const requestBegin = (): CommonActions => {
     return {
         type: ActionTypes.REQUEST
+    };
+}
+
+function requestEnd() {
+    return {
+        type: "REQUEST_END"
     };
 }
 
@@ -91,7 +102,7 @@ export const assignSocialLinks = (socialLinks: SocialLink[]): SocialLinksActions
 }
 
 export const getHomePageModel = () => (dispatch: Dispatch) => {
-    dispatch(request());
+    dispatch(requestBegin());
     return fetch("/api/pagemodels/home")
         .then((response: Response) => {
             return response.json();
@@ -112,7 +123,7 @@ export const getHomePageModel = () => (dispatch: Dispatch) => {
 }
 
 export const getLoginPageModel = () => (dispatch: Dispatch) => {
-    dispatch(request());
+    dispatch(requestBegin());
     let accessToken: string = readAccessToken();
     let options: RequestInit = {
         headers: !accessToken ? {} : {
@@ -134,7 +145,7 @@ export const getLoginPageModel = () => (dispatch: Dispatch) => {
 }
 
 export const getNotFoundPageModel = () => (dispatch: Dispatch) => {
-    dispatch(request());
+    dispatch(requestBegin());
     let accessToken: string = readAccessToken();
     let options: RequestInit = {
         headers: !accessToken ? {} : {
@@ -156,7 +167,7 @@ export const getNotFoundPageModel = () => (dispatch: Dispatch) => {
 }
 
 export const getAccessDeniedPageModel = () => (dispatch: Dispatch) => {
-    dispatch(request());
+    dispatch(requestBegin());
     let accessToken: string = readAccessToken();
     let options: RequestInit = {
         headers: !accessToken ? {} : {
@@ -177,6 +188,342 @@ export const getAccessDeniedPageModel = () => (dispatch: Dispatch) => {
         });
 }
 
+export const getMyProfilePageModel = () => (dispatch: Dispatch) => {
+    dispatch(requestBegin());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        }
+    }; //console.log("options", options);//
+    return fetch("/api/pagemodels/myprofile", options)
+        .then((response: Response) => {
+            //console.log("response", response);//
+            return response.json();
+        })
+        .then((data: MyProfilePageModel) => {
+            //console.log("data", data);//
+            dispatch(initMyProfilePage(data));
+        })
+        .catch((error: Error) => {
+            console.error(error, "getMyProfilePageModel error");//
+        });
+}
+
+const initMyProfilePage = (model: MyProfilePageModel): InitMyProfilePageAction => {
+    return {
+        type: "INIT_MY_PROFILE_PAGE",
+        userName: model.userWidget.userName,
+        photo: model.userWidget.photo,
+        isAuthenticated: true,
+        isAdmin: model.isAdmin,
+        user: model.user,
+        newMessagesCount: model.newMessagesCount
+    };
+}
+
+export const updateUserProfile = (userName: string, formData: FormData) => (dispatch: Dispatch) => {
+    //console.log("formData", formData);//
+    dispatch(requestBegin());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        method: "PUT",
+        body: formData,
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        }
+    };
+    return fetch(`/api/users/${userName}/profile`, options)
+        .then((response: Response) => response.json())
+        .then((data: any) => {
+            //console.log("data", data);//
+            let details: OperationDetails = data as OperationDetails
+            if (!details) {
+                details = {
+                    isError: true,
+                    message: "A validation error occurred while processing your request."
+                };
+            }
+            let notification: Notification = {
+                id: Date.now(),
+                type: details.isError ? "error" : "success",
+                text: $("<div />").text(details.message).html() // HTML encode with jQuery.
+            };
+            dispatch(addNotification(notification))
+            getMyProfilePageModel()(dispatch)
+                .then(() => dispatch(push("/admin/myprofile")));
+        })
+        .catch((error: Error) => {
+            console.error(error, "updateUserProfile error");//
+        });
+}
+
+export const addNotification = (notification: Notification) => {
+    return {
+        type: "ADD_NOTIFICATION",
+        notification
+    };
+}
+
+export const deleteNotification = (id: number) => {
+    return {
+        type: "DELETE_NOTIFICATION",
+        id
+    };
+}
+
+interface ServicesPageModel {
+    userWidget: {
+        userName: string,
+        photo: string
+    };
+    items: ServiceInfo[];
+    isAdmin: boolean;
+    newMessagesCount: number;
+}
+
+export const getServicesPageModel = () => (dispatch: Dispatch) => {
+    dispatch(requestBegin());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        }
+    };
+    return fetch("/api/pagemodels/services", options)
+        .then((response: Response) => {
+            return response.json();
+        })
+        .then((data: ServicesPageModel) => {
+            dispatch(initServicesPage(data));
+        })
+        .catch((error: Error) => {
+            console.error(error, "getServicesPageModel error");//
+        });
+}
+
+const initServicesPage = (model: ServicesPageModel): any => {
+    return {
+        type: "INIT_SERVICES_PAGE",
+        userName: model.userWidget.userName,
+        photo: model.userWidget.photo,
+        isAuthenticated: true,
+        isAdmin: model.isAdmin,
+        services: model.items,
+        newMessagesCount: model.newMessagesCount
+    };
+}
+
+export const deleteService = (serviceId: number) => (dispatch: Dispatch) => {
+    /// TODO: Отрефакторить.
+    dispatch(requestBegin());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        method: "DELETE",
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        }
+    };
+    return fetch(`/api/services/${serviceId}`, options)
+        .then((response: Response) => response.json())
+        .then((data: any) => {
+            let details: OperationDetails = data as OperationDetails
+            if (!details) {
+                details = {
+                    isError: true,
+                    message: "A validation error occurred while processing your request."
+                };
+            }
+            let notification: Notification = {
+                id: Date.now(),
+                type: details.isError ? "error" : "success",
+                text: encodeHTML(details.message)
+            };
+            dispatch(addNotification(notification))
+            getServicesPageModel()(dispatch)
+                .then(() => dispatch(push("/admin/services")));
+        })
+        .catch((error: Error) => {
+            console.error(error, "deleteService error");//
+        });
+}
+
+interface AddServicePageModel {
+    userWidget: UserInfo;
+    isAdmin: boolean;
+    newMessagesCount: number;
+}
+
+export const getAddServicePageModel = () => (dispatch: Dispatch) => {
+    dispatch(requestBegin());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        }
+    }; //console.log("options", options);//
+    return fetch("/api/pagemodels/addservice", options)
+        .then((response: Response) => {
+            //console.log("response", response);//
+            return response.json();
+        })
+        .then((data: AddServicePageModel) => {
+            //console.log("data", data);//
+            dispatch(initAddServicePage(data));
+        })
+        .catch((error: Error) => {
+            console.error(error, "getAddServicePageModel error");//
+        });
+}
+
+const initAddServicePage = (model: AddServicePageModel): any => {
+    return {
+        type: "INIT_ADD_SERVICE_PAGE",
+        userName: model.userWidget.userName,
+        photo: model.userWidget.photo,
+        isAuthenticated: true,
+        isAdmin: model.isAdmin,
+        newMessagesCount: model.newMessagesCount
+    };
+}
+
+interface EditServicePageModel {
+    userWidget: UserInfo;
+    isAdmin: boolean;
+    newMessagesCount: number;
+    item: ServiceInfo;
+}
+
+export const getEditServicePageModel = (serviceId: number) => (dispatch: Dispatch) => {
+    dispatch(requestBegin());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        }
+    }; //console.log("options", options);//
+    return fetch(`/api/pagemodels/editservice/${serviceId}`, options)
+        .then((response: Response) => {
+            //console.log("response", response);//
+            if (response.status === 404) {
+                dispatch(replace("/notfound"));
+                throw new Error("Page not found.");
+            }
+            return response.json();
+        })
+        .then((data: EditServicePageModel) => {
+            //console.log("data", data);//
+            dispatch(initEditServicePage(data));
+        })
+        .catch((error: Error) => {
+            console.error(error, "getEditServicePageModel error");//
+        });
+}
+
+const initEditServicePage = (model: EditServicePageModel): any => {
+    return {
+        type: "INIT_EDIT_SERVICE_PAGE",
+        userName: model.userWidget.userName,
+        photo: model.userWidget.photo,
+        isAuthenticated: true,
+        isAdmin: model.isAdmin,
+        newMessagesCount: model.newMessagesCount,
+        item: model.item
+    };
+}
+
+interface ValidationProblemDetails {
+    title: string;
+    errors: Map<string, string[]>;
+}
+
+export const addService = (formData: FormData) => (dispatch: Dispatch) => {
+    dispatch(requestBegin());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        method: "POST",
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        },
+        body: formData
+    };
+    return fetch(`/api/services`, options)
+        .then((response: Response) => {
+            return response.json();
+        })
+        .then((data: OperationDetails | ValidationProblemDetails) => {
+            let isValidationError: boolean = "title" in data;
+            let details: OperationDetails = null;
+            if (isValidationError) {
+                details = {
+                    isError: true,
+                    message: "A validation error occurred while processing your request."
+                }
+            } else {
+                details = <OperationDetails>data;
+            }
+            let notification: Notification = {
+                id: Date.now(),
+                type: details.isError ? "error" : "success",
+                text: encodeHTML(details.message)
+            };
+            dispatch(addNotification(notification))
+            if (!isValidationError) {
+                dispatch(push("/admin/services"));
+            } else {
+                dispatch(requestEnd());
+            }
+        })
+        .catch((error: Error) => {
+            console.error(error, "addService error");//
+        });
+}
+
+export const updateService = (serviceId: number, formData: FormData) => (dispatch: Dispatch) => {
+    dispatch(requestBegin());
+    let accessToken: string = readAccessToken();
+    let options: RequestInit = {
+        method: "PUT",
+        headers: !accessToken ? {} : {
+            Authorization: `Bearer ${accessToken}`
+        },
+        body: formData
+    };
+    return fetch(`/api/services/${serviceId}`, options)
+        .then((response: Response) => {
+            return response.json();
+        })
+        .then((data: OperationDetails | ValidationProblemDetails) => {
+            let isValidationError: boolean = "title" in data;
+            let details: OperationDetails = null;
+            if (isValidationError) {
+                details = {
+                    isError: true,
+                    message: (data as ValidationProblemDetails).title
+                }
+            } else {
+                details = <OperationDetails>data;
+            }
+            let notification: Notification = {
+                id: Date.now(),
+                type: details.isError ? "error" : "success",
+                text: encodeHTML(details.message)
+            };
+            dispatch(addNotification(notification))
+            if (!isValidationError) {
+                dispatch(push("/admin/services"));
+            } else {
+                dispatch(requestEnd());
+            }
+        })
+        .catch((error: Error) => {
+            console.error(error, "updateService error");//
+        });
+}
+
+
+
+
 const STORAGE_KEY: string = "accessToken";
 
 function readAccessToken(): string {
@@ -192,7 +539,7 @@ interface UserInfo {
     photo: string;
 }
 
-const initSimplePage = (type: string, { userName, photo }: UserInfo): InitPageAction => {
+const initSimplePage = (type: string, { userName, photo }: UserInfo): InitSimplePageAction => {
     return {
         type,
         userName,
@@ -226,8 +573,13 @@ interface OperationDetails {
     message: string;
 }
 
+interface AuthInfo {
+    accessToken: string;
+    isAdmin: boolean;
+}
+
 export const signIn = ({ userName, password, rememberMe, returnUrl }: SignInInfo) => (dispatch: Dispatch) => {
-    dispatch(request()); //console.log("signIn action creator");//
+    dispatch(requestBegin());
     let options: RequestInit = {
         method: "POST",
         headers: {
@@ -237,33 +589,25 @@ export const signIn = ({ userName, password, rememberMe, returnUrl }: SignInInfo
     };
     return fetch("/api/auth/token", options)
         .then((response: Response) => {
-            //console.log("response", response);//
             return response.json();
         })
-        .then((data: any) => {
-            //console.log("data", data);//
-            let { accessToken, isAdmin } = data;
-            if (accessToken) {
-                //console.log("sign in success");//
+        .then((data: OperationDetails | ValidationProblemDetails | AuthInfo) => {
+            if ("accessToken" in data) {
+                let { accessToken, isAdmin } = data;
                 dispatch(doSignIn(accessToken, isAdmin, rememberMe));
                 dispatch(push(returnUrl ? returnUrl : "/admin/myprofile"));
                 return;
             }
-            let details: OperationDetails;
-            if (details = data as OperationDetails) {
-                //console.log("sign in error");//
-                dispatch(assignOperationDetails({ ...details, validationError: null }));
-                return;
-            }
-            let validationError: ValidationProblemDetails
-            if (validationError = data as ValidationProblemDetails) {
-                //console.log("validation problem");//
+            let details: OperationDetails = null;
+            if ("title" in data) {
                 details = {
                     isError: true,
-                    message: validationError.title
+                    message: data.title
                 };
-                dispatch(assignOperationDetails({ ...details, validationError }))
+            } else {
+                details = <OperationDetails>data;
             }
+            dispatch(assignOperationDetails({ ...details }))
         })
         .catch((error: Error) => {
             console.error(error, "signIn error");//
@@ -282,12 +626,11 @@ const doSignIn = (accessToken: string, isAdmin: boolean, rememberMe: boolean): S
     };
 }
 
-const assignOperationDetails = ({ isError, message, validationError }: OperationDetailsState): OperationDetailsAction => {
+const assignOperationDetails = ({ isError, message }: OperationDetailsState): OperationDetailsAction => {
     return {
         type: "ASSIGN_OPERATION_DETAILS",
         isError,
-        message,
-        validationError
+        message
     };
 }
 
@@ -310,19 +653,17 @@ export const sendMessage = (message: ContactMessage) => (dispatch: Dispatch) => 
         .then((response: Response) => {
             return response.json();
         })
-        .then((data: any) => {
-            let details: OperationDetails;
-            if (details = data as OperationDetails) {
-                dispatch(assignOperationDetails({ ...details, validationError: null }));
-            }
-            let validationError: ValidationProblemDetails
-            if (validationError = data as ValidationProblemDetails) {
+        .then((data: OperationDetails | ValidationProblemDetails) => {
+            let details: OperationDetails = null;
+            if ("title" in data) {
                 details = {
                     isError: true,
-                    message: `${validationError.title} Please check message data and try again.`
-                }
-                dispatch(assignOperationDetails({ ...details, validationError }))
+                    message: `${(data as ValidationProblemDetails).title} Please check message data and try again.`
+                };
+            } else {
+                details = <OperationDetails>data;
             }
+            dispatch(assignOperationDetails({ ...details }));
         })
         .catch((error: Error) => {
             console.error(error, "sendMessage error");//

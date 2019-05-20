@@ -2,9 +2,9 @@
 import { Navbar } from "./Navbar";
 import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
 import "./Header.scss";
-import { ButtonModifiers } from "./Button";
 import smoothScroll from "../../scripts/smoothScroll";
-import { LinkButton } from "./LinkButton";
+import { LinkButton } from "@components/Shared/LinkButton";
+import { ButtonModifiers } from "@components/Shared/Button";
 
 export class Header extends React.Component {
     private navbar = React.createRef<HTMLElement>();

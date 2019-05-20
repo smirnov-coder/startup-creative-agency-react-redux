@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
-import { WorkExample } from "../../store/entities";
-import { Button, ButtonModifiers } from "./Button";
+import { WorkExample } from "@store/entities";
 import "./WorkExamplePreview.scss";
+import { Button, ButtonModifiers } from "@components/Shared/Button";
 
 interface WorkExamplePreviewProps {
     workExample: WorkExample;

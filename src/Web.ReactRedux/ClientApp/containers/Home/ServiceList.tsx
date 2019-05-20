@@ -1,11 +1,11 @@
 ﻿import * as React from "react";
-import { ServiceInfo } from "../../store/entities";
-import { Service } from "../../components/Home/Service";
+import { ServiceInfo } from "@store/entities";
+import { Service } from "@components/Home/Service";
 import { connect } from "react-redux";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import "@bootstrap/css";
 import "./ServiceList.scss";
-import { Loader } from "../../components/Home/Loader";
-import { AppState } from "../../store/state";
+import { AppState } from "@store/state";
+import Loader from "@components/Shared/Loader";
 
 type ServiceListProps = StateProps;
 

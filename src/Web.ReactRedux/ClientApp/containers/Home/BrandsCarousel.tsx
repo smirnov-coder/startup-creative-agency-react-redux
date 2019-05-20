@@ -1,12 +1,12 @@
 ﻿import * as React from "react";
-import { Brand } from "../../store/entities";
+import { Brand } from "@store/entities";
 import { connect } from "react-redux";
 import OwlCarousel from "../../assets/lib/owl.carousel-customized/OwlCarousel";
 import { Options } from "../../assets/lib/owl.carousel-customized/OwlCarousel";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import "@bootstrap/css";
 import "./BrandsCarousel.scss";
 import { AppState } from "../../store/state";
-import { Loader } from "../../components/Home/Loader";
+import Loader from "@components/Shared/Loader";
 
 type BrandsCarouselProps = StateProps;
 

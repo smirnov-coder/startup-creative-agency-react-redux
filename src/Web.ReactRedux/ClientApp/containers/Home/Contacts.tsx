@@ -1,10 +1,10 @@
 ﻿import * as React from "react";
-import { ContactInfo } from "../../store/entities";
+import { ContactInfo } from "@store/entities";
 import { connect } from "react-redux";
-import { ContactLine } from "../../components/Home/ContactLine";
+import { ContactLine } from "@components/Home/ContactLine";
 import "./Contacts.scss";
-import { AppState } from "../../store/state";
-import { Loader } from "../../components/Home/Loader";
+import { AppState } from "@store/state";
+import Loader from "@components/Shared/Loader";
 
 type ContactsProps = StateProps;
 

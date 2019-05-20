@@ -1,12 +1,12 @@
 ﻿import * as React from "react";
-import { Testimonial as TestimonialEntity } from "../../store/entities";
+import { Testimonial as TestimonialEntity } from "@store/entities";
 import { connect } from "react-redux";
 import OwlCarousel from "../../assets/lib/owl.carousel-customized/OwlCarousel";
 import { Options } from "../../assets/lib/owl.carousel-customized/OwlCarousel";
-import { Testimonial } from "../../components/Home/Testimonial";
+import { Testimonial } from "@components/Home/Testimonial";
 import "./TestimonialsSlider.scss";
-import { Loader } from "../../components/Home/Loader";
-import { AppState } from "../../store/state";
+import { AppState } from "@store/state";
+import Loader from "@components/Shared/Loader";
 
 type TestimonialsSliderProps = StateProps;
 

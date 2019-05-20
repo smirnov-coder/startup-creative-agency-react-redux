@@ -1,15 +1,15 @@
 ﻿import * as React from "react";
-import { BlogPost } from "../../store/entities";
+import { BlogPost } from "@store/entities";
 import { connect } from "react-redux";
-import { BlogPostPreview } from "../../components/Home/BlogPostPreview";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import { BlogPostPreview } from "@components/Home/BlogPostPreview";
+import "@bootstrap/css";
 import "./Blog.scss";
-import { BlogPostModal } from "../../components/Home/BlogPostModal";
-import { Button } from "../../components/Home/Button";
-import { Loader } from "../../components/Home/Loader";
+import { BlogPostModal } from "@components/Home/BlogPostModal";
 import { Dispatch, bindActionCreators } from "redux";
-import { getBlogPosts } from "../../store/actions/actionCreators";
-import { AppState } from "../../store/state";
+import { getBlogPosts } from "@store/actions/actionCreators";
+import { AppState } from "@store/state";
+import Loader from "@components/Shared/Loader";
+import { Button } from "@components/Shared/Button";
 
 type BlogProps = StateProps & DispatchProps;
    

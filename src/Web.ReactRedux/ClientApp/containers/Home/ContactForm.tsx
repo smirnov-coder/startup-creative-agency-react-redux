@@ -1,13 +1,13 @@
 ﻿import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { Button } from "../../components/Home/Button";
-import { sendMessage } from "../../store/actions/actionCreators";
+import { sendMessage } from "@store/actions/actionCreators";
 import "./ContactForm.scss";
 import "jquery-validation";
-import { Loader } from "../../components/Home/Loader";
-import { ContactFormModal } from "../../components/Home/ContactFormModal";
-import { AppState, OperationDetailsState } from "../../store/state";
+import { ContactFormModal } from "@components/Home/ContactFormModal";
+import { AppState, OperationDetailsState } from "@store/state";
+import { Button } from "@components/Shared/Button";
+import Loader from "@components/Shared/Loader";
 
 export interface ContactMessage {
     name: string;

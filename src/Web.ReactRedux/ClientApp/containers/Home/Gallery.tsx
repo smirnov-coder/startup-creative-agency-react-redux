@@ -1,13 +1,13 @@
 ﻿import * as React from "react";
-import { WorkExample } from "../../store/entities";
+import { WorkExample } from "@store/entities";
 import { connect } from "react-redux";
-import { GalleryFilter } from "../../components/Home/GalleryFilter";
-import { WorkExamplePreview } from "../../components/Home/WorkExamplePreview";
-import { WorkExampleModal } from "../../components/Home/WorkExampleModal";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import { GalleryFilter } from "@components/Home/GalleryFilter";
+import { WorkExamplePreview } from "@components/Home/WorkExamplePreview";
+import { WorkExampleModal } from "@components/Home/WorkExampleModal";
+import "@bootstrap/css";
 import "./Gallery.scss";
-import { Loader } from "../../components/Home/Loader";
-import { AppState } from "../../store/state";
+import { AppState } from "@store/state";
+import Loader from "@components/Shared/Loader";
 
 type GalleryProps = StateProps;
 
@@ -69,7 +69,7 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
                     }
                 </div>
                 <div className="gallery__items row">
-                    { isLoading ? <Loader /> : elements.map(element => element) }
+                    {isLoading ? <Loader /> : elements.map(element => element)}
                 </div>
                 <WorkExampleModal workExample={this.state.workExample} showModal={showModal}
                     onClose={this.closeModal} />

@@ -112,16 +112,19 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         public async Task<MyProfilePageModel> MyProfileAsync()
         {
             var user = await _userService.GetUserAsync(User?.Identity?.Name);
+            var profile = user.Profile;
+            profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition, 
+                Url.Content(profile.PhotoFilePath));
+
+            /// TODO: Абсолютно непонятная ошибка. Если не пощупать SocialLinks, они не будут сериализироваться. О_о
+            // Похоже, виноваты прокси-объекты. Разобраться с этой ошибкой.
+            profile.SocialLinks.First();
+
             return new MyProfilePageModel
             {
                 UserWidget = await GetUserWidgetModelAsync(user),
-                UserName = user.Identity.UserName,
-                FirstName = user.Profile.FirstName,
-                LastName = user.Profile.LastName,
-                JobPosition = user.Profile.JobPosition,
-                PhotoFilePath = Url.Content(user.Profile.PhotoFilePath),
-                SocialLinks = user.Profile.SocialLinks.ToList(),
-                //IsAdmin = IsCurrentUserAdmin(),
+                User = user,
+                IsAdmin = IsCurrentUserAdmin(),
                 NewMessagesCount = await GetNewMessagesCount()
             };
         }
@@ -138,7 +141,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         {
             UserWidget = await GetUserWidgetModelAsync(),
             Items = await _serviceInfoService.GetServiceInfosAsync(),
-            //IsAdmin = IsCurrentUserAdmin(),
+            IsAdmin = IsCurrentUserAdmin(),
             NewMessagesCount = await GetNewMessagesCount()
         };
 
@@ -151,7 +154,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 UserWidget = await GetUserWidgetModelAsync(),
                 Item = serviceInfo,
-                //IsAdmin = IsCurrentUserAdmin(),
+                IsAdmin = IsCurrentUserAdmin(),
                 NewMessagesCount = await GetNewMessagesCount()
             };
         }
@@ -171,7 +174,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         private async Task<BasePageModel> GetAddPageModelAsync() => new BasePageModel
         {
             UserWidget = await GetUserWidgetModelAsync(),
-            //IsAdmin = IsCurrentUserAdmin(),
+            IsAdmin = IsCurrentUserAdmin(),
             NewMessagesCount = await GetNewMessagesCount()
         };
 

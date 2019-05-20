@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
-import { ButtonModifiers, Button } from "./Button";
 import "./GalleryFilter.scss";
 import { Menu } from "./Menu";
+import { Button, ButtonModifiers } from "@components/Shared/Button";
 
 interface GalleryFilterProps {
     categories: string[];

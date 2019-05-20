@@ -17,7 +17,10 @@ interface PartialState<T = BaseEntity> {
     error: Error;
 }
 
-export type ServicesState = PartialState<ServiceInfo>;
+export interface ServicesState extends PartialState<ServiceInfo> {
+    current: ServiceInfo;
+}
+
 export type TeamMembersState = PartialState<DomainUser>;
 export type WorksState = PartialState<WorkExample>;
 export type BlogState = PartialState<BlogPost>;
@@ -25,24 +28,35 @@ export type BrandsState = PartialState<Brand>;
 export type TestimonialsState = PartialState<Testimonial>;
 export type ContactsState = PartialState<ContactInfo>;
 export type SocialLinksState = PartialState<SocialLink>;
-export type MessagesState = PartialState<Message>;
-
-export interface ValidationProblemDetails {
-    title: string;
-    errors: any;
+export interface MessagesState extends PartialState<Message> {
+    newMessagesCount: number;
 }
 
 export interface OperationDetailsState {
     isError: boolean,
     message: string,
-    validationError: ValidationProblemDetails
 }
 
 export interface AuthState {
     userName: string,
     photo: string,
     isAuthenticated: boolean,
-    isAdmin: boolean
+    isAdmin: boolean,
+    isLoading: boolean
+}
+
+export interface UsersState extends PartialState<DomainUser> {
+    current: DomainUser
+}
+
+export interface Notification {
+    id: number;
+    type: "success" | "error";
+    text: string;
+}
+
+export interface NotificationsState {
+    items: Notification[]
 }
 
 export interface AppState {
@@ -57,5 +71,8 @@ export interface AppState {
     messages: MessagesState,
     operationDetails: OperationDetailsState,
     auth: AuthState,
+    users: UsersState,
+    notifications: NotificationsState,
+
     router: RouterState
 }

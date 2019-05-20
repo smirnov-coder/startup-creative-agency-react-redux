@@ -1,9 +1,9 @@
 ﻿import * as React from "react";
 import { connect } from "react-redux";
 import { Dispatch, bindActionCreators } from "redux";
-import { Button, ButtonModifiers } from "../../components/Home/Button";
-import { signIn } from "../../store/actions/actionCreators";
+import { signIn } from "@store/actions/actionCreators";
 import "./LoginForm.scss";
+import { Button, ButtonModifiers } from "@components/Shared/Button";
 
 type LoginFormProps = DispatchProps;
 

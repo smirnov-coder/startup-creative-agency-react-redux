@@ -1,12 +1,10 @@
 ﻿import * as React from "react";
 import { connect } from "react-redux";
 import { Dispatch, bindActionCreators } from "redux";
-import { getLoginPageModel } from "../../store/actions/actionCreators";
+import { getLoginPageModel } from "@store/actions/actionCreators";
+import { AppState } from "@store/state";
 import LoginForm from "./LoginForm";
-import { Layout } from "../../components/Shared/Layout";
-import { AdminFooter } from "../../components/Shared/AdminFooter";
-import { AdminHeader } from "../../components/Shared/AdminHeader";
-import { AppState } from "../../store/state";
+import Loader from "@components/Shared/Loader";
 
 type LoginPageProps = StateProps & DispatchProps;
 
@@ -16,35 +14,24 @@ export class LoginPage extends React.Component<LoginPageProps> {
     }
 
     componentDidMount(): void {
-        document.title = "Startup ReactRedux Login";
+        document.title = "Startup ReactRedux Auth Login";
     }
 
     render(): JSX.Element {
-        let { isAuthenticated } = this.props; //console.log("login page isAuth", isAuthenticated);//
-        return (
-            <Layout>
-                <Layout.Header>
-                    <AdminHeader isAuthenticated={isAuthenticated} />
-                </Layout.Header>
-                <Layout.Content>
-                    <LoginForm />
-                </Layout.Content>
-                <Layout.Footer>
-                    <AdminFooter />
-                </Layout.Footer>
-            </Layout>
+        return (this.props.isLoading
+            ? <Loader modifiers={["loader--color-white"]} />
+            : <LoginForm />
         );
     }   
 }
 
 interface StateProps {
-    isAuthenticated: boolean;
+    isLoading: boolean;
 }
 
 const mapStateToProps = (state: AppState): StateProps => {
-    //console.log("login page state", state);//
     return {
-        isAuthenticated: state.auth.isAuthenticated
+        isLoading: state.auth.isLoading
     };
 }
 

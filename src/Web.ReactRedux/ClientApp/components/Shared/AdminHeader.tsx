@@ -1,26 +1,30 @@
 ﻿import * as React from "react";
-import { Logo } from "../../components/Home/Logo";
-import UserWidget from "../../containers/Shared/UserWidget";
+import UserWidget from "@containers/Shared/UserWidget";
 import "./AdminHeader.scss";
+import { AppState } from "@store/state";
+import { connect } from "react-redux";
+import { Logo } from "./Logo";
 
-interface AdminHeaderProps {
+type AdminHeaderProps = StateProps;
+
+const AdminHeader: React.SFC<AdminHeaderProps> = (props: AdminHeaderProps) =>
+    <header className="admin-header">
+        <div className="admin-header__left-content">
+            <Logo />
+        </div>
+        <div className="admin-header__right-content">
+            {props.isAuthenticated ? <UserWidget /> : null}
+        </div>
+    </header>;
+
+interface StateProps {
     isAuthenticated: boolean;
 }
 
-export class AdminHeader extends React.Component<AdminHeaderProps> {
-    render(): JSX.Element {
-        let { isAuthenticated } = this.props;
-        return (
-            <header className="admin-header">
-                <div className="admin-header__left-content">
-                    <Logo />
-                </div>
-                {!isAuthenticated ? null :
-                    <div className="admin-header__right-content">
-                        <UserWidget />
-                    </div>
-                }
-            </header>
-        );
-    }
+const mapStateToProps = (state: AppState): StateProps => {
+    return {
+        isAuthenticated: state.auth.isAuthenticated
+    };
 }
+
+export default connect(mapStateToProps, null)(AdminHeader);

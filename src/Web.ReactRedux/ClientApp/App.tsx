@@ -3,10 +3,11 @@ import { hot } from "react-hot-loader";
 import { Provider } from "react-redux";
 import configureStore, { history } from "./store/configureStore";
 import { ConnectedRouter } from "connected-react-router";
-import { Switch, Route } from "react-router";
-import HomePage from "./containers/Home/HomePage";
-import AuthArea from "./components/Auth/AuthArea";
-import NotFoundPage from "./containers/Shared/NotFoundPage";
+import { Switch, Route, Redirect } from "react-router";
+import HomePage from "@containers/Home/HomePage";
+import AuthArea from "@components/Auth/AuthArea";
+import NotFoundPage from "@containers/Shared/NotFoundPage";
+import AdminArea from "@components/Admin/AdminArea";
 
 const store = configureStore();
 
@@ -17,7 +18,9 @@ const App: React.SFC = () => {
                 <Switch>
                     <Route exact path="/" component={HomePage} />
                     <Route path="/auth" component={AuthArea} />
-                    <Route component={NotFoundPage} />
+                    <Route path="/admin" component={AdminArea} />
+                    <Route path="/notfound" component={NotFoundPage} />
+                    <Redirect to="/notfound" />
                 </Switch>
             </ConnectedRouter>
         </Provider>

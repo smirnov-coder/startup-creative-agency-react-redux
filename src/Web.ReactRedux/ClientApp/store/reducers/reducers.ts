@@ -1,4 +1,4 @@
-﻿import { AppState, ServicesState, TeamMembersState, WorksState, BlogState, BrandsState, TestimonialsState, ContactsState, MessagesState, SocialLinksState, AuthState, OperationDetailsState } from "../state";
+﻿import { AppState, ServicesState, TeamMembersState, WorksState, BlogState, BrandsState, TestimonialsState, ContactsState, MessagesState, SocialLinksState, AuthState, OperationDetailsState, UsersState, NotificationsState, Notification } from "@store/state";
 import {
     ServicesActions,
     AssignManyAction,
@@ -14,9 +14,13 @@ import {
     AuthActions,
     OperationDetailsAction,
     SignInAction,
-    InitPageAction,
-} from "../actions/actions";
-import { ActionTypes } from "../actions/actionTypes";
+    InitSimplePageAction,
+    UsersActions,
+    AssignSingleAction,
+    PagesActions,
+    InitMyProfilePageAction,
+} from "@store/actions/actions";
+import { ActionTypes } from "@store/actions/actionTypes";
 import {
     ServiceInfo,
     DomainUser,
@@ -25,13 +29,14 @@ import {
     Brand,
     Testimonial,
     ContactInfo,
-    SocialLink,} from "../entities";
+    SocialLink,} from "@store/entities";
 
 const initialState: AppState = {
     services: {
         isLoading: false,
         items: [],
-        error: null
+        error: null,
+        current: null
     },
     teamMembers: {
         isLoading: false,
@@ -71,23 +76,48 @@ const initialState: AppState = {
     messages: {
         isLoading: false,
         items: [],
-        error: null
+        error: null,
+        newMessagesCount: 0
     },
     operationDetails: {
         isError: false,
-        message: "",
-        validationError: null
+        message: ""
     },
     auth: {
         isAuthenticated: false,
         userName: "",
         photo: "",
-        isAdmin: false
+        isAdmin: false,
+        isLoading: false
     },
+    users: {
+        isLoading: false,
+        items: [],
+        current: null,
+        error: null
+    },
+    notifications: {
+        items: [
+            //{
+            //    id: 1,
+            //    type: "success",
+            //    text: "success text"
+            //}, {
+            //    id: 2,
+            //    type: "error",
+            //    text: "error text"
+            //}, {
+            //    id: 3,
+            //    type: "success",
+            //    text: "control"
+            //}
+        ]
+    },
+
     router: null
 }
 
-export function servicesReducer(state: ServicesState = initialState.services, action: ServicesActions): ServicesState {
+export function servicesReducer(state: ServicesState = initialState.services, action: any): ServicesState {
     switch (action.type) {
         case ActionTypes.REQUEST: //console.log("services load");//
             return {
@@ -95,8 +125,16 @@ export function servicesReducer(state: ServicesState = initialState.services, ac
                 isLoading: true
             };
 
+        case "REQUEST_END": {
+            return {
+                ...state,
+                isLoading: false
+            };
+        }
+
         case ActionTypes.ASSIGN_SERVICES:
             return {
+                ...state,
                 isLoading: false,
                 error: null,
                 items: (action as AssignManyAction<ServiceInfo>).items
@@ -108,6 +146,32 @@ export function servicesReducer(state: ServicesState = initialState.services, ac
                 isLoading: false,
                 error: (action as ErrorAction).error
             };
+
+        case "INIT_SERVICES_PAGE": {
+            return {
+                ...state,
+                error: null,
+                isLoading: false,
+                items: action.services
+            };
+        }
+
+        case "INIT_ADD_SERVICE_PAGE": {
+            return {
+                ...state,
+                error: null,
+                isLoading: false
+            };
+        }
+
+        case "INIT_EDIT_SERVICE_PAGE": {
+            return {
+                ...state,
+                error: null,
+                isLoading: false,
+                current: action.item
+            };
+        }
 
         default:
             return state;
@@ -284,7 +348,7 @@ export function contactsReducer(state: ContactsState = initialState.contacts, ac
     }
 }
 
-export function messagesReducer(state: MessagesState = initialState.messages, action: MessagesActions): MessagesState {
+export function messagesReducer(state: MessagesState = initialState.messages, action: MessagesActions | InitMyProfilePageAction): MessagesState {
     switch (action.type) {
         case ActionTypes.REQUEST_SEND_MESSAGE: //console.log("messages load");//
             //console.log("sendingMessage");//
@@ -301,24 +365,21 @@ export function messagesReducer(state: MessagesState = initialState.messages, ac
                 error: null
             };
 
-        //case "SHOW_RESPONSE_MESSAGE":
-        //    //console.log("showResponse");//
-        //    return {
-        //        ...state,
-        //        messages: {
-        //            ...state.messages,
-        //            isLoading: false,
-        //            error: null
-        //        },
-        //        operationDetails: (action as ShowResponse).text,
-        //        isError: (action as ShowResponse).isError
-        //    }
-
         case ActionTypes.ASSIGN_ERROR:
             return {
                 ...state,
                 isLoading: false,
                 error: (action as ErrorAction).error
+            };
+
+        case "INIT_SERVICES_PAGE":
+        case "INIT_ADD_SERVICE_PAGE":
+        case "INIT_EDIT_SERVICE_PAGE":
+        case "INIT_MY_PROFILE_PAGE":
+            //console.log("state", state);//
+            return {
+                ...state,
+                newMessagesCount: (action as InitMyProfilePageAction).newMessagesCount
             };
 
         default:
@@ -353,14 +414,22 @@ export function socialLinksReducer(state: SocialLinksState = initialState.social
     }
 }
 
-export function authReducer(state: AuthState = initialState.auth, action: AuthActions | InitPageAction): AuthState {
+export function authReducer(state: AuthState = initialState.auth, action: AuthActions | InitSimplePageAction | InitMyProfilePageAction): AuthState {
     switch (action.type) {
+        case "REQUEST": {
+            return {
+                ...state,
+                isLoading: true
+            };
+        }
+
         case "SIGN_IN":
             return {
                 userName: "",
                 photo: "",
                 isAuthenticated: true,
-                isAdmin: (action as SignInAction).isAdmin
+                isAdmin: (action as SignInAction).isAdmin,
+                isLoading: false
             };
 
         case "SIGN_OUT":
@@ -368,16 +437,37 @@ export function authReducer(state: AuthState = initialState.auth, action: AuthAc
                 userName: "",
                 photo: "",
                 isAuthenticated: false,
-                isAdmin: false
+                isAdmin: false,
+                isLoading: false
             };
 
         case "INIT_LOGIN_PAGE":
         case "INIT_NOT_FOUND_PAGE": //console.log("state", state); console.log("action", action);//
-        case "INIT_ACCESS_DENIED_PAGE":
+        case "INIT_ACCESS_DENIED_PAGE": {
+            let { userName, photo, isAuthenticated } = action as InitSimplePageAction
             return {
                 ...state,
-                ...action
+                userName,
+                photo,
+                isAuthenticated,
+                isLoading: false
             };
+        }
+
+        case "INIT_SERVICES_PAGE":
+        case "INIT_ADD_SERVICE_PAGE":
+        case "INIT_EDIT_SERVICE_PAGE":
+        case "INIT_MY_PROFILE_PAGE": {
+            //console.log("state", state);//
+            let { userName, photo, isAuthenticated, isAdmin } = action as InitMyProfilePageAction
+            return {
+                userName,
+                photo,
+                isAuthenticated,
+                isAdmin,
+                isLoading: false
+            };
+        }
 
         default:
             return state;
@@ -387,11 +477,10 @@ export function authReducer(state: AuthState = initialState.auth, action: AuthAc
 export const operationDetailsReducer = (state: OperationDetailsState = initialState.operationDetails, action: OperationDetailsAction): OperationDetailsState => {
     switch (action.type) {
         case "ASSIGN_OPERATION_DETAILS":
-            let { isError, message, validationError } = action;
+            let { isError, message } = action;
             return {
                 isError,
-                message,
-                validationError
+                message
             };
 
         default:
@@ -399,3 +488,50 @@ export const operationDetailsReducer = (state: OperationDetailsState = initialSt
     }
 }
 
+export const usersReducer = (state: UsersState = initialState.users, action: UsersActions | InitMyProfilePageAction): UsersState => {
+    switch (action.type) {
+        case ActionTypes.REQUEST: //console.log("state Request", state);//
+            return {
+                ...state,
+                isLoading: true
+            };
+
+        case "ASSIGN_USER":
+            return {
+                ...state,
+                isLoading: false,
+                current: (action as AssignSingleAction<DomainUser>).item,
+                error: null
+            };
+
+        case "INIT_MY_PROFILE_PAGE":
+            //console.log("state Init", state);//
+            return {
+                ...state,
+                error: null,
+                isLoading: false,
+                current: (action as InitMyProfilePageAction).user
+            };
+
+        default:
+            return state;
+    }
+}
+
+export const notificationsReducer = (state: NotificationsState = initialState.notifications, action: any): NotificationsState => {
+    switch (action.type) {
+        case "ADD_NOTIFICATION":
+            return {
+                items: state.items.concat(action.notification)
+            };
+
+        case "DELETE_NOTIFICATION": {
+            return {
+                items: state.items.filter(item => item.id !== action.id)
+            };
+        }
+
+        default:
+            return state;
+    }
+}

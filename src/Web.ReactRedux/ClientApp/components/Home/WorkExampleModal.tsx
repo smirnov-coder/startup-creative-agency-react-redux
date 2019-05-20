@@ -1,9 +1,9 @@
 ﻿import * as React from "react";
-import { WorkExample } from "../../store/entities";
-import { ButtonModifiers, Button } from "./Button";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
-import "../../assets/lib/bootstrap-customized/js/bootstrap";
+import { WorkExample } from "@store/entities";
+import "@bootstrap/css";
+import "@bootstrap/js";
 import "./WorkExampleModal.scss";
+import { Button, ButtonModifiers } from "@components/Shared/Button";
 
 interface WorkExampleModalProps {
     workExample: WorkExample;

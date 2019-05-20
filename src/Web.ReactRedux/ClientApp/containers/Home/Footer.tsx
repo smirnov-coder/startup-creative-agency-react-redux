@@ -1,14 +1,14 @@
 ﻿import * as React from "react";
-import { Section } from "../../components/Home/Section";
-import { SectionHeader } from "../../components/Home/SectionHeader";
-import { Dash, DashModifiers } from "../../components/Home/Dash";
-import { SocialLink as SocialLinkEntity } from "../../store/entities";
+import { Section } from "@components/Home/Section";
+import { SectionHeader } from "@components/Home/SectionHeader";
+import { Dash, DashModifiers } from "@components/Home/Dash";
+import { SocialLink as SocialLinkEntity } from "@store/entities";
 import { connect } from "react-redux";
-import { SocialLink, SocialLinkModifiers } from "../../components/Home/SocialLink";
+import { SocialLink, SocialLinkModifiers } from "@components/Home/SocialLink";
 import "./Footer.scss";
-import { Menu } from "../../components/Home/Menu";
-import { AppState } from "../../store/state";
-import { Loader } from "../../components/Home/Loader";
+import { Menu } from "@components/Home/Menu";
+import { AppState } from "@store/state";
+import Loader from "@components/Shared/Loader";
 
 type FooterProps = StateProps;
 

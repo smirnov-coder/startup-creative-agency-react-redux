@@ -1,8 +1,8 @@
 ﻿import * as React from "react";
-import { BlogPost, DomainUser } from "../../store/entities";
-import { ButtonModifiers, Button } from "./Button";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import { BlogPost, DomainUser } from "@store/entities";
+import "@bootstrap/css";
 import "./BlogPostModal.scss";
+import { Button, ButtonModifiers } from "@components/Shared/Button";
 
 interface BlogPostModalProps {
     blogPost: BlogPost;
@@ -50,8 +50,7 @@ export class BlogPostModal extends React.Component<BlogPostModalProps> {
                                     <div className="blog-post__content" dangerouslySetInnerHTML={{ __html: blogPost.Content }}></div>
                                 </div>
                                 <div className="modal-footer custom-modal__footer">
-                                    <Button
-                                        modifiers={[ButtonModifiers.Size.SMALL]}
+                                    <Button modifiers={[ButtonModifiers.Size.SMALL]}
                                         className="custom-modal__close"
                                         children="Close"
                                         onClick={this.handleClose} />
