@@ -16,6 +16,37 @@
     </environment>*@
 </head>
 <body>
+    <script type="text/javascript">
+        if (window && !window.customGlobals) {
+            window.customGlobals = {
+                uriTemplates: {
+                    initialState: "@Url.Action("AppStateAsync", "Home").ToLower()",
+                    homeModel: "@Url.Action("ModelAsync", "Home")",
+                    services: "@Url.Action("ListAsync", "Services").ToLower()",
+                    service: decodeURI("@Url.Action("GetAsync", "Services", new { id = "{0}" }).ToLower()"),
+                    blog: "@Url.Action("ListAsync", "Blog").ToLower()",
+                    blogPost: decodeURI("@Url.Action("GetAsync", "Blog", new { id = "{0}" }).ToLower()"),
+                    blogPartial: decodeURI("@Url.Action("ListAsync", "Blog", new { skip = "{0}", take = "{1}" }).ToLower()"),
+                    works: "@Url.Action("ListAsync", "Works").ToLower()",
+                    workExample: "@Url.Action("GetAsync", "Works", new { id = "{0}" }).ToLower()",
+                    brands: "@Url.Action("ListAsync", "Brands").ToLower()",
+                    brand: decodeURI("@Url.Action("GetAsync", "Brands", new { id = "{0}" }).ToLower()"),
+                    testimonials: "@Url.Action("ListAsync", "Testimonials").ToLower()",
+                    testimonial: decodeURI("@Url.Action("GetAsync", "Testimonials", new { id = "{0}" }).ToLower()"),
+                    messages: "@Url.Action("GetMessagesAsync", "Messages").ToLower()",
+                    message: decodeURI("@Url.Action("GetMessageAsync", "Messages", new { id = "{0}" }).ToLower()"),
+                    contacts: "@Url.Action("GetAsync", "Contacts").ToLower()",
+                    users: "@Url.Action("GetUsersAsync", "Users").ToLower()",
+                    myProfile: "@Url.Action("GetUserAsync", "Users").ToLower()",
+                    registerUser: "@Url.Action("RegisterAsync", "Users").ToLower()",
+                    updateUserProfile: decodeURI("@Url.Action("UpdateProfileAsync", "Users", new { userName = "{0}" }).ToLower()"),
+                    updateUserStatus: decodeURI("@Url.Action("UpdateDisplayStatusAsync", "Users", new { userName = "{0}" }).ToLower()"),
+                    deleteUser: decodeURI("@Url.Action("DeleteAsync", "Users", new { userName = "{0}" }).ToLower()"),
+                    accessToken: "@Url.Action("AccessTokenAsync", "Auth").ToLower()",
+                }
+            };
+        }
+    </script>
     <div id="root"></div>
 
     <script asp-src-include="~/lib/js/vendor.bundle.min.js"></script>

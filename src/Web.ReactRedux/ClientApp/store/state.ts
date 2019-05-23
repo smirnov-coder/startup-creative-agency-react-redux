@@ -1,40 +1,32 @@
-﻿import {
-    ServiceInfo,
-    DomainUser,
-    WorkExample,
-    BlogPost,
-    Brand,
-    Testimonial,    ContactInfo,
-    Message,
-    SocialLink,
-    BaseEntity
-} from "./entities";
+﻿import * as Entities from "./entities";
 import { RouterState } from "connected-react-router";
 
-interface PartialState<T = BaseEntity> {
+interface PartialState<T = Entities.BaseEntity> {
     isLoading: boolean;
     items: T[];
+    current: T;
     error: Error;
 }
 
-export interface ServicesState extends PartialState<ServiceInfo> {
-    current: ServiceInfo;
+export type ServicesState = PartialState<Entities.ServiceInfo>;
+export type WorksState = PartialState<Entities.WorkExample>;
+export type BlogState = PartialState<Entities.BlogPost>;
+export type BrandsState = PartialState<Entities.Brand>;
+export type TestimonialsState = PartialState<Entities.Testimonial>;
+
+export interface ContactsState {
+    isLoading: boolean;
+    contactInfos: Entities.ContactInfo[];
+    socialLinks: Entities.SocialLink[];
+    error: Error
 }
 
-export type TeamMembersState = PartialState<DomainUser>;
-export type WorksState = PartialState<WorkExample>;
-export type BlogState = PartialState<BlogPost>;
-export type BrandsState = PartialState<Brand>;
-export type TestimonialsState = PartialState<Testimonial>;
-export type ContactsState = PartialState<ContactInfo>;
-export type SocialLinksState = PartialState<SocialLink>;
-export interface MessagesState extends PartialState<Message> {
+export interface MessagesState extends PartialState<Entities.Message> {
     newMessagesCount: number;
-}
-
-export interface OperationDetailsState {
-    isError: boolean,
-    message: string,
+    sendingResult: {
+        isError: boolean,
+        message: string
+    };
 }
 
 export interface AuthState {
@@ -42,11 +34,12 @@ export interface AuthState {
     photo: string,
     isAuthenticated: boolean,
     isAdmin: boolean,
-    isLoading: boolean
+    isLoading: boolean,
+    errorMessage: string
 }
 
-export interface UsersState extends PartialState<DomainUser> {
-    current: DomainUser
+export interface UsersState extends PartialState<Entities.DomainUser> {
+    current: Entities.DomainUser
 }
 
 export interface Notification {
@@ -61,18 +54,82 @@ export interface NotificationsState {
 
 export interface AppState {
     services: ServicesState,
-    teamMembers: TeamMembersState,
     works: WorksState,
     blog: BlogState,
     brands: BrandsState,
     testimonials: TestimonialsState,
     contacts: ContactsState,
-    socialLinks: SocialLinksState,
     messages: MessagesState,
-    operationDetails: OperationDetailsState,
     auth: AuthState,
     users: UsersState,
     notifications: NotificationsState,
-
     router: RouterState
+}
+
+export const initialState: AppState = {
+    services: {
+        isLoading: true,
+        items: [],
+        error: null,
+        current: null
+    },
+    works: {
+        isLoading: true,
+        items: [],
+        error: null,
+        current: null
+    },
+    blog: {
+        isLoading: true,
+        items: [],
+        error: null,
+        current: null
+    },
+    brands: {
+        isLoading: true,
+        items: [],
+        error: null,
+        current: null
+    },
+    testimonials: {
+        isLoading: true,
+        items: [],
+        error: null,
+        current: null
+    },
+    contacts: {
+        isLoading: true,
+        contactInfos: [],
+        socialLinks: [],
+        error: null
+    },
+    messages: {
+        isLoading: true,
+        items: [],
+        error: null,
+        current: null,
+        newMessagesCount: 0,
+        sendingResult: {
+            isError: false,
+            message: ""
+        }
+    },
+    auth: {
+        isAuthenticated: false,
+        userName: "",
+        photo: "",
+        isAdmin: false,
+        isLoading: true,
+        errorMessage: ""
+    },
+    users: {
+        isLoading: true,
+        items: [],
+        current: null,
+        error: null
+    },
+    notifications: {
+        items: []
+    },
+    router: null
 }

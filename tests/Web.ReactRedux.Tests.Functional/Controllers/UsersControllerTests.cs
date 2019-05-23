@@ -97,6 +97,34 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
         }
 
         [Fact]
+        public async Task CanGetMyself()
+        {
+            using (var httpClient = await _factoryCollection.ForRead.CreateClientWithAccessTokenAsync(USER_NAME))
+            {
+                using (var response = await httpClient.GetAsync($"{BASE_URL}/me"))
+                {
+                    Assert.True(response.IsSuccessStatusCode);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    var resultJson = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<DomainUser>(resultJson);
+                    Assert.Equal("user1", result.Identity.UserName);
+                    Assert.Equal("FirstName #1", result.Profile.FirstName);
+                    Assert.Equal("LastName #1", result.Profile.LastName);
+                    Assert.Equal("Job #1", result.Profile.JobPosition);
+                    Assert.Equal("Path #1", result.Profile.PhotoFilePath);
+                    Assert.True(result.Profile.IsReadyForDisplay);
+                    Assert.True(result.Profile.DisplayAsTeamMember);
+                    Assert.Equal(4, result.Profile.SocialLinks.Count);
+                    Assert.Equal("Facebook", result.Profile.SocialLinks.First().NetworkName);
+                    Assert.Equal("Link #1", result.Profile.SocialLinks.First().Url);
+                    Assert.Equal("Linkedin", result.Profile.SocialLinks.Last().NetworkName);
+                    Assert.Equal("Link #4", result.Profile.SocialLinks.Last().Url);
+                }
+            }
+        }
+
+
+        [Fact]
         public async Task CanRegisterUser()
         {
             var factory = _factoryCollection.ForAdd;
@@ -112,11 +140,14 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     Role = "User"
                 };
                 var json = JsonConvert.SerializeObject(model);
-                using (var response = await httpClient.PostAsync(BASE_URL, new StringContent(json, Encoding.UTF8, "application/json")))
+                using (var response = await httpClient.PostAsync($"{BASE_URL}/register", new StringContent(json, Encoding.UTF8, "application/json")))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal($"User '@test_user' has been registered successfully.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal("User '@test_user' has been registered successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         using (var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
@@ -157,8 +188,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     using (var response = await httpClient.PutAsync($"{BASE_URL}/{USER_NAME}/profile", requestContent))
                     {
                         Assert.True(response.IsSuccessStatusCode);
-                        string message = await response.Content.ReadAsStringAsync();
-                        Assert.Equal("Your profile has been updated successfully.", message);
+                        Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                        string responseJson = await response.Content.ReadAsStringAsync();
+                        var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                        Assert.False(details.IsError);
+                        Assert.Equal("Your profile has been updated successfully.", details.Message);
                         using (var scope = factory.Server.Host.Services.CreateScope())
                         {
                             using (var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
@@ -190,12 +224,15 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             var factory = _factoryCollection.ForUpdate;
             using (var httpClient = await factory.CreateClientWithAccessTokenAsync(ADMIN_USER_NAME))
             {
-                string requestUrl = $"{BASE_URL}/{USER_NAME}/displayStatus";
+                string requestUrl = $"{BASE_URL}/{USER_NAME}/display-status";
                 using (var response = await httpClient.PutAsync(requestUrl, new StringContent("false")))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal("Display status for user '@user1' has been updated successfully.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal("Display status for user '@user1' has been updated successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -219,9 +256,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 using (var response = await httpClient.SendAsync(request))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
                     Assert.Equal($"The entity of type '{typeof(DomainUser)}' with value 'user1' for 'UserName' " +
-                        $"deleted successfully.", message);
+                        $"deleted successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         using (var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())

@@ -1,9 +1,9 @@
 ﻿import * as React from "react";
 import { bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
-import { signOut } from "@store/actions/actionCreators";
 import "./UserWidget.scss";
 import { AppState } from "@store/state";
+import { signOut } from "@store/actions/authActions";
 
 type UserWidgetProps = StateProps & DispatchProps;
 

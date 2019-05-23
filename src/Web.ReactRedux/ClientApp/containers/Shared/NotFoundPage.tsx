@@ -1,19 +1,12 @@
 ﻿import * as React from "react";
-import { connect } from "react-redux";
-import { Dispatch, bindActionCreators } from "redux";
-import { getNotFoundPageModel } from "@store/actions/actionCreators";
 import { Layout } from "@components/Shared/Layout";
 import AdminHeader from "@components/Shared/AdminHeader";
 import { AdminFooter } from "@components/Shared/AdminFooter";
 import ErrorPage from "@components/Shared/ErrorPage";
 
-type NotFoundPageProps = DispatchProps;
+//type NotFoundPageProps = DispatchProps;
 
-export class NotFoundPage extends React.Component<NotFoundPageProps> {
-    componentWillMount(): void {
-        this.props.getPageModel();
-    }
-
+export class NotFoundPage extends React.Component {
     componentDidMount(): void {
         document.title = "Startup ReactRedux Page Not Found";
     }
@@ -36,14 +29,14 @@ export class NotFoundPage extends React.Component<NotFoundPageProps> {
     }
 }
 
-interface DispatchProps {
-    getPageModel: () => void;
-}
+//interface DispatchProps {
+//    getPageModel: () => void;
+//}
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
-    return {
-        getPageModel: bindActionCreators(getNotFoundPageModel, dispatch)
-    };
-}
+//const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+//    return {
+//        getPageModel: bindActionCreators(getNotFoundPageModel, dispatch)
+//    };
+//}
 
-export default connect(null, mapDispatchToProps)(NotFoundPage);
+//export default connect(null, mapDispatchToProps)(NotFoundPage);

@@ -1,8 +1,6 @@
 ﻿import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { getHomePageModel } from "@store/actions/actionCreators";
-import { ServiceInfo, DomainUser, WorkExample, BlogPost, Brand, Testimonial, ContactInfo, SocialLink } from "@store/entities";
 import { Header } from "@components/Home/Header";
 import { ServicesSection } from "@components/Home/ServicesSection";
 import "@bootstrap/css";
@@ -14,24 +12,11 @@ import { BlogSection } from "@components/Home/BlogSection";
 import { ClientsSection } from "@components/Home/ClientsSection";
 import { ContactSection } from "@components/Home/ContactSection";
 import Footer from "./Footer";
-
-export interface HomePageModel {
-    services: ServiceInfo[];
-    teamMembers: DomainUser[];
-    works: WorkExample[];
-    blogPosts: BlogPost[];
-    brands: Brand[];
-    testimonials: Testimonial[];
-    contacts: ContactInfo[];
-    socialLinks: SocialLink[];
-}
+import { fetchHomePageModel } from "@store/actions/appActions";
 
 type HomePageProps = DispatchProps;
 
 class HomePage extends React.Component<HomePageProps> {
-    constructor(props: HomePageProps) {
-        super(props);
-    }
 
     componentWillMount(): void {
         this.props.getPageModel();
@@ -76,33 +61,13 @@ class HomePage extends React.Component<HomePageProps> {
     }
 }
 
-//interface IStateProps {
-//    isLoading: boolean;
-//    services: IServiceInfo[];
-//    //teamMembers: IDomainUser[];
-//    //works: IWorkExample[];
-//    //blog: IBlogPost[];
-//    //brands: IBrand[];
-//    //testimonials: ITestimonial[];
-//    //contacts: IContactInfo[];
-//    //socialLinks: ISocialLink[];
-//}
-
-//const mapStateToProps = (state: AppState): IStateProps => {
-//    return {
-//        isLoading: state.servicesReducer.services.isLoading, 
-
-//        services: state.servicesReducer.services.items
-//    };
-//}
-
 interface DispatchProps {
     getPageModel: () => void
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     return {
-        getPageModel: bindActionCreators(getHomePageModel, dispatch)
+        getPageModel: bindActionCreators(fetchHomePageModel, dispatch)
     };
 }
 

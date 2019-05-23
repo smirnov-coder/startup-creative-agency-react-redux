@@ -70,7 +70,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
-            Assert.Equal("Company contacts saved successfully.", result.Value as string);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
+            Assert.Equal("Company contacts saved successfully.", details.Message);
         }
 
         private ContactsViewModel GetTestContactsViewModel()

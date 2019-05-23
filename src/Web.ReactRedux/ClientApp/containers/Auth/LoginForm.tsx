@@ -1,9 +1,10 @@
 ﻿import * as React from "react";
+import * as $ from "jquery";
 import { connect } from "react-redux";
 import { Dispatch, bindActionCreators } from "redux";
-import { signIn } from "@store/actions/actionCreators";
 import "./LoginForm.scss";
 import { Button, ButtonModifiers } from "@components/Shared/Button";
+import { signIn } from "@store/actions/authActions";
 
 type LoginFormProps = DispatchProps;
 
@@ -23,11 +24,10 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
         };
     }
 
+    private validator: JQueryValidation.Validator;
+
     componentDidMount(): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
-        $(this.loginForm.current).validate({
+        this.validator = $(this.form.current).validate({
             /// TODO: не забыть про валидацию формы
             rules: {
                 "user-name": {
@@ -50,10 +50,14 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
             invalidHandler: (event, validator) => {
                 console.error("Form data is invalid.");//
             }
-        })
+        });
     }
 
-    private loginForm = React.createRef<HTMLFormElement>();
+    componentWillUnmount(): void {
+        this.validator.destroy();
+    }
+
+    private form = React.createRef<HTMLFormElement>();
 
     render(): JSX.Element {
         let { userName, password, rememberMe } = this.state;
@@ -61,7 +65,7 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
             <div className="login-form panel panel-default center-block">
                 <h3>Log in to Admin area.</h3>
                 <hr />
-                <form ref={this.loginForm}>
+                <form ref={this.form}>
                     {/*<div asp-validation-summary="ModelOnly"></div>*/}
                     <div className="form-group">
                         <label htmlFor="user-name" className="control-label">User Name</label>
@@ -78,7 +82,7 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
                         <input id="remember-me" name="remember-me" type="checkbox"
                             className="login-form__remember-me form-check-input"
                             value={`${rememberMe}`} onChange={(e) => this.handleChange(e, "rememberMe")} />
-                        <label htmlFor="remember-me">Remember Me?</label>
+                        <label htmlFor="remember-me" style={{ marginLeft: 5 }}>Remember me</label>
                     </div>
                     <div className="form-group">
                         <Button className="login-form__submit"
@@ -96,7 +100,7 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
         this.setState({
             ...this.state,
             [inputName]: value
-        }); //console.log(this.state);//
+        });
     }
 }
 

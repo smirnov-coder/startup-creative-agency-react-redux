@@ -18,18 +18,20 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
     {
         private readonly IUserService _userService;
         private SignInManager<UserIdentity> _signInManager;
+        private IMessageService _messageService;
 
-        public AuthController(IUserService userService, SignInManager<UserIdentity> signInManager)
+        public AuthController(IUserService userService, SignInManager<UserIdentity> signInManager, IMessageService messageService)
         {
             _userService = userService;
             _signInManager = signInManager;
+            _messageService = messageService;
         }
 
         //
         // POST api/auth/token
         //
         [HttpPost("token")]
-        public async Task<ActionResult<AuthInfo>> AccessTokenAsync(UserCredentials credentials)
+        public async Task<ActionResult<AuthResult>> AccessTokenAsync(UserCredentials credentials)
         {
             var user = await _userService.GetUserAsync(credentials.UserName);
             if (user == null)
@@ -42,11 +44,21 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             if (identityResult.Succeeded)
             {
                 var userManager = _signInManager.UserManager;
-                return new AuthInfo
+                var result =  new AuthResult
                 {
                     AccessToken = await JwtHelper.GetEncodedJwtAsync(identity, userManager),
-                    IsAdmin = await userManager.IsInRoleAsync(user.Identity as UserIdentity, "Administrator")
+                    AppState = new InitialAppState
+                    {
+                        IsAuthenticated = true,
+                        UserName = user.Identity.UserName,
+                        Photo = Url.Content(user.Profile.PhotoFilePath),
+                        IsAdmin = await userManager.IsInRoleAsync(user.Identity as UserIdentity, "Administrator"),
+                    }
                 };
+                result.AppState.NewMessagesCount = result.AppState.IsAdmin
+                    ? (await _messageService.GetMessagesAsync()).Where(x => !x.IsRead).Count()
+                    : 0;
+                return result;
             }
             return BadRequest(OperationDetails.Error($"Unable to authenticate user with value '{credentials.UserName}' " +
                 $"for '{nameof(IUserIdentity.UserName)}'."));

@@ -44,11 +44,14 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<ActionResult<Message>>(actionResult);
             Assert.NotNull(actionResult.Result);
             Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+            Assert.Null(actionResult.Value);
             var result = actionResult.Result as NotFoundObjectResult;
             Assert.Equal(404, result.StatusCode);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.True(details.IsError);
             Assert.Equal($"The entity of type '{typeof(Message)}' with key value '101' " +
-                    $"for 'Id' not found.", result.Value as string);
-            Assert.Null(actionResult.Value);
+                $"for 'Id' not found.", details.Message);
         }
 
         [Fact]
@@ -69,7 +72,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
-            Assert.Equal("Thank you for your message!", result.Value as string);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
+            Assert.Equal("Thank you for your message!", details.Message);
         }
 
         [Fact]
@@ -83,7 +89,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<BadRequestObjectResult>(actionResult);
             var result = actionResult as BadRequestObjectResult;
             Assert.Equal(400, result.StatusCode);
-            Assert.Equal("Oops! We are sorry. Something went wrong on the server side. Try again later.", result.Value as string);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.True(details.IsError);
+            Assert.Equal("Oops! We are sorry. Something went wrong on the server side. Try again later.", details.Message);
         }
 
         [Fact]
@@ -95,8 +104,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
             Assert.Equal($"A set of entities of type '{typeof(Message)}' has been updated successfully.", 
-                result.Value as string);
+                details.Message);
         }
 
         [Fact]
@@ -108,8 +120,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
             Assert.Equal($"A set of entities of type '{typeof(Message)}' has been deleted successfully.",
-                result.Value as string);
+                details.Message);
         }
 
         private MessageViewModel GetTestMessageModel() =>

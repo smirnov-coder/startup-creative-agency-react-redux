@@ -14,34 +14,34 @@ namespace StartupCreativeAgency.Domain.Entities
         /// <summary>
         /// Имя пользователя.
         /// </summary>
-        public string FirstName { get; private set; }
+        public virtual string FirstName { get; private set; }
         
         /// <summary>
         /// Фамилия пользователя.
         /// </summary>
-        public string LastName { get; private set; }
+        public virtual string LastName { get; private set; }
         
         /// <summary>
         /// Абсолютный или относительный путь к файлу фаотографии пользователя.
         /// </summary>
-        public string PhotoFilePath { get; private set; }
+        public virtual string PhotoFilePath { get; private set; }
         
         /// <summary>
         /// Занимаемая пользователем должность в компании.
         /// </summary>
-        public string JobPosition { get; private set; }
+        public virtual string JobPosition { get; private set; }
         
         /// <summary>
         /// Показывает готовность профайла для отображения данных пользователя в пользовательском интерфейсе.
         /// Для отображения должна быть предоставлена следующая информация: имя, фамилия, должность, фотография,
         /// 4 не пустые ссылки на страницы с соц. сетях Facebook, Twitter, Google+, Linkedin.
         /// </summary>
-        public bool IsReadyForDisplay { get; private set; }
+        public virtual bool IsReadyForDisplay { get; private set; }
         
         /// <summary>
         /// Показывает, отображаются ли данные пользователя в пользовательском интерфейсе (в качестве члена команды).
         /// </summary>
-        public bool DisplayAsTeamMember { get; private set; }
+        public virtual bool DisplayAsTeamMember { get; private set; }
 
         private List<SocialLink> _socialLinks = new List<SocialLink>();
         

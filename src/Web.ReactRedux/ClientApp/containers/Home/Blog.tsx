@@ -6,10 +6,10 @@ import "@bootstrap/css";
 import "./Blog.scss";
 import { BlogPostModal } from "@components/Home/BlogPostModal";
 import { Dispatch, bindActionCreators } from "redux";
-import { getBlogPosts } from "@store/actions/actionCreators";
 import { AppState } from "@store/state";
 import Loader from "@components/Shared/Loader";
 import { Button } from "@components/Shared/Button";
+import { fetchBlogPosts } from "@store/actions/blogActions";
 
 type BlogProps = StateProps & DispatchProps;
    
@@ -25,17 +25,7 @@ class Blog extends React.Component<BlogProps, BlogState> {
         super(props);
         this.state = {
             showModal: false,
-            blogPost: {
-                Id: 0,
-                Title: "",
-                Category: "",
-                Content: "",
-                ImagePath: "",
-                CreatedBy: null,
-                CreatedOn: null,
-                LastUpdatedBy: null,
-                LastUpdatedOn: null
-            },
+            blogPost: {} as BlogPost,
             itemsCount: 0,
             showButton: false
         };
@@ -110,7 +100,7 @@ class Blog extends React.Component<BlogProps, BlogState> {
     onViewBlogPost(id: number): void {
         this.setState({
             showModal: true,
-            blogPost: this.props.items.find(x => x.Id === id)
+            blogPost: this.props.items.find(item => item.Id === id)
         });
     }
 }
@@ -133,7 +123,7 @@ interface DispatchProps {
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     return {
-        getBlogPosts: bindActionCreators(getBlogPosts, dispatch)
+        getBlogPosts: bindActionCreators(fetchBlogPosts, dispatch)
     };
 }
 

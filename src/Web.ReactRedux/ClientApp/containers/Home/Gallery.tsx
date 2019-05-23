@@ -23,17 +23,7 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
         this.state = {
             activeFilter: "*",
             showModal: false,
-            workExample: {
-                Id: 0,
-                Name: "",
-                Category: "",
-                Description: "",
-                ImagePath: "",
-                CreatedBy: null,
-                CreatedOn: null,
-                LastUpdatedBy: null,
-                LastUpdatedOn: null
-            }
+            workExample: {} as WorkExample
         };
         this.changeFilter = this.changeFilter.bind(this);
         this.viewWorkExample = this.viewWorkExample.bind(this);
@@ -71,8 +61,7 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
                 <div className="gallery__items row">
                     {isLoading ? <Loader /> : elements.map(element => element)}
                 </div>
-                <WorkExampleModal workExample={this.state.workExample} showModal={showModal}
-                    onClose={this.closeModal} />
+                <WorkExampleModal workExample={this.state.workExample} showModal={showModal} onClose={this.closeModal} />
             </section>
         );
     }
@@ -80,11 +69,11 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
     closeModal(): void {
         this.setState({
             showModal: false
-        })
+        });
     }
 
     viewWorkExample(id: number): void {
-        let workExample = this.props.items.find(x => x.Id === id);
+        let workExample = this.props.items.find(item => item.Id === id);
         this.setState({
             showModal: true,
             workExample

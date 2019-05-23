@@ -2,9 +2,9 @@
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 import { Dash, DashModifiers } from "./Dash";
-import Contacts from "../../containers/Home/Contacts";
+import Contacts from "@containers/Home/Contacts";
 import "./ContactSection.scss";
-import ContactForm from "../../containers/Home/ContactForm";
+import ContactForm from "@containers/Home/ContactForm";
 
 export class ContactSection extends React.Component {
     render(): JSX.Element {

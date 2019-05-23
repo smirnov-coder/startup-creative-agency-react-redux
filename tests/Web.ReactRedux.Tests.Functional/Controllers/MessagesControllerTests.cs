@@ -88,8 +88,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 {
                     Assert.False(response.IsSuccessStatusCode);
                     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal($"The entity of type '{typeof(Message)}' with key value '101' for 'Id' not found.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.True(details.IsError);
+                    Assert.Equal($"The entity of type '{typeof(Message)}' with key value '101' for 'Id' not found.", details.Message);
                 }
             }
         }
@@ -113,8 +116,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 using (var response = await httpClient.PostAsync(BASE_URL, new StringContent(json, Encoding.UTF8, "application/json")))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal("Thank you for your message!", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal("Thank you for your message!", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         using (var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
@@ -151,8 +157,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 using (var response = await httpClient.PutAsync(BASE_URL, new FormUrlEncodedContent(model)))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal($"A set of entities of type '{typeof(Message)}' has been updated successfully.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal($"A set of entities of type '{typeof(Message)}' has been updated successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         using (var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
@@ -179,8 +188,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 using (var response = await httpClient.SendAsync(request))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal($"A set of entities of type '{typeof(Message)}' has been deleted successfully.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal($"A set of entities of type '{typeof(Message)}' has been deleted successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         using (var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())

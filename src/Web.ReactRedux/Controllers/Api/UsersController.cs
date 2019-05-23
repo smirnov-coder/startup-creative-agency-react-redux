@@ -49,10 +49,17 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             return PrepareForReturn(user);
         }
 
+        //
+        // GET api/users/me
+        //
+        [HttpGet("me")]
+        public async Task<ActionResult<DomainUser>> GetUserAsync() => await GetUserAsync(User?.Identity?.Name);
+        
+
         private DomainUser PrepareForReturn(DomainUser user)
         {
             var profile = user.Profile;
-            profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition, 
+            profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition,
                 Url.Content(profile.PhotoFilePath));
             return user;
         }
@@ -60,7 +67,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // POST api/users/register
         //
-        [HttpPost]
+        [HttpPost("register")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> RegisterAsync(RegisterUserViewModel newUser)
         {
@@ -81,10 +88,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // PUT api/users/user1/profile
         //
         [HttpPut("{userName}/profile")]
-        public async Task<IActionResult> UpdateProfileAsync([FromRoute]string userName, [FromForm]MyProfileViewModel profile)
+        public async Task<IActionResult> UpdateProfileAsync([FromRoute]string userName, [FromForm]MyProfileBindingModel profile)
         {
             if (userName != User?.Identity?.Name)
-                return BadRequest(OperationDetails.Error($"{nameof(IUserIdentity.UserName)} mismatch."));
+                return BadRequest(OperationDetails.Error("User name mismatch."));
 
             var user = await _userService.GetUserAsync(userName);
             string photoFilePath = profile.PersonalInfo.PhotoFilePath;
@@ -108,9 +115,9 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         }
 
         //
-        // PUT api/users/user1/displayStatus
+        // PUT api/users/user1/display-status
         //
-        [HttpPut("{userName}/displayStatus")]
+        [HttpPut("{userName}/display-status")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> UpdateDisplayStatusAsync([FromRoute]string userName, bool isDisplayed)
         {

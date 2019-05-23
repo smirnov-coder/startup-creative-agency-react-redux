@@ -21,9 +21,9 @@ export class WorkExampleModal extends React.Component<WorkExampleModalProps> {
         if (!$) {
             throw new Error("jQuery '$' is required.");
         }
-        if (nextProps.showModal) {
-            $(this.modal.current).modal("show");
-        }
+        nextProps.showModal
+            ? $(this.modal.current).modal("show")
+            : $(this.modal.current).modal("hide");
     }
 
     private modal = React.createRef<HTMLDivElement>();
