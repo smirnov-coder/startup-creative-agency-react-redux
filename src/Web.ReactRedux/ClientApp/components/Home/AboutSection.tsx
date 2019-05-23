@@ -2,8 +2,8 @@
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 import { AboutUs } from "./AboutUs";
-import TeamCarousel from "../../containers/Home/TeamCarousel";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import TeamCarousel from "@containers/Home/TeamCarousel";
+import "@bootstrap/css";
 import "./AboutSection.scss";
 import { Dash, DashModifiers } from "./Dash";
 

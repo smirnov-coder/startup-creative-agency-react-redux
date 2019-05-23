@@ -92,7 +92,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 action.Invoke(messageId);
             }
-            return Task.FromResult<IActionResult>(Ok(OperationDetails.Error($"A set of entities of type '{typeof(Message)}' has been " +
+            return Task.FromResult<IActionResult>(Ok(OperationDetails.Success($"A set of entities of type '{typeof(Message)}' has been " +
                 $"{messagePart} successfully.")));
         }
     }

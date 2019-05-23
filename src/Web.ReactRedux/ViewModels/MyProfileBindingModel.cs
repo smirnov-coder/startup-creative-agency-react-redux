@@ -9,7 +9,7 @@ using StartupCreativeAgency.Web.ReactRedux.Attributes;
 
 namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 {
-    public class MyProfileViewModel
+    public class MyProfileBindingModel
     {
         public PersonalInfoViewModel PersonalInfo { get; set; }
 
@@ -18,9 +18,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 
     public class PersonalInfoViewModel
     {
-        //[BindNever]
-        //public string UserName { get; set; }
-
         [StringLength(30)]
         public string FirstName { get; set; }
 

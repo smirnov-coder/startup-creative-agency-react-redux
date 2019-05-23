@@ -36,10 +36,9 @@ class Footer extends React.Component<FooterProps> {
                                         <Menu className="footer__socials" modifiers={["menu--style-inline"]}>
                                             {items.map(socialLink => (
                                                 <Menu.Item key={socialLink.NetworkName} className="footer__socials-item">
-                                                    <SocialLink
+                                                    <SocialLink url={socialLink.Url}
                                                         icon={icons[socialLink.NetworkName]}
-                                                        modifiers={[SocialLinkModifiers.Shape.ROUND]}
-                                                        url={socialLink.Url} />
+                                                        modifiers={[SocialLinkModifiers.Shape.ROUND]} />
                                                 </Menu.Item>
                                             ))}
                                         </Menu>
@@ -70,8 +69,8 @@ interface StateProps {
 
 const mapStateToProps = (state: AppState): StateProps => {
     return {
-        isLoading: state.socialLinks.isLoading,
-        items: state.socialLinks.items
+        isLoading: state.contacts.isLoading,
+        items: state.contacts.socialLinks
     };
 }
 

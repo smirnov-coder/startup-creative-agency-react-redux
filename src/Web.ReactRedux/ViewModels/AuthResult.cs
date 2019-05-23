@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 {
-    public class AuthInfo
+    public class AuthResult
     {
         public string AccessToken { get; set; }
-        public bool IsAdmin { get; set; }
+        public InitialAppState AppState { get; set; }
     }
 }

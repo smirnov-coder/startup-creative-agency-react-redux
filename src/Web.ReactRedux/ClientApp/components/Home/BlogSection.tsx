@@ -2,7 +2,7 @@
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 import { Dash, DashModifiers } from "./Dash";
-import Blog from "../../containers/Home/Blog";
+import Blog from "@containers/Home/Blog";
 import "./BlogSection.scss";
 
 export class BlogSection extends React.Component {

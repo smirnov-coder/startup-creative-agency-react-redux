@@ -1,8 +1,8 @@
 ﻿import * as React from "react";
 import { Navbar } from "./Navbar";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import "@bootstrap/css";
 import "./Header.scss";
-import smoothScroll from "../../scripts/smoothScroll";
+import smoothScroll from "@scripts/smoothScroll";
 import { LinkButton } from "@components/Shared/LinkButton";
 import { ButtonModifiers } from "@components/Shared/Button";
 

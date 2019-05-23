@@ -20,9 +20,6 @@ export function getUserInfoString(user: DomainUser): string {
     }
 }
 
-export function encodeHTML(source: string): string {
-    if (!$) {
-        throw new Error("jQuery '$' is required.");
-    }
-    return $("<div />").text(source).html();
-}
+export const encodeHTML = (source: string): string => $("<div />").text(source).html();
+
+export const decodeHTML = (source: string): string => $("<div />").html(source).text();

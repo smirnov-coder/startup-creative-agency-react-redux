@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 import { Section } from "./Section";
-import Gallery from "../../containers/Home/Gallery";
+import Gallery from "@containers/Home/Gallery";
 import "./WorksSection.scss";
 import { SectionHeader } from "./SectionHeader";
 import { Dash, DashModifiers } from "./Dash";

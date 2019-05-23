@@ -1,8 +1,8 @@
 ﻿import * as React from "react";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
-import ServiceList from "../../containers/Home/ServiceList";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import ServiceList from "@containers/Home/ServiceList";
+import "@bootstrap/css";
 import "./ServicesSection.scss";
 import { Dash, DashModifiers } from "./Dash";
 

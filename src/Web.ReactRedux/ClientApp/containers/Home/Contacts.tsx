@@ -41,7 +41,7 @@ interface StateProps {
 const mapStateToProps = (state: AppState): StateProps => {
     return {
         isLoading: state.contacts.isLoading,
-        items: state.contacts.items
+        items: state.contacts.contactInfos
     };
 }
 

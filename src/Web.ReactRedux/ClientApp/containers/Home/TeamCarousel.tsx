@@ -92,8 +92,8 @@ interface StateProps {
 
 const mapStateToProps = (state: AppState): StateProps => {
     return {
-        isLoading: state.teamMembers.isLoading,
-        items: state.teamMembers.items
+        isLoading: state.users.isLoading,
+        items: state.users.items
     };
 }
 

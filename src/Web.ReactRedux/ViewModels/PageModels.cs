@@ -7,6 +7,7 @@ using StartupCreativeAgency.Web.ReactRedux.ViewModels;
 
 namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 {
+    /// TODO: delete
     public class BasePageModel
     {
         public UserWidgetViewModel UserWidget { get; set; }

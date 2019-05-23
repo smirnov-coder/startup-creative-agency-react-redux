@@ -78,8 +78,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 using (var response = await httpClient.PostAsync(BASE_URL, new StringContent(json, Encoding.UTF8, "application/json")))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal("Company contacts saved successfully.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal("Company contacts saved successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         var contactsService = scope.ServiceProvider.GetRequiredService<IContactsService>();

@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
+using StartupCreativeAgency.Web.ReactRedux.ViewModels;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
@@ -205,9 +206,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     {
                         Assert.False(response.IsSuccessStatusCode);
                         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-                        string message = await response.Content.ReadAsStringAsync();
+                        Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                        string responseJson = await response.Content.ReadAsStringAsync();
+                        var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                        Assert.True(details.IsError);
                         Assert.Equal($"The entity of type '{typeof(BlogPost)}' with key value '1' for 'Id' is already exists. " +
-                            $"If you want to update it, use 'Update' method", message);
+                            $"If you want to update it, use 'Update' method", details.Message);
                     }
                 }
             }
@@ -232,9 +236,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 {
                     Assert.False(response.IsSuccessStatusCode);
                     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.True(details.IsError);
                     Assert.Equal($"The entity of type '{typeof(BlogPost)}' with key value '101' for 'Id' " +
-                        $"that you trying to update doesn't exist. To add new entity, use 'Add' method.", message);
+                        $"that you trying to update doesn't exist. To add new entity, use 'Add' method.", details.Message);
                 }
             }
         }
@@ -250,9 +257,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 {
                     Assert.False(response.IsSuccessStatusCode);
                     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.True(details.IsError);
                     Assert.Equal($"The entity type '{typeof(BlogPost)}' with key value '101' for 'Id' not found.", 
-                        message);
+                        details.Message);
                 }
             }
         }
