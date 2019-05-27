@@ -123,7 +123,7 @@ export const initialState: AppState = {
         errorMessage: ""
     },
     users: {
-        isLoading: true,
+        isLoading: false,
         items: [],
         current: null,
         error: null

@@ -1,26 +1,27 @@
 ﻿import * as React from "react";
 import { connect } from "react-redux";
-import { AppState } from "../../store/state";
+import { AppState } from "@store/state";
 import { NavLink } from "react-router-dom";
-import { Menu } from "../../components/Home/Menu";
+import { Menu } from "@components/Home/Menu";
 import "./NavMenu.scss";
+import { Routes } from "@scripts/constants";
 
 type NavMenuProps = StateProps;
 
 const NavMenu: React.SFC<NavMenuProps> = (props: NavMenuProps) => {
     let links: any = {
-        "My Profile": "/admin/myprofile",
-        "Services": "/admin/services",
-        "Users": "/admin/users",
-        "Works": "/admin/works",
-        "Blog": "/admin/blog",
-        "Brands": "/admin/brands",
-        "Testimonials": "/admin/testimonials"
+        "My Profile": Routes.MY_PROFILE,
+        "Services": Routes.SERVICES,
+        "Users": Routes.USERS,
+        "Works": Routes.WORKS,
+        "Blog": Routes.BLOG,
+        "Brands": Routes.BRANDS,
+        "Testimonials": Routes.TESTIMONIALS
     };
     let { isAdmin, newMessagesCount } = props;
     if (isAdmin) {
-        links["Contacts"] = "/admin/contacts";
-        links["Messages"] = "/admin/messages";
+        links["Contacts"] = Routes.CONTACTS;
+        links["Messages"] = Routes.MESSAGES;
     }
     return (
         <Menu className="nav-menu">
@@ -31,7 +32,7 @@ const NavMenu: React.SFC<NavMenuProps> = (props: NavMenuProps) => {
                         {pageName === "Messages" && newMessagesCount > 0
                             ? <span className="badge nav-menu__badge">
                                 {newMessagesCount > 99 ? "99+" : newMessagesCount}
-                            </span>
+                              </span>
                             : null
                         }
                     </NavLink>

@@ -4,7 +4,7 @@ import { ListItem } from "./ListItem";
 import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
 import { FileInput } from "./FileInput";
 
-interface PersonalInfoProps {
+export interface PersonalInfoProps {
     userName: string;
     firstName: string;
     lastName: string;
@@ -54,7 +54,7 @@ const PersonalInfo: React.SFC<PersonalInfoProps> = (props: PersonalInfoProps) =>
                         <div className="list-item__content-line form-group">
                             <label htmlFor={names.firstName} className="list-item__content-line-heading control-label col-sm-2">
                                 First Name
-                        </label>
+                            </label>
                             <div className="col-sm-10">
                                 <input id={names.firstName} name={names.firstName} className="personal-info__first-name form-control"
                                     defaultValue={user.firstName} />
@@ -63,7 +63,7 @@ const PersonalInfo: React.SFC<PersonalInfoProps> = (props: PersonalInfoProps) =>
                         <div className="list-item__content-line form-group">
                             <label htmlFor={names.lastName} className="list-item__content-line-heading control-label col-sm-2">
                                 Last Name
-                        </label>
+                            </label>
                             <div className="col-sm-10">
                                 <input id={names.lastName} name={names.lastName} className="personal-info__last-name form-control"
                                     defaultValue={user.lastName} />
@@ -72,7 +72,7 @@ const PersonalInfo: React.SFC<PersonalInfoProps> = (props: PersonalInfoProps) =>
                         <div className="list-item__content-line form-group">
                             <label htmlFor={names.jobPosition} className="list-item__content-line-heading control-label col-sm-2">
                                 Job Position
-                        </label>
+                            </label>
                             <div className="col-sm-10">
                                 <input id={names.jobPosition} name={names.jobPosition} className="personal-info__job form-control"
                                     defaultValue={user.jobPosition} />

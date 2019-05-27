@@ -1,21 +1,41 @@
 ﻿import * as React from "react";
 import { Button, ButtonModifiers } from "@components/Shared/Button";
+import * as $ from "jquery";
+import { AppState } from "@store/state";
+import { ServiceInfo } from "@store/entities";
+import { connect } from "react-redux";
+import { RouteComponentProps } from "react-router";
+import { Routes } from "@scripts/constants";
+import "./ServiceItemForm.scss";
 
-interface ServiceItemFormProps {
+interface ServiceItemFormProps extends StateProps, RouteComponentProps {
+    onSubmit: (formData: FormData) => void;
+}
+
+interface ServiceItemFormState {
     Id: number;
     IconClass: string;
     Caption: string;
     Description: string;
-    onSubmit: (formData: FormData) => void;
 }
 
-export class ServiceItemForm extends React.Component<ServiceItemFormProps> {
+class ServiceItemForm extends React.Component<ServiceItemFormProps, ServiceItemFormState> {
+    constructor(props: ServiceItemFormProps) {
+        super(props);
+        let { Id, IconClass, Caption, Description } = this.props.item;
+        this.state = {
+            Id,
+            IconClass,
+            Caption,
+            Description
+        };
+    }
+
+    private validator: JQueryValidation.Validator;
+
     componentDidMount(): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.")
-        }
         let $form = $(this.form.current);
-        $form.validate({
+        this.validator = $form.validate({
             rules: {
                 Id: {
                     required: true
@@ -48,34 +68,51 @@ export class ServiceItemForm extends React.Component<ServiceItemFormProps> {
         });
     }
 
+    componentWillUnmount(): void {
+        this.validator.destroy();
+    }
+
+    componentWillReceiveProps(nextProps: ServiceItemFormProps): void {
+        if (this.props.match.path.toLocaleLowerCase() === Routes.ADD_SERVICE) {
+            this.setState({
+                Id: 0,
+                Caption: "",
+                IconClass: "",
+                Description: ""
+            });
+        } else {
+            let { Id, IconClass, Caption, Description } = nextProps.item;
+            this.setState({
+                Id,
+                IconClass,
+                Caption,
+                Description
+            });
+        }
+    }
+
     private form = React.createRef<HTMLFormElement>();
 
     render(): JSX.Element {
-        let { Id, IconClass, Caption, Description } = this.props;
-        let item = {
-            id: Id ? Id : 0,
-            iconClass: IconClass ? IconClass : "",
-            caption: Caption ? Caption : "",
-            description: Description ? Description : ""
-        };
+        let { Id, IconClass, Caption, Description } = this.state;
         return (
             <div className="service-item-form">
                 <form ref={this.form}>
-                    <input id="Id" name="Id" type="hidden" className="service-item-form__id" defaultValue={item.id.toString()} />
+                    <input id="Id" name="Id" type="hidden" className="service-item-form__id" defaultValue={Id.toString()} />
                     <div className="service-item-form__line form-group">
                         <label htmlFor="IconClass">FontAwesome Icon Class</label>
                         <input id="IconClass" name="IconClass" className="service-item-form__icon-class form-control"
-                            defaultValue={item.iconClass} />
+                            value={IconClass} onChange={(e) => this.handleChange(e, "IconClass")} />
                     </div>
                     <div className="service-item-form__line form-group">
                         <label htmlFor="Caption">Caption</label>
                         <input id="Caption" name="Caption" className="service-item-form__caption form-control"
-                            defaultValue={item.caption} />
+                            value={Caption} onChange={(e) => this.handleChange(e, "Caption")} />
                     </div>
                     <div className="service-item-form__line form-group">
                         <label htmlFor="Description">Description</label>
                         <textarea id="Description" name="Description" className="service-item-form__description form-control"
-                            defaultValue={item.description}></textarea>
+                            value={Description} onChange={(e) => this.handleChange(e, "Description")}></textarea>
                     </div>
                     <div className="service-item-form__line">
                         <Button type="submit"
@@ -87,4 +124,23 @@ export class ServiceItemForm extends React.Component<ServiceItemFormProps> {
             </div>
         );
     }
+
+    handleChange(event: React.ChangeEvent, inputName: string): void {
+        this.setState({
+            ...this.state,
+            [inputName]: (event.target as HTMLInputElement).value
+        });
+    }
 }
+
+interface StateProps {
+    item: ServiceInfo;
+}
+
+const mapStateToProps = (state: AppState): StateProps => {//console.log("state", state);//
+    return {
+        item: state.services.current
+    };
+}
+
+export default connect(mapStateToProps, null)(ServiceItemForm);

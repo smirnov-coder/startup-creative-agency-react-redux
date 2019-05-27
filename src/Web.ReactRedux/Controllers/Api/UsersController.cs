@@ -53,7 +53,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // GET api/users/me
         //
         [HttpGet("me")]
-        public async Task<ActionResult<DomainUser>> GetUserAsync() => await GetUserAsync(User?.Identity?.Name);
+        public async Task<ActionResult<DomainUser>> GetMeAsync() => await GetUserAsync(User?.Identity?.Name);
         
 
         private DomainUser PrepareForReturn(DomainUser user)
@@ -61,6 +61,9 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var profile = user.Profile;
             profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition,
                 Url.Content(profile.PhotoFilePath));
+            /// TODO: Абсолютно непонятная ошибка с проксями.
+            profile.SocialLinks.First();
+
             return user;
         }
 

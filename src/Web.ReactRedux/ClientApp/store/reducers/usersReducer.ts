@@ -1,11 +1,11 @@
 ﻿import { UsersState, initialState as appState } from "@store/state";
-import { AddUsersAction } from "@store/actions/usersActions";
 import { HomePageModelAction } from "@store/actions/appActions";
 import { ActionTypes } from "@store/actions/actionTypes";
+import { CurrentUserAction } from "@store/actions/usersActions";
 
 type UsersActions = 
-    | AddUsersAction
     | HomePageModelAction
+    | CurrentUserAction
 
 const initialState = appState.users;
 
@@ -35,31 +35,21 @@ function usersReducer(state: UsersState = initialState, action: UsersActions): U
             };
         }
 
+        case ActionTypes.CURRENT_USER: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                current: (action as CurrentUserAction).payload.user,
+            };
+        }
+
         //case "ADD_USERS": {
         //    return {
         //        ...state,
         //        isLoading: false,
         //        error: null,
         //        items: (action as AddUsersAction).payload.items
-        //    };
-        //}
-
-        //case "ASSIGN_USER": {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        current: action.item,
-        //        error: null
-        //    };
-        //}
-
-        //case "INIT_MY_PROFILE_PAGE": {
-        //    //console.log("state Init", state);//
-        //    return {
-        //        ...state,
-        //        error: null,
-        //        isLoading: false,
-        //        current: action.user
         //    };
         //}
 

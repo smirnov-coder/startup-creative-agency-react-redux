@@ -91,10 +91,10 @@ export const signOut = () => (dispatch: Dispatch) => {
 
 export type SignOutAction = Action;
 
-const doSignOut = (): SignOutAction => {
+export const doSignOut = (): SignOutAction => {
     window.sessionStorage.removeItem(TOKEN_STORAGE_KEY);
     window.localStorage.removeItem(TOKEN_STORAGE_KEY);
     return {
-        type: "SIGN_OUT"
+        type: ActionTypes.SIGN_OUT
     };
 }

@@ -6,7 +6,7 @@ import { ActionTypes } from "./actionTypes";
 import { decodeHTML } from "@scripts/utils";
 import { GLOBALS } from "@scripts/constants";
 
-export const fetchBlogPosts = (skip: number = 0, take = 0) => (dispatch: Dispatch) => {
+export const fetchBlogPosts = (skip: number = 0, take: number = 0) => (dispatch: Dispatch) => {
     dispatch(createSimpleAction(ActionTypes.REQUEST_BLOG_POSTS));
     let uriTemplate: string = decodeHTML(GLOBALS.api.blogPartial);
     //console.log("uriTemplate", uriTemplate);//
@@ -31,7 +31,7 @@ export interface BlogPostsAction extends Action {
 
 const addBlogPosts = (blogPosts: BlogPost[], append: boolean = false): BlogPostsAction => {
     return {
-        type: "BLOG_POSTS",
+        type: ActionTypes.BLOG_POSTS,
         payload: {
             items: blogPosts,
             append

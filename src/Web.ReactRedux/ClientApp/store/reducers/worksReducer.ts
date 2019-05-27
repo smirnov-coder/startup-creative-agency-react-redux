@@ -1,11 +1,13 @@
 ﻿import { WorksState, initialState as appState } from "@store/state";
-import { AddWorksAction } from "@store/actions/worksActions";
 import { HomePageModelAction } from "@store/actions/appActions";
 import { ActionTypes } from "@store/actions/actionTypes";
+import { WorkExample } from "@store/entities";
+import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
 
 type WorksActions =
-    | AddWorksAction
+    | ItemsAction<WorkExample>
     | HomePageModelAction
+    | CurrentAction<WorkExample>
 
 const initialState = appState.works;
 
@@ -35,22 +37,23 @@ function worksReducer(state: WorksState = initialState, action: WorksActions): W
             };
         }
 
-        //case "ADD_WORKS": {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: null,
-        //        items: (action as AddWorksAction).payload.items
-        //    };
-        //}
+        case ActionTypes.WORKS: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                items: (action as ItemsAction<WorkExample>).payload.items
+            };
+        }
 
-        //case ActionTypes.ASSIGN_ERROR: {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: action.error
-        //    };
-        //}
+        case ActionTypes.CURRENT_WORK_EXAMPLE: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                current: (action as CurrentAction<WorkExample>).payload.item
+            };
+        }
 
         default:
             return state;

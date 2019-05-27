@@ -142,7 +142,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     ["Content"] = "New Content",
                     ["ImagePath"] = "Old Path"
                 };
-                using (var response = await httpClient.PutAsync($"{BASE_URL}/{id}", new FormUrlEncodedContent(model)))
+                using (var response = await httpClient.PutAsync(BASE_URL, new FormUrlEncodedContent(model)))
                 {
                     Assert.True(response.IsSuccessStatusCode);
                     using (var scope = factory.Server.Host.Services.CreateScope())
@@ -223,16 +223,15 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             var factory = _factoryCollection.ForUpdate;
             using (var httpClient = await factory.CreateClientWithAccessTokenAsync(USER_NAME))
             {
-                int id = 101;
                 var model = new Dictionary<string, string>
                 {
-                    ["Id"] = id.ToString(),
+                    ["Id"] = "101",
                     ["Title"] = "New Title",
                     ["Category"] = "New Category",
                     ["Content"] = "New Content",
                     ["ImagePath"] = "Old Path"
                 };
-                using (var response = await httpClient.PutAsync($"{BASE_URL}/{id}", new FormUrlEncodedContent(model)))
+                using (var response = await httpClient.PutAsync(BASE_URL, new FormUrlEncodedContent(model)))
                 {
                     Assert.False(response.IsSuccessStatusCode);
                     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

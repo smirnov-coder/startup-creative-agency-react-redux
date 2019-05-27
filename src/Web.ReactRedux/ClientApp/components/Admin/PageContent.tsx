@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import "@bootstrap/css";
 import "./PageContent.scss";
 
 interface PageContentProps extends React.PropsWithChildren<{}> {

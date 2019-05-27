@@ -1,14 +1,12 @@
 ﻿import * as React from "react";
+import { Notification } from "@store/state";
 import "@bootstrap/css";
 
-interface NotificationProps {
-    id: number;
-    type: "success" | "error";
-    text: string;
+interface NotificationProps extends Notification {
     onDelete: (id: number) => void
 }
 
-const Notification: React.SFC<NotificationProps> = (props: NotificationProps) => {
+const NotificationItem: React.SFC<NotificationProps> = (props: NotificationProps) => {
     let { id, type, text, onDelete } = props;
     let colorClass: string = type === "success" ? "alert-success" : "alert-danger";
     return (
@@ -21,4 +19,4 @@ const Notification: React.SFC<NotificationProps> = (props: NotificationProps) =>
     );
 }
 
-export default Notification;
+export default NotificationItem;

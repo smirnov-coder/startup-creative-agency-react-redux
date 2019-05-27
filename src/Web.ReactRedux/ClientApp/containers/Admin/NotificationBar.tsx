@@ -2,14 +2,9 @@
 import { AppState } from "@store/state";
 import { connect } from "react-redux";
 import { Dispatch, bindActionCreators } from "redux";
-import NotificationItem from "@components/Admin/Notification";
-import { deleteNotification } from "@store/actions/actionCreators";
-
-interface Notification {
-    id: number;
-    type: "success" | "error";
-    text: string;
-}
+import NotificationItem from "@components/Admin/NotificationItem";
+import { deleteNotification } from "@store/actions/notificationsActions";
+import { Notification } from "@store/state";
 
 type NotificationBarProps = StateProps & DispatchProps;
 

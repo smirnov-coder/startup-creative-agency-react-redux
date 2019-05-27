@@ -35,7 +35,7 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
     render(): JSX.Element {
         let categories: string[] = this.props.items.map(workExample => workExample.Category);
         let { isLoading, items } = this.props;
-        let { activeFilter, showModal } = this.state;
+        let { activeFilter, ...restState } = this.state;
         let elements: JSX.Element[] = [];
         for (let index = 0; index < items.length; index++) {
             if (!this.itemRefs[index]) {
@@ -61,7 +61,7 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
                 <div className="gallery__items row">
                     {isLoading ? <Loader /> : elements.map(element => element)}
                 </div>
-                <WorkExampleModal workExample={this.state.workExample} showModal={showModal} onClose={this.closeModal} />
+                <WorkExampleModal {...restState} onClose={this.closeModal} />
             </section>
         );
     }

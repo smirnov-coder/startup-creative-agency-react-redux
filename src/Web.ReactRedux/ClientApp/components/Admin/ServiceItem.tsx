@@ -4,7 +4,8 @@ import { ListItem } from "./ListItem";
 import { LinkButton } from "@components/Shared/LinkButton";
 import { ButtonModifiers, Button } from "@components/Shared/Button";
 import "./ServiceItem.scss";
-import { getDateTimeString, getUserInfoString } from "@scripts/utils";
+import { getDateTimeString, getUserInfoString, concretizeRoute } from "@scripts/utils";
+import { Routes } from "@scripts/constants";
 
 interface ServiceItemProps extends ServiceInfo {
     onDelete: (id: number) => void;
@@ -18,6 +19,7 @@ export class ServiceItem extends React.Component<ServiceItemProps> {
 
     render(): JSX.Element {
         let { Id, IconClass, Caption, Description, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props;
+        let url: string = concretizeRoute(Routes.EDIT_SERVICE, ":id", Id);
         return (
             <div className="service-item">
                 <ListItem>
@@ -52,7 +54,7 @@ export class ServiceItem extends React.Component<ServiceItemProps> {
                         </div>
                     </ListItem.Content>
                     <ListItem.Footer>
-                        <LinkButton url={`/admin/services/edit/${Id}`}
+                        <LinkButton url={url}
                             className="service-item__edit"
                             modifiers={[ButtonModifiers.Size.SMALL]}
                             children="Edit" />

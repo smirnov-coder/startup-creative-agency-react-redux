@@ -5,7 +5,7 @@ import { ConnectedRouter } from "connected-react-router";
 import { Switch, Route, Redirect } from "react-router";
 import HomePage from "@containers/Home/HomePage";
 import AuthArea from "@components/Auth/AuthArea";
-import { NotFoundPage } from "@containers/Shared/NotFoundPage";
+import NotFoundPage from "@containers/Shared/NotFoundPage";
 import AdminArea from "@components/Admin/AdminArea";
 import { Dispatch, bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -28,7 +28,7 @@ class App extends React.Component<AppProps> {
                     <Route path={Routes.ADMIN_AREA} component={AdminArea} />
                     <Route path={Routes.NOT_FOUND} component={NotFoundPage} />
                     <Redirect to={Routes.NOT_FOUND} />
-                </Switch >
+                </Switch>
             </ConnectedRouter>
         );
     }

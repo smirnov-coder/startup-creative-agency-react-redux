@@ -5,8 +5,9 @@ import { Dispatch, bindActionCreators } from "redux";
 import "./LoginForm.scss";
 import { Button, ButtonModifiers } from "@components/Shared/Button";
 import { signIn } from "@store/actions/authActions";
+import { RouteComponentProps } from "react-router";
 
-type LoginFormProps = DispatchProps;
+type LoginFormProps = DispatchProps & RouteComponentProps;
 
 interface LoginFormState {
     userName: string;
@@ -45,7 +46,9 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
             submitHandler: (form, event) => {
                 event.preventDefault();
                 // dispatch sign in here
-                this.props.signIn({ ...this.state }); //console.log("login form submitted");//
+                let { state } = this.props.location;
+                let returnUrl: string = state ? state.returnUrl : null;
+                this.props.signIn({ ...this.state, returnUrl }); //console.log("login form submitted");//
             },
             invalidHandler: (event, validator) => {
                 console.error("Form data is invalid.");//
@@ -118,7 +121,7 @@ interface DispatchProps {
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     return {
         signIn: bindActionCreators(signIn, dispatch),
-    }
+    };
 }
 
 export default connect(null, mapDispatchToProps)(LoginForm);

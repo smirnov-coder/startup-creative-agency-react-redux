@@ -1,11 +1,13 @@
 ﻿import { ServicesState, initialState as appState } from "@store/state"
-import { AddServicesAction } from "@store/actions/servicesActions";
 import { HomePageModelAction } from "@store/actions/appActions";
 import { ActionTypes } from "@store/actions/actionTypes";
+import { CurrentAction, ItemsAction } from "@store/actions/genericActions";
+import { ServiceInfo } from "@store/entities";
 
 type ServicesActions =
-    | AddServicesAction
+    | ItemsAction<ServiceInfo>
     | HomePageModelAction
+    | CurrentAction<ServiceInfo>
 
 const initialState = appState.services
 
@@ -35,15 +37,23 @@ function servicesReducer(state: ServicesState = initialState, action: ServicesAc
             };
         }
 
+        case ActionTypes.SERVICES: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                items: (action as ItemsAction<ServiceInfo>).payload.items
+            };
+        }
 
-        //case "ADD_SERVICES": {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: null,
-        //        items: (action as AddServicesAction).payload.items
-        //    };
-        //}
+        case ActionTypes.CURRENT_SERVICE: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                current: (action as CurrentAction<ServiceInfo>).payload.item
+            };
+        }
 
         default:
             return state;

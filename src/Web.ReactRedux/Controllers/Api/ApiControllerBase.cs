@@ -100,9 +100,9 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         protected abstract Task<TEntity> PerformAddAsync(TEntity entity);
 
         //
-        // PUT api/[controller]/5
+        // PUT api/[controller]
         //
-        [HttpPut("{id?}")]
+        [HttpPut]
         public virtual async Task<IActionResult> UpdateAsync([FromForm]TModel model)
         {
             var user = await _userService.GetUserAsync(User?.Identity?.Name);

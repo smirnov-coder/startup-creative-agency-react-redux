@@ -1,5 +1,6 @@
 ﻿import * as $ from "jquery";
 import { DomainUser, UserProfile } from "@store/entities";
+import { Routes } from "./constants";
 
 export function getDateTimeString(date: Date): string {
     let obj: Date = new Date(date);
@@ -23,3 +24,9 @@ export function getUserInfoString(user: DomainUser): string {
 export const encodeHTML = (source: string): string => $("<div />").text(source).html();
 
 export const decodeHTML = (source: string): string => $("<div />").html(source).text();
+
+export function concretizeRoute(routeTemplate: Routes, routeParam: string | RegExp, routeValue: string | number): string {
+    return routeTemplate.replace(routeParam, routeValue.toString()); 
+}
+
+export const formatString = (template: string, ...args: any[]): string => $.validator.format(template, args);

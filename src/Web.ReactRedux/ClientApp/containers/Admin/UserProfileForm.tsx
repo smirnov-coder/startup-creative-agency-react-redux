@@ -3,20 +3,17 @@ import { AppState } from "@store/state";
 import { DomainUser } from "@store/entities";
 import { Dispatch, bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import PersonalInfo from "@components/Admin/PersonalInfo";
-import { updateUserProfile } from "@store/actions/actionCreators";
+import PersonalInfo, { PersonalInfoProps } from "@components/Admin/PersonalInfo";
 import SocialLinks from "@components/Admin/SocialLinks";
 import "jquery-validation/dist/additional-methods";
 import "./UserProfileForm.scss";
 import { Button, ButtonModifiers } from "@components/Shared/Button";
+import { updateProfile } from "@store/actions/usersActions";
 
 type UserProfileFormProps = StateProps & DispatchProps;
 
 class UserProfileForm extends React.Component<UserProfileFormProps> {
     componentDidMount(): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
         let $form = $(this.form.current);
         let socialLinksRules = {};
         $form.find("input[name$='NetworkName']").each(index => {
@@ -66,7 +63,7 @@ class UserProfileForm extends React.Component<UserProfileFormProps> {
                 event.preventDefault();
                 // dispatch sign in here
                 let formData: FormData = new FormData($form[0] as HTMLFormElement);
-                this.props.updateUserProfile(this.props.user.Identity.UserName, formData);
+                this.props.onSubmit(this.props.user.Identity.UserName, formData);
             },
             invalidHandler: (event, validator) => {
                 console.error("Form data is invalid.");//
@@ -77,27 +74,30 @@ class UserProfileForm extends React.Component<UserProfileFormProps> {
     private form = React.createRef<HTMLFormElement>();
 
     render(): JSX.Element {
-        //console.log("props", this.props);//
-        let personalInfo = {
-            userName: this.props.user.Identity.UserName,
-            firstName: this.props.user.Profile.FirstName,
-            lastName: this.props.user.Profile.LastName,
-            jobPosition: this.props.user.Profile.JobPosition,
-            photoFilePath: this.props.user.Profile.PhotoFilePath
-        }; //console.log("info", personalInfo);//
         return (
             <div className="profile">
                 <form ref={this.form} className="form-horizontal" encType="multipart/form-data">
                     <div className="profile__personal-info">
-                        <PersonalInfo {...personalInfo} />
+                        {this.props.user ? <PersonalInfo {...this.getPersonalInfo()} /> : null}
                     </div>
                     <div className="profile__social-links">
-                        <SocialLinks items={this.props.user.Profile.SocialLinks} />
+                        {this.props.user ? <SocialLinks items={this.props.user.Profile.SocialLinks} /> : null}
                     </div>
                     <Button className="profile__save" modifiers={[ButtonModifiers.Size.SMALL]} type="submit">Save</Button>
                 </form>
             </div>
         );
+    }
+
+    getPersonalInfo(): PersonalInfoProps {
+        let { Identity, Profile } = this.props.user;
+        return {
+            userName: Identity.UserName,
+            firstName: Profile.FirstName,
+            lastName: Profile.LastName,
+            jobPosition: Profile.JobPosition,
+            photoFilePath: Profile.PhotoFilePath
+        };
     }
 }
 
@@ -112,12 +112,12 @@ const mapStateToProps = (state: AppState): StateProps => {
 }
 
 interface DispatchProps {
-    updateUserProfile: (userName: string, formData: FormData) => void;
+    onSubmit: (userName: string, formData: FormData) => void;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     return {
-        updateUserProfile: bindActionCreators(updateUserProfile, dispatch)
+        onSubmit: bindActionCreators(updateProfile, dispatch)
     }
 }
 
