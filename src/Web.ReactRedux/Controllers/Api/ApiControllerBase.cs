@@ -29,7 +29,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // GET api/[controller]
         //
-        [AllowAnonymous]
         public virtual async Task<IEnumerable<TEntity>> ListAsync()
         {
             return (await PerformGetManyAsync()).Select(entity => PrepareEntityForReturn(entity));
@@ -41,7 +40,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // GET api/[controller]/5
         //
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public virtual async Task<ActionResult<TEntity>> GetAsync(TKey id)
         {
             var entity = await PerformGetAsync(id);

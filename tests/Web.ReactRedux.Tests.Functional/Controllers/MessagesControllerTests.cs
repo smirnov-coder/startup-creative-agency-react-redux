@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -148,13 +149,14 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             using (var httpClient = await factory.CreateClientWithAccessTokenAsync(USER_NAME))
             {
                 int expectedCount = 3;
-                var model = new Dictionary<string, string>
+                var model = new MessageReadStatusBindingModel
                 {
-                    ["ids[0]"] = "1",
-                    ["ids[1]"] = "2",
-                    ["isRead"] = "false"
+                    MessageIds = new int[] { 1, 2 },
+                    IsRead = false
                 };
-                using (var response = await httpClient.PutAsync(BASE_URL, new FormUrlEncodedContent(model)))
+                string json = JsonConvert.SerializeObject(model);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                using (var response = await httpClient.PutAsync(BASE_URL, content))
                 {
                     Assert.True(response.IsSuccessStatusCode);
                     Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);

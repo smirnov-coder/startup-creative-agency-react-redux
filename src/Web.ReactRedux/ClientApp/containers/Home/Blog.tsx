@@ -88,7 +88,7 @@ class Blog extends React.Component<BlogProps, BlogState> {
     loadBlogPosts(): void {
         let skip: number = this.props.items.length;
         let take: number = 2;
-        this.props.getBlogPosts(skip, take);
+        this.props.getBlogPosts({ skip, take });
     }
 
     closeModal(): void {
@@ -117,8 +117,13 @@ const mapStateToProps = (state: AppState): StateProps => {
     };
 }
 
+interface GetBlogPostsParams {
+    skip: number;
+    take: number;
+}
+
 interface DispatchProps {
-    getBlogPosts: (skip: number, take: number) => void
+    getBlogPosts: ({ skip, take }: GetBlogPostsParams) => void
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {

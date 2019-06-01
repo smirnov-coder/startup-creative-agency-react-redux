@@ -8,7 +8,7 @@ export function withDocumentTitle<T extends object>(title: string) {
             }
 
             render(): JSX.Element {
-                return <WrappedComponent {...this.props} />
+                return <WrappedComponent {...this.props} />;
             }
         }
     }

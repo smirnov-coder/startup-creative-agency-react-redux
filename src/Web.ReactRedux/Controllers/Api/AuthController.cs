@@ -18,13 +18,19 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
     {
         private readonly IUserService _userService;
         private SignInManager<UserIdentity> _signInManager;
+        private RoleManager<IdentityRole> _roleManager;
         private IMessageService _messageService;
 
-        public AuthController(IUserService userService, SignInManager<UserIdentity> signInManager, IMessageService messageService)
+        public AuthController(
+            IUserService userService, 
+            SignInManager<UserIdentity> signInManager, 
+            IMessageService messageService,
+            RoleManager<IdentityRole> roleManager)
         {
             _userService = userService;
             _signInManager = signInManager;
             _messageService = messageService;
+            _roleManager = roleManager;
         }
 
         //
@@ -55,22 +61,15 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                         IsAdmin = await userManager.IsInRoleAsync(user.Identity as UserIdentity, "Administrator"),
                     }
                 };
-                result.AppState.NewMessagesCount = result.AppState.IsAdmin
-                    ? (await _messageService.GetMessagesAsync()).Where(x => !x.IsRead).Count()
-                    : 0;
+                if (result.AppState.IsAdmin)
+                {
+                    result.AppState.NewMessagesCount = (await _messageService.GetMessagesAsync()).Where(x => !x.IsRead).Count();
+                    result.AppState.Roles = result.AppState.IsAdmin ? _roleManager.Roles.Select(role => role.Name) : null;
+                }
                 return result;
             }
             return BadRequest(OperationDetails.Error($"Unable to authenticate user with value '{credentials.UserName}' " +
                 $"for '{nameof(IUserIdentity.UserName)}'."));
         }
-
-        //[HttpGet("token/test")]
-        //[Authorize(Policy = "AdminPolicy")]
-        //public IActionResult TestToken()
-        //{
-        //    var user = User;
-
-        //    return Ok("Authorization test passed successfully.");
-        //}
     }
 }

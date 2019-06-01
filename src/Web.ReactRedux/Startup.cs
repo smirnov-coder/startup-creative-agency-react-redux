@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using StartupCreativeAgency.Domain.Abstractions.Repositories;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
@@ -124,7 +125,9 @@ namespace StartupCreativeAgency.Web.ReactRedux
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    options.SerializerSettings.MaxDepth = 100;////////////////////////
+                    //options.SerializerSettings.MaxDepth = 100;////////////////////////
+                    //options.UseMemberCasing();
+                    //options.UseCamelCasing(false);
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

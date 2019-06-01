@@ -3,11 +3,15 @@ import { ActionTypes } from "@store/actions/actionTypes";
 import { InitialAppStateAction } from "@store/actions/appActions";
 import { SendingResultAction } from "@store/actions/messagesActions";
 import { SignInAction } from "@store/actions/authActions";
+import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
+import { Message } from "@store/entities";
 
 type MessagesActions =
     | InitialAppStateAction
     | SendingResultAction
     | SignInAction
+    | ItemsAction<Message>
+    | CurrentAction<Message>
 
 export default function messagesReducer(state: MessagesState = initialState.messages, action: MessagesActions): MessagesState {
     switch (action.type) {
@@ -50,24 +54,31 @@ export default function messagesReducer(state: MessagesState = initialState.mess
             };
         }
 
-        //case ActionTypes.ASSIGN_ERROR: {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: action.error
-        //    };
-        //}
+        case ActionTypes.MESSAGES: {
+            let { items } = (action as ItemsAction<Message>).payload;
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                items,
+                newMessagesCount: items.filter(message => !message.IsRead).length
+            };
+        }
 
-        //case "INIT_SERVICES_PAGE":
-        //case "INIT_ADD_SERVICE_PAGE":
-        //case "INIT_EDIT_SERVICE_PAGE":
-        //case "INIT_MY_PROFILE_PAGE": {
-        //    //console.log("state", state);//
-        //    return {
-        //        ...state,
-        //        newMessagesCount: action.newMessagesCount
-        //    };
-        //}
+        case ActionTypes.CURRENT_MESSAGE: {
+            let current: Message = (action as CurrentAction<Message>).payload.item;
+            let newMessagesCount: number = state.newMessagesCount > 0
+                ? state.newMessagesCount - 1
+                : state.newMessagesCount;
+            current.IsRead = true;
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                current,
+                newMessagesCount
+            };
+        }
 
         default:
             return state;

@@ -26,6 +26,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Mock.Of<IUserStore<UserIdentity>>(), null, null, null, null, null, null, null, null);
         private Mock<SignInManager<UserIdentity>> _mockSignInManager;
         private Mock<IUrlHelper> _mockUrlHelper = new Mock<IUrlHelper>();
+        private Mock<RoleManager<IdentityRole>> _mockRoleManager = new Mock<RoleManager<IdentityRole>>(
+            Mock.Of<IRoleStore<IdentityRole>>(), null, null, null, null);
         private AuthController _target;
 
         public AuthControllerTests()
@@ -33,7 +35,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             _mockSignInManager = new Mock<SignInManager<UserIdentity>>(_mockUserManager.Object,
                 Mock.Of<IHttpContextAccessor>(), 
                 Mock.Of<IUserClaimsPrincipalFactory<UserIdentity>>(), null, null, null);
-            _target = new AuthController(_mockUserService.Object, _mockSignInManager.Object, _mockMessageService.Object)
+            _target = new AuthController(_mockUserService.Object, _mockSignInManager.Object, _mockMessageService.Object,
+                _mockRoleManager.Object)
             {
                 Url = _mockUrlHelper.Object
             };
@@ -62,6 +65,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.True(result.AppState.IsAuthenticated);
             Assert.False(result.AppState.IsAdmin);
             Assert.Equal(0, result.AppState.NewMessagesCount);
+            Assert.Null(result.AppState.Roles);
             Assert.True(JwtHelper.IsValid(result.AccessToken));
         }
 

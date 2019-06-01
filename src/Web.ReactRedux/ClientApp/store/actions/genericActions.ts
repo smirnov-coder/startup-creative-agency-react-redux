@@ -1,5 +1,4 @@
-﻿import { ActionTypes } from "./actionTypes";
-import { Action, Dispatch } from "redux";
+﻿import { Action, Dispatch } from "redux";
 import { createSimpleAction, readAccessToken, OperationDetails, ValidationProblemDetails } from "./appActions";
 import { doSignOut } from "./authActions";
 import { Routes } from "@scripts/constants";
@@ -36,18 +35,21 @@ export function fetchData<T>({ url, requestActionType, success, errorTitle }: Fe
                     case 401:
                         dispatch(doSignOut());
                         dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
-                        throw new Error("Unauthorized request.");
+                        throw new Error(response.statusText);
 
                     case 403:
                         dispatch(push(Routes.ACCESS_DENIED));
-                        throw new Error("Forbidden.");
+                        throw new Error(response.statusText);
 
                     case 500:
-                        throw new Error("Internal server error.")
+                        throw new Error(response.statusText);
+
+                    default:
+                        throw new Error("Unhandled response status code.");
                 }
             })
             .then((data: T) => {
-                //console.log("initial state", data);//
+                //console.log("data", data);//
                 dispatch(success(data));
             })
             .catch(error => {
@@ -63,7 +65,7 @@ export interface ItemsAction<T> extends Action {
     };
 }
 
-export function addItems<T>(items: T[], append: boolean = false, actionType: ActionTypes): ItemsAction<T> {
+export function addItems<T>(items: T[], append: boolean = false, actionType: string): ItemsAction<T> {
     return {
         type: actionType,
         payload: {
@@ -79,7 +81,7 @@ export interface CurrentAction<T> extends Action {
     };
 }
 
-export function setCurrent<T>(item: T, actionType: ActionTypes): CurrentAction<T> {
+export function setCurrent<T>(item: T, actionType: string): CurrentAction<T> {
     return {
         type: actionType,
         payload: {
@@ -89,19 +91,19 @@ export function setCurrent<T>(item: T, actionType: ActionTypes): CurrentAction<T
 }
 
 interface DeleteEntityRequest {
-    entityId: number;
-    url: string;
+    entityId: number | string;
+    urlTemplate: string;
     requestActionType: string;
     success: () => (dispatch: Dispatch) => void;
     errorTitle: string;
 }
 
-export function deleteEntity({ entityId, url, requestActionType, success, errorTitle }: DeleteEntityRequest) {
+export function deleteEntity({ entityId, urlTemplate, requestActionType, success, errorTitle }: DeleteEntityRequest) {
     return (dispatch: Dispatch) => {
         dispatch(createSimpleAction(requestActionType));
         let accessToken: string = readAccessToken();
         if (!accessToken) {
-            console.log("form page url", history.location.pathname);//
+            //console.log("form page url", history.location.pathname);//
             return dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }))
         }
         let options: RequestInit = {
@@ -110,9 +112,9 @@ export function deleteEntity({ entityId, url, requestActionType, success, errorT
                 Authorization: `Bearer ${accessToken}`
             }
         };
-        let uriTemplate: string = decodeHTML(url);
-        let uri: string = formatString(uriTemplate, entityId);
-        return fetch(uri, options)
+        let template: string = decodeHTML(urlTemplate);
+        let url: string = formatString(template, entityId);
+        return fetch(url, options)
             .then(response => {
                 switch (response.status) {
                     case 200:
@@ -122,15 +124,18 @@ export function deleteEntity({ entityId, url, requestActionType, success, errorT
 
                     case 401:
                         dispatch(doSignOut());
-                        dispatch(push(Routes.LOGIN));
-                        throw new Error("Unauthorized request.");
+                        dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
+                        throw new Error(response.statusText);
 
                     case 403:
-                        dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
-                        throw new Error("Forbidden.");
+                        dispatch(push(Routes.ACCESS_DENIED));
+                        throw new Error(response.statusText);
 
                     case 500:
-                        throw new Error("Internal server error.")
+                        throw new Error(response.statusText);
+
+                    default:
+                        throw new Error("Unhandled response status code.");
                 }
             })
             .then((data: OperationDetails | ValidationProblemDetails) => {
@@ -173,7 +178,7 @@ export function submitFormData({ formData, url, method, requestActionType, succe
         dispatch(createSimpleAction(requestActionType));
         let accessToken: string = readAccessToken();
         if (!accessToken) {
-            console.log("form page url", history.location.pathname);//
+            //console.log("form page url", history.location.pathname);//
             return dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }))
         }
         let options: RequestInit = {
@@ -194,14 +199,17 @@ export function submitFormData({ formData, url, method, requestActionType, succe
                     case 401:
                         dispatch(doSignOut());
                         dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
-                        throw new Error("Unauthorized request.");
+                        throw new Error(response.statusText);
 
                     case 403:
                         dispatch(push(Routes.ACCESS_DENIED));
-                        throw new Error("Forbidden.");
+                        throw new Error(response.statusText);
 
                     case 500:
-                        throw new Error("Internal server error.")
+                        throw new Error(response.statusText);
+
+                    default:
+                        throw new Error("Unhandled response status code.");
                 }
             })
             .then((data: OperationDetails | ValidationProblemDetails) => {
@@ -214,17 +222,16 @@ export function submitFormData({ formData, url, method, requestActionType, succe
                     }
                 } else {
                     details = <OperationDetails>data;
-                }
+                } //console.log("data", data);//
                 let notification: Notification = {
                     id: Date.now(),
                     type: details.isError ? "error" : "success",
                     text: encodeHTML(details.message)
                 };
                 dispatch(addNotification(notification))
-                if (!isValidationError) {
+                dispatch(createSimpleAction(completedActionType));
+                if (!details.isError) {
                     dispatch(push(successRedirectUrl));
-                } else {
-                    dispatch(createSimpleAction(completedActionType));
                 }
             })
             .catch((error: Error) => {

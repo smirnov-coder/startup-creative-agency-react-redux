@@ -98,7 +98,13 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         [Fact]
         public async Task UpdateReadStatusAsync_Good()
         {
-            var actionResult = await _target.UpdateReadStatusAsync(new int[3], false);
+            var testModel = new MessageReadStatusBindingModel
+            {
+                MessageIds = new int[3],
+                IsRead = false
+            };
+
+            var actionResult = await _target.UpdateReadStatusAsync(testModel);
 
             _mockMessageService.Verify(x => x.UpdateMessageReadStatusAsync(It.IsAny<int>(), false), Times.Exactly(3));
             Assert.IsType<OkObjectResult>(actionResult);

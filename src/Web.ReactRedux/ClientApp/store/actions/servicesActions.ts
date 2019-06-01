@@ -35,7 +35,7 @@ export function setCurrentService(service: ServiceInfo): CurrentAction<ServiceIn
 export function deleteService(serviceId: number) {
     return deleteEntity({
         entityId: serviceId,
-        url: GLOBALS.api.service,
+        urlTemplate: GLOBALS.api.service,
         requestActionType: ActionTypes.REQUEST_SERVICES,
         success: fetchServices,
         errorTitle: "delete service error"

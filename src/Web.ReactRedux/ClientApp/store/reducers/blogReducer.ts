@@ -1,11 +1,13 @@
 ﻿import { BlogState, initialState } from "@store/state";
-import { BlogPostsAction } from "@store/actions/blogActions";
 import { HomePageModelAction } from "@store/actions/appActions";
 import { ActionTypes } from "@store/actions/actionTypes";
+import { BlogPost } from "@store/entities";
+import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
 
 type BlogActions = 
-    | BlogPostsAction
+    | ItemsAction<BlogPost>
     | HomePageModelAction
+    | CurrentAction<BlogPost>
 
 export default function blogReducer(state: BlogState = initialState.blog, action: BlogActions): BlogState {
     switch (action.type) {
@@ -34,7 +36,7 @@ export default function blogReducer(state: BlogState = initialState.blog, action
         }
 
         case ActionTypes.BLOG_POSTS: {
-            let { items, append } = (action as BlogPostsAction).payload;
+            let { items, append } = (action as ItemsAction<BlogPost>).payload;
             return {
                 ...state,
                 isLoading: false,
@@ -43,22 +45,14 @@ export default function blogReducer(state: BlogState = initialState.blog, action
             };
         }
 
-        //case ActionTypes.ASSIGN_ERROR: {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: action.error
-        //    };
-        //}
-
-        //case ActionTypes.APPEND_BLOG_POSTS: {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: null,
-        //        items: state.items.concat(action.items)
-        //    };
-        //}
+        case ActionTypes.CURRENT_BLOG_POST: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                current: (action as CurrentAction<BlogPost>).payload.item
+            };
+        }
 
         default:
             return state;

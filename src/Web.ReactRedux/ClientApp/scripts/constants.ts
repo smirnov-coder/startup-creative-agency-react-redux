@@ -56,7 +56,7 @@ export enum Routes {
     EDIT_TESTIMONIAL = "/admin/testimonials/edit/:id",
     CONTACTS = "/admin/contacts",
     MESSAGES = "/admin/messages",
-    MESSAGE = "/admin/message/:id",
+    MESSAGE = "/admin/messages/:id",
     USERS = "/admin/users",
     MANAGE_USER = "/admin/users/manage/:userName",
     REGISTER_USER = "/admin/users/register"

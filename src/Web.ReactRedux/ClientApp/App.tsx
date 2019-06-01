@@ -18,7 +18,7 @@ class App extends React.Component<AppProps> {
     componentWillMount(): void {
         this.props.initAppState();
     }
-
+    /// TODO: Вынести ConnectedRouter в index.tsx и обернуть в ХОКи.
     render(): JSX.Element {
         return (
             <ConnectedRouter history={history}>

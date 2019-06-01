@@ -1,0 +1,25 @@
+﻿@import "../../styles/_include.scss";
+
+.brand-item {
+    margin: 0;
+    padding: 0;
+
+    &__img {
+        display: block;
+        margin: 0;
+        padding: 0;
+        width: $brand-item-img-width;
+        height: $brand-item-img-height;
+        object-fit: scale-down;
+        object-position: center;
+    }
+
+    &__info {
+        margin: 0 0 0 30px;
+    }
+
+
+    &__edit, &__delete {
+        margin: 0 5px 0 0;
+    }
+}

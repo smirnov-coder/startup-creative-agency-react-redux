@@ -5,11 +5,11 @@ import { Redirect, RouteComponentProps } from "react-router";
 import { Routes } from "@scripts/constants";
 import Loader from "@components/Shared/Loader";
 
-export function withAuthentication<T extends object>(adminCheck: boolean = false) {
+export function withAuthentication<T extends RouteComponentProps>(adminCheck: boolean = false) {
     return (WrappedComponent: React.ComponentType<T>) => {
-        class WithAuthentication extends React.Component<StateProps & T & RouteComponentProps> {
+        class WithAuthentication extends React.Component<StateProps & T> {
             render(): JSX.Element {
-                let { isLoading, isAuthenticated, isAdmin, history, location, match, staticContext, ...restProps } = this.props;
+                let { isLoading, isAuthenticated, isAdmin, ...restProps } = this.props;
                 return (
                     isLoading
                         ? <Loader modifiers={["loader--behavior-fill"]} />

@@ -62,8 +62,7 @@ class UserProfileForm extends React.Component<UserProfileFormProps> {
             submitHandler: (form, event) => {
                 event.preventDefault();
                 // dispatch sign in here
-                let formData: FormData = new FormData($form[0] as HTMLFormElement);
-                this.props.onSubmit(this.props.user.Identity.UserName, formData);
+                this.props.onSubmit(new FormData($form[0] as HTMLFormElement));
             },
             invalidHandler: (event, validator) => {
                 console.error("Form data is invalid.");//
@@ -112,7 +111,7 @@ const mapStateToProps = (state: AppState): StateProps => {
 }
 
 interface DispatchProps {
-    onSubmit: (userName: string, formData: FormData) => void;
+    onSubmit: (formData: FormData) => void;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {

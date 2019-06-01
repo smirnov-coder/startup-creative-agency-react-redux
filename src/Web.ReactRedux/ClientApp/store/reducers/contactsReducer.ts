@@ -1,26 +1,26 @@
 ﻿import { ContactsState, initialState } from "@store/state";
-import { AddContactsAction } from "@store/actions/contactsActions";
 import { HomePageModelAction } from "@store/actions/appActions";
 import { ActionTypes } from "@store/actions/actionTypes";
+import { ContactsAction } from "@store/actions/contactsActions";
 
 type ContactsActions = 
-    | AddContactsAction
     | HomePageModelAction
+    | ContactsAction
 
 export default function contactsReducer(state: ContactsState = initialState.contacts, action: ContactsActions): ContactsState {
     switch (action.type) {
         case ActionTypes.REQUEST_HOME_PAGE_MODEL:
-        case ActionTypes.REQUSET_CONTACTS: {
+        case ActionTypes.REQUEST_CONTACTS: {
             return {
                 ...state,
                 isLoading: true
             };
         }
 
-        case ActionTypes.REQUSET_CONTACTS_COMPLETED: {
+        case ActionTypes.REQUEST_CONTACTS_COMPLETED: {
             return {
                 ...state,
-                isLoading: true
+                isLoading: false
             };
         }
 
@@ -34,32 +34,15 @@ export default function contactsReducer(state: ContactsState = initialState.cont
             };
         }
 
-        //case "ADD_CONTACTS": {
-        //    let { contactInfos, socialLinks } = (action as AddContactsAction).payload
-        //    return {
-        //        isLoading: false,
-        //        error: null,
-        //        contactInfos,
-        //        socialLinks
-        //    };
-        //}
-
-        //case ActionTypes.ASSIGN_SOCIAL_LINKS: {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: null,
-        //        socialLinks: action.items
-        //    };
-        //}
-
-        //case ActionTypes.ASSIGN_ERROR: {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: action.error
-        //    };
-        //}
+        case ActionTypes.CONTACTS: {
+            let { contactInfos, socialLinks } = (action as ContactsAction).payload;
+            return {
+                isLoading: false,
+                error: null,
+                contactInfos,
+                socialLinks
+            };
+        }
 
         default:
             return state;

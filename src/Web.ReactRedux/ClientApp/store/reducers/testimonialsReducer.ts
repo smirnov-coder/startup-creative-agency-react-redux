@@ -1,11 +1,13 @@
 ﻿import { TestimonialsState, initialState as appState } from "@store/state";
-import { AddTestimonialsAction } from "@store/actions/testimonialsActions";
 import { HomePageModelAction } from "@store/actions/appActions";
 import { ActionTypes } from "@store/actions/actionTypes";
+import { Testimonial } from "@store/entities";
+import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
 
 type TestimonialsActions =
-    | AddTestimonialsAction
+    | ItemsAction<Testimonial>
     | HomePageModelAction
+    | CurrentAction<Testimonial>
 
 const initialState = appState.testimonials;
 
@@ -35,22 +37,23 @@ function testimonialsReducer(state: TestimonialsState = initialState, action: Te
             };
         }
 
-        //case "ADD_TESTIMONIALS": {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: null,
-        //        items: (action as AddTestimonialsAction).payload.items
-        //    };
-        //}
+        case ActionTypes.TESTIMONIALS: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                items: (action as ItemsAction<Testimonial>).payload.items
+            };
+        }
 
-        //case ActionTypes.ASSIGN_ERROR: {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: action.error
-        //    };
-        //}
+        case ActionTypes.CURRENT_TESTIMONIAL: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                current: (action as CurrentAction<Testimonial>).payload.item
+            };
+        }
 
         default:
             return state;

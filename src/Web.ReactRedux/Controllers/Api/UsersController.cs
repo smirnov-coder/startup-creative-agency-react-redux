@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Web.ReactRedux.ViewModels;
@@ -38,7 +39,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // GET api/users/user1
         //
         [HttpGet("{userName}")]
-        public async Task<ActionResult<DomainUser>> GetUserAsync(string userName)
+        public async Task<ActionResult<DomainUser>> GetUserAsync([FromRoute]string userName)
         {
             var user = await _userService.GetUserAsync(userName);
             if (user == null)
@@ -72,60 +73,57 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         [HttpPost("register")]
         [Authorize(Policy = "AdminPolicy")]
-        public async Task<IActionResult> RegisterAsync(RegisterUserViewModel newUser)
+        public async Task<IActionResult> RegisterAsync([FromForm]RegisterUserBindingModel model)
         {
-            var user = await _userService.GetUserAsync(newUser.UserName);
+            var user = await _userService.GetUserAsync(model.UserName);
             if (user == null)
             {
                 var creator = await _userService.GetUserAsync(User?.Identity?.Name);
-                await _userService.CreateUserAsync(newUser.UserName, newUser.Password, newUser.Email, newUser.Role, creator);
-                return Ok(OperationDetails.Success($"User '@{newUser.UserName}' has been registered successfully."));
+                await _userService.CreateUserAsync(model.UserName, model.Password, model.Email, model.Role, creator);
+                return Ok(OperationDetails.Success($"User '@{model.UserName}' has been registered successfully."));
             }
             else
             {
-                return BadRequest(OperationDetails.Error($"User '@{newUser.UserName}' already exists."));
+                return BadRequest(OperationDetails.Error($"User '@{model.UserName}' already exists."));
             }
         }
 
         //
-        // PUT api/users/user1/profile
+        // PUT api/users/profile
         //
-        [HttpPut("{userName}/profile")]
-        public async Task<IActionResult> UpdateProfileAsync([FromRoute]string userName, [FromForm]MyProfileBindingModel profile)
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfileAsync([FromForm]MyProfileBindingModel model)
         {
-            if (userName != User?.Identity?.Name)
-                return BadRequest(OperationDetails.Error("User name mismatch."));
-
-            var user = await _userService.GetUserAsync(userName);
-            string photoFilePath = profile.PersonalInfo.PhotoFilePath;
-            if (profile.PersonalInfo.Image != null)
+            var user = await _userService.GetUserAsync(User?.Identity?.Name);
+            string photoFilePath = model.PersonalInfo.PhotoFilePath;
+            if (model.PersonalInfo.Image != null)
             {
                 using (var stream = new MemoryStream())
                 {
-                    await profile.PersonalInfo.Image.CopyToAsync(stream);
-                    string extension = Path.GetExtension(profile.PersonalInfo.Image.FileName);
+                    await model.PersonalInfo.Image.CopyToAsync(stream);
+                    string extension = Path.GetExtension(model.PersonalInfo.Image.FileName);
                     string fileName = _fileService.GenerateUniqueFileName(extension, "userphoto-");
                     photoFilePath = await _fileService.SaveImageAsync(fileName, stream);
                 }
             }
-            await _userService.UpdateUserPersonalInfoAsync(user.Identity.UserName, profile.PersonalInfo.FirstName,
-                profile.PersonalInfo.LastName, profile.PersonalInfo.JobPosition, photoFilePath);
+            await _userService.UpdateUserPersonalInfoAsync(user.Identity.UserName, model.PersonalInfo.FirstName,
+                model.PersonalInfo.LastName, model.PersonalInfo.JobPosition, photoFilePath);
 
-            var socialLinks = profile.SocialLinks.Select(x => new SocialLink(x.NetworkName, x.Url));
+            var socialLinks = model.SocialLinks.Select(x => new SocialLink(x.NetworkName, x.Url));
             await _userService.UpdateUserSocialLinksAsync(user.Identity.UserName, socialLinks.ToArray());
 
             return Ok(OperationDetails.Success("Your profile has been updated successfully."));
         }
 
         //
-        // PUT api/users/user1/display-status
+        // PUT api/users/display-status
         //
-        [HttpPut("{userName}/display-status")]
+        [HttpPut("display-status")]
         [Authorize(Policy = "AdminPolicy")]
-        public async Task<IActionResult> UpdateDisplayStatusAsync([FromRoute]string userName, bool isDisplayed)
+        public async Task<IActionResult> UpdateDisplayStatusAsync(UserDisplayStatusBindingModel model)
         {
-            await _userService.UpdateUserDisplayStatusAsync(userName, isDisplayed);
-            return Ok(OperationDetails.Success($"Display status for user '@{userName}' has been updated successfully."));
+            await _userService.UpdateUserDisplayStatusAsync(model.UserName, model.IsDisplayed);
+            return Ok(OperationDetails.Success($"Display status for user '@{model.UserName}' has been updated successfully."));
         }
 
         //
@@ -133,7 +131,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         [HttpDelete("{userName}")]
         [Authorize(Policy = "AdminPolicy")]
-        public async Task<IActionResult> DeleteAsync(string userName)
+        public async Task<IActionResult> DeleteAsync([FromRoute]string userName)
         {
             await _userService.DeleteUserAsync(userName);
             return Ok(OperationDetails.Success($"The entity of type '{typeof(DomainUser)}' with value '{userName}' for " +

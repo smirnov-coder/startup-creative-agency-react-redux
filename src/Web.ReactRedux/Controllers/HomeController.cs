@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Web.ReactRedux.ViewModels;
 using StartupCreativeAgency.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers
 {
@@ -17,6 +19,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
         private ITestimonialService _testimonialService;
         private IContactsService _contactsService;
         private IMessageService _messageService;
+        private RoleManager<IdentityRole> _roleManager;
 
         public HomeController(
             IServiceInfoService serviceInfoService,
@@ -26,7 +29,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
             IBrandService brandService,
             ITestimonialService testimonialService,
             IContactsService contactsService,
-            IMessageService messageService)
+            IMessageService messageService,
+            RoleManager<IdentityRole> roleManager)
         {
             _serviceInfoService = serviceInfoService;
             _userService = userService;
@@ -36,6 +40,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
             _testimonialService = testimonialService;
             _contactsService = contactsService;
             _messageService = messageService;
+            _roleManager = roleManager;
         }
 
         public IActionResult Index() => View();
@@ -51,7 +56,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
                 model.UserName = user.Identity.UserName;
                 model.Photo = Url.Content(user.Profile.PhotoFilePath);
                 model.IsAdmin = User.IsInRole("Administrator");
-                model.NewMessagesCount = model.IsAdmin ? (await _messageService.GetMessagesAsync()).Count : 0;
+                model.NewMessagesCount = model.IsAdmin ? (await _messageService.GetMessagesAsync()).Where(x => !x.IsRead).Count() : 0;
+                model.Roles = model.IsAdmin ? _roleManager.Roles.Select(x => x.Name) : null;
             }
             return model;
         }

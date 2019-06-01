@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
@@ -31,10 +35,13 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         private Mock<DomainUser> _mockDomainUser = new Mock<DomainUser>();
         private Mock<IUserIdentity> _mockUserIdentity = new Mock<IUserIdentity>();
         private Mock<UserProfile> _mockUserProfile = new Mock<UserProfile>();
+        private Mock<IQueryableRoleStore<IdentityRole>> _mockRoleStore = new Mock<IQueryableRoleStore<IdentityRole>>();
+        private Mock<RoleManager<IdentityRole>> _mockRoleManager;
         private HomeController _target;
 
         public HomeControllerTests()
         {
+            _mockRoleManager = new Mock<RoleManager<IdentityRole>>(_mockRoleStore.Object, null, null, null, null);
             _target = new HomeController(
                 _mockServiceInfoService.Object,
                 _mockUserService.Object,
@@ -43,7 +50,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                 _mockBrandService.Object,
                 _mockTestimonialService.Object,
                 _mockContactsService.Object,
-                _mockMessageService.Object)
+                _mockMessageService.Object,
+                _mockRoleManager.Object)
             {
                 // Из-за невозможности "замокать" ControllerContext (свойство HttpContext не является виртуальным) 
                 // приходится использовать реальный объект, что превращает тесты из модульных в интеграционные. :(
@@ -74,7 +82,22 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             _mockDomainUser.Setup(x => x.Profile).Returns(_mockUserProfile.Object);
 
             _mockUserService.Setup(x => x.GetUserAsync(testUserName)).ReturnsAsync(_mockDomainUser.Object);
-            _mockMessageService.Setup(x => x.GetMessagesAsync()).ReturnsAsync(new Message[3]);
+            _mockMessageService.Setup(x => x.GetMessagesAsync()).ReturnsAsync(new Message[] 
+            {
+                new Message() { IsRead = false },
+                new Message() { IsRead = true },
+                new Message() { IsRead = false }
+            });
+
+            var testRoles = new List<IdentityRole> {
+                new IdentityRole("Role1"),
+                new IdentityRole("Role2")
+            }.AsQueryable();
+            var mockSet = new Mock<DbSet<IdentityRole>>();
+            mockSet.As<IQueryable<IdentityRole>>().Setup(m => m.Provider).Returns(testRoles.Provider);
+            mockSet.As<IQueryable<IdentityRole>>().Setup(m => m.Expression).Returns(testRoles.Expression);
+            mockSet.As<IQueryable<IdentityRole>>().Setup(m => m.GetEnumerator()).Returns(testRoles.GetEnumerator());
+            _mockRoleManager.Setup(x => x.Roles).Returns(mockSet.Object);
 
             var result = await _target.AppStateAsync();
 
@@ -82,7 +105,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.Equal(testPath, result.Photo);
             Assert.True(result.IsAuthenticated);
             Assert.True(result.IsAdmin);
-            Assert.Equal(3, result.NewMessagesCount);
+            Assert.Equal(2, result.NewMessagesCount);
+            Assert.Equal(2, result.Roles.Count());
+            Assert.Equal("Role1", result.Roles.First());
+            Assert.Equal("Role2", result.Roles.Last());
         }
 
         [Fact]
@@ -112,6 +138,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.True(result.IsAuthenticated);
             Assert.False(result.IsAdmin);
             Assert.Equal(0, result.NewMessagesCount);
+            Assert.Null(result.Roles);
         }
 
         [Fact]
@@ -126,6 +153,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.False(result.IsAuthenticated);
             Assert.False(result.IsAdmin);
             Assert.Equal(0, result.NewMessagesCount);
+            Assert.Null(result.Roles);
         }
     }
 }

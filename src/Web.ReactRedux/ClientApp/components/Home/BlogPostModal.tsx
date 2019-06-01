@@ -3,6 +3,7 @@ import { BlogPost, DomainUser } from "@store/entities";
 import "@bootstrap/css";
 import "./BlogPostModal.scss";
 import { Button, ButtonModifiers } from "@components/Shared/Button";
+import * as $ from "jquery";
 
 interface BlogPostModalProps {
     blogPost: BlogPost;
@@ -17,9 +18,6 @@ export class BlogPostModal extends React.Component<BlogPostModalProps> {
     }
 
     componentWillReceiveProps(nextProps: BlogPostModalProps): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
         nextProps.showModal
             ? $(this.modal.current).modal("show")
             : $(this.modal.current).modal("hide");

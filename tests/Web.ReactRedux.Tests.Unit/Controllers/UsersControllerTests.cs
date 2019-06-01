@@ -102,7 +102,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             _mockUserService.Setup(x => x.GetUserAsync(It.IsAny<string>()))
                 .ReturnsAsync(new DomainUser(new UserIdentity("Test UserName", "Test Email")));
 
-            var actionResult = await _target.UpdateProfileAsync(null, GetTestProfileModel());
+            var actionResult = await _target.UpdateProfileAsync(GetTestProfileModel());
 
             _mockUserService.Verify(x => x.UpdateUserPersonalInfoAsync("Test UserName", "Test FirstName",
                 "Test LastName", "Test Job", "Test Path"), Times.Once());
@@ -122,23 +122,15 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         }
 
         [Fact]
-        public async Task UpdateProfileAsync_Bad_BadRequest()
-        {
-            var actionResult = await _target.UpdateProfileAsync("Test UserName", GetTestProfileModel());
-
-            Assert.IsType<BadRequestObjectResult>(actionResult);
-            var result = actionResult as BadRequestObjectResult;
-            Assert.Equal(400, result.StatusCode);
-            Assert.IsType<OperationDetails>(result.Value);
-            var details = result.Value as OperationDetails;
-            Assert.True(details.IsError);
-            Assert.Equal("User name mismatch.", details.Message);
-        }
-
-        [Fact]
         public async Task UpdateDisplayStatusAsync_Good()
         {
-            var actionResult = await _target.UpdateDisplayStatusAsync("Test UserName", true);
+            var testModel = new UserDisplayStatusBindingModel
+            {
+                UserName = "Test UserName",
+                IsDisplayed = true
+            };
+
+            var actionResult = await _target.UpdateDisplayStatusAsync(testModel);
 
             _mockUserService.Verify(x => x.UpdateUserDisplayStatusAsync("Test UserName", true), Times.Once());
             Assert.IsType<OkObjectResult>(actionResult);
@@ -184,8 +176,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                 }
             };
 
-        private RegisterUserViewModel GetTestRegisterModel() =>
-            new RegisterUserViewModel
+        private RegisterUserBindingModel GetTestRegisterModel() =>
+            new RegisterUserBindingModel
             {
                 UserName = "Test UserName",
                 Email = "Test Email",

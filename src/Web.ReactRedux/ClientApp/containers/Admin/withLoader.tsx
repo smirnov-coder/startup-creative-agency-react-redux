@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 export function withLoader<T extends object>(LoaderComponent: React.ComponentType, isLoading: (state: AppState) => boolean) {
     return (WrappedComponent: React.ComponentType<T>) => {
-        class WithLoader extends React.Component<StateProps & T> {
+        class WithLoader extends React.Component<StateProps> {
             render(): JSX.Element {
                 let { isLoading, ...restProps } = this.props;
                 return (this.props.isLoading

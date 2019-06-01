@@ -1,11 +1,13 @@
 ﻿import { BrandsState, initialState } from "@store/state";
-import { AddBrandsAction } from "@store/actions/brandsActions";
 import { HomePageModelAction } from "@store/actions/appActions";
 import { ActionTypes } from "@store/actions/actionTypes";
+import { Brand } from "@store/entities";
+import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
 
 type BrandsActions = 
-    | AddBrandsAction
+    | ItemsAction<Brand>
     | HomePageModelAction
+    | CurrentAction<Brand>
 
 export default function brandsReducer(state: BrandsState = initialState.brands, action: BrandsActions): BrandsState {
     switch (action.type) {
@@ -33,22 +35,24 @@ export default function brandsReducer(state: BrandsState = initialState.brands, 
             };
         }
 
-        //case "ADD_BRANDS": {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: null,
-        //        items: (action as AddBrandsAction).payload.items
-        //    };
-        //}
+        case ActionTypes.BRANDS: {
+            let { items, append } = (action as ItemsAction<Brand>).payload;
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                items: append ? state.items.concat(items) : items
+            };
+        }
 
-        //case ActionTypes.ASSIGN_ERROR: {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: action.error
-        //    };
-        //}
+        case ActionTypes.CURRENT_BRAND: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                current: (action as CurrentAction<Brand>).payload.item
+            };
+        }
 
         default:
             return state;

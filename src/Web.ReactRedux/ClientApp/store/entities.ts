@@ -27,7 +27,9 @@ export interface Brand extends UpdatableEntity {
 export interface ContactInfo {
     Name: string,
     Caption: string,
-    Values: string[]
+    Values: {
+        Value: string
+    }[]
 }
 
 export interface DomainUser extends UpdatableEntity {

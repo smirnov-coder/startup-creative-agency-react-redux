@@ -20,7 +20,7 @@ function addWorks(works: WorkExample[]): ItemsAction<WorkExample> {
 export function deleteWorkExample(workExampleId: number) {
     return deleteEntity({
         entityId: workExampleId,
-        url: GLOBALS.api.workExample,
+        urlTemplate: GLOBALS.api.workExample,
         requestActionType: ActionTypes.REQUEST_WORKS,
         success: fetchWorks,
         errorTitle: "delete work example error"

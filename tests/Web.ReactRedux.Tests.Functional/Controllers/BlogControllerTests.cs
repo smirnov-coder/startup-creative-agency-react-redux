@@ -40,7 +40,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
         [Fact]
         public async Task CanGetBlogPost()
         {
-            using (var httpClient = _factoryCollection.ForRead.CreateClient())
+            using (var httpClient = await _factoryCollection.ForRead.CreateClientWithAccessTokenAsync(USER_NAME))
             {
                 using (var response = await httpClient.GetAsync($"{BASE_URL}/1"))
                 {
@@ -59,11 +59,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
         }
 
         [Fact]
-        public async Task CanGetBlogPosts()
+        public async Task CanGetPublicBlogPosts()
         {
             using (var httpClient = _factoryCollection.ForRead.CreateClient())
             {
-                using (var response = await httpClient.GetAsync($"{BASE_URL}?skip=1&take=3"))
+                using (var response = await httpClient.GetAsync($"{BASE_URL}/public?skip=1&take=3"))
                 {
                     Assert.True(response.IsSuccessStatusCode);
                     Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);

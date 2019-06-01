@@ -12,5 +12,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
         public string UserName { get; set; }
         public string Photo { get; set; }
         public int NewMessagesCount { get; set; }
+        public IEnumerable<string> Roles { get; set; }
     }
 }

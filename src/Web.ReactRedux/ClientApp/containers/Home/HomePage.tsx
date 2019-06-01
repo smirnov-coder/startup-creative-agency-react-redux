@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import { bindActionCreators, Dispatch, compose } from "redux";
 import { Header } from "@components/Home/Header";
 import { ServicesSection } from "@components/Home/ServicesSection";
 import "@bootstrap/css";
@@ -13,18 +13,21 @@ import { ClientsSection } from "@components/Home/ClientsSection";
 import { ContactSection } from "@components/Home/ContactSection";
 import Footer from "./Footer";
 import { fetchHomePageModel } from "@store/actions/appActions";
+import { withInitializer } from "@containers/Admin/withInitializer";
+import { withDocumentTitle } from "@components/Admin/withDocumentTitle";
+import { RouteComponentProps } from "react-router";
 
-type HomePageProps = DispatchProps;
+type HomePageProps = RouteComponentProps;
 
 class HomePage extends React.Component<HomePageProps> {
 
-    componentWillMount(): void {
-        this.props.getPageModel();
-    }
+    //componentWillMount(): void {
+    //    this.props.getPageModel();
+    //}
 
-    componentDidMount(): void {
-        document.title = "Startup ReactRedux Home";
-    }
+    //componentDidMount(): void {
+    //    document.title = "Startup ReactRedux Home";
+    //}
 
     render(): JSX.Element {
         return (
@@ -61,14 +64,21 @@ class HomePage extends React.Component<HomePageProps> {
     }
 }
 
-interface DispatchProps {
-    getPageModel: () => void
-}
+//interface DispatchProps {
+//    getPageModel: () => void
+//}
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
-    return {
-        getPageModel: bindActionCreators(fetchHomePageModel, dispatch)
-    };
-}
+//const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+//    return {
+//        getPageModel: bindActionCreators(fetchHomePageModel, dispatch)
+//    };
+//}
 
-export default connect(null, mapDispatchToProps)(HomePage);
+const composed = compose(
+    withDocumentTitle("Startup ReactRedux Home"),
+    withInitializer((routeMatch, actionCreator) => actionCreator, fetchHomePageModel)
+);
+
+export default composed(HomePage);
+
+//export default connect(null, mapDispatchToProps)(HomePage);

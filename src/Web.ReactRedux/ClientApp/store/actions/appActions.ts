@@ -9,6 +9,7 @@ export interface InitialAppState {
     isAuthenticated: boolean;
     isAdmin: boolean;
     newMessagesCount: number;
+    roles: string[];
 }
 
 export const fetchInitialAppState = () => (dispatch: Dispatch) => {

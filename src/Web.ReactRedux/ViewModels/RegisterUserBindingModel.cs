@@ -2,7 +2,7 @@
 
 namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 {
-    public class RegisterUserViewModel
+    public class RegisterUserBindingModel
     {
         [Required]
         [StringLength(20)]

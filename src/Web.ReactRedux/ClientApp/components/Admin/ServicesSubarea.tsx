@@ -9,7 +9,7 @@ import { withDocumentTitle } from "@components/Admin/withDocumentTitle";
 import { ServiceInfo } from "@store/entities";
 import { withPageContentWrapper } from "@components/Admin/withPageContentWrapper";
 import { withLoader } from "@containers/Admin/withLoader";
-import { withPageInitializer } from "@containers/Admin/withPageInitializer";
+import { withInitializer } from "@containers/Admin/withPageInitializer";
 import { withSubmitHandler } from "@containers/Admin/withSubmitHandler";
 import ServiceItemForm from "@containers/Admin/ServiceItemForm";
 
@@ -23,14 +23,14 @@ const ServicesSubarea: React.SFC = () =>
 
 // Services page
 const ServicesPage = compose(
-    withPageInitializer((routeMatch, actionCreator) => actionCreator, fetchServices),
+    withInitializer((routeMatch, actionCreator) => actionCreator, fetchServices),
     withLoader(Loader, state => state.services.isLoading),
     withPageContentWrapper("Service List")
 )(ServiceList);
 
 // AddService page
 const AddServicePage = compose(
-    withPageInitializer(
+    withInitializer(
         (routeMatch, actionCreator) => {
             return () => actionCreator({ Id: 0, IconClass: "", Caption: "", Description: "" } as ServiceInfo);
         },
@@ -43,7 +43,7 @@ const AddServicePage = compose(
 
 // EditService page
 const EditServicePage = compose(
-    withPageInitializer(
+    withInitializer(
         (routeMatch, actionCreator) => {
             let id: number = (routeMatch.params as any).id;
             return () => actionCreator(id);

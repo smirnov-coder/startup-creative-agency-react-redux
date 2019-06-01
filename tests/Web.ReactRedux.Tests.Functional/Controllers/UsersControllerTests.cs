@@ -41,23 +41,23 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     var resultJson = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<List<DomainUser>>(resultJson);
                     Assert.Equal(5, result.Count);
-                    Assert.Equal("user1", result.First().Identity.UserName);
-                    Assert.Equal("FirstName #1", result.First().Profile.FirstName);
-                    Assert.Equal("LastName #1", result.First().Profile.LastName);
-                    Assert.Equal("Job #1", result.First().Profile.JobPosition);
-                    Assert.Equal("Path #1", result.First().Profile.PhotoFilePath);
-                    Assert.True(result.First().Profile.IsReadyForDisplay);
-                    Assert.True(result.First().Profile.DisplayAsTeamMember);
+                    Assert.Equal("admin", result.First().Identity.UserName);
+                    Assert.Equal("Admin", result.First().Profile.FirstName);
+                    Assert.Equal("Admin", result.First().Profile.LastName);
+                    Assert.Equal("Administrator", result.First().Profile.JobPosition);
+                    Assert.True(string.IsNullOrWhiteSpace(result.First().Profile.PhotoFilePath));
+                    Assert.False(result.First().Profile.IsReadyForDisplay);
+                    Assert.False(result.First().Profile.DisplayAsTeamMember);
                     Assert.Equal(4, result.First().Profile.SocialLinks.Count);
                     Assert.Equal("Facebook", result.First().Profile.SocialLinks.First().NetworkName);
-                    Assert.Equal("Link #1", result.First().Profile.SocialLinks.First().Url);
+                    Assert.True(string.IsNullOrWhiteSpace(result.First().Profile.SocialLinks.First().Url));
                     Assert.Equal("Linkedin", result.First().Profile.SocialLinks.Last().NetworkName);
-                    Assert.Equal("Link #4", result.First().Profile.SocialLinks.Last().Url);
-                    Assert.Equal("user5", result.Last().Identity.UserName);
-                    Assert.Equal("FirstName #5", result.Last().Profile.FirstName);
-                    Assert.Equal("LastName #5", result.Last().Profile.LastName);
-                    Assert.Equal("Job #5", result.Last().Profile.JobPosition);
-                    Assert.Equal("Path #5", result.Last().Profile.PhotoFilePath);
+                    Assert.True(string.IsNullOrWhiteSpace(result.First().Profile.SocialLinks.Last().Url));
+                    Assert.Equal("user4", result.Last().Identity.UserName);
+                    Assert.Equal("FirstName #4", result.Last().Profile.FirstName);
+                    Assert.Equal("LastName #4", result.Last().Profile.LastName);
+                    Assert.Equal("Job #4", result.Last().Profile.JobPosition);
+                    Assert.Equal("Path #4", result.Last().Profile.PhotoFilePath);
                     Assert.True(result.Last().Profile.IsReadyForDisplay);
                     Assert.True(result.Last().Profile.DisplayAsTeamMember);
                     Assert.Equal(4, result.Last().Profile.SocialLinks.Count);
@@ -131,16 +131,15 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             using (var httpClient = await factory.CreateClientWithAccessTokenAsync(ADMIN_USER_NAME))
             {
                 int expectedCount = 6;
-                var model = new RegisterUserViewModel
+                var model = new Dictionary<string, string>
                 {
-                    UserName = "test_user",
-                    Password = "User123",
-                    ConfirmPassword = "User123",
-                    Email = "test@example.com",
-                    Role = "User"
+                    ["UserName"] = "test_user",
+                    ["Password"] = "User123",
+                    ["ConfirmPassword"] = "User123",
+                    ["Email"] = "test@example.com",
+                    ["Role"] = "User"
                 };
-                var json = JsonConvert.SerializeObject(model);
-                using (var response = await httpClient.PostAsync($"{BASE_URL}/register", new StringContent(json, Encoding.UTF8, "application/json")))
+                using (var response = await httpClient.PostAsync($"{BASE_URL}/register", new FormUrlEncodedContent(model)))
                 {
                     Assert.True(response.IsSuccessStatusCode);
                     Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
@@ -185,7 +184,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 };
                 using (var requestContent = TestHelper.CreateTestMultipartFormDataContent(model, "PersonalInfo.Image", "test-user-photo.jpg"))
                 {
-                    using (var response = await httpClient.PutAsync($"{BASE_URL}/{USER_NAME}/profile", requestContent))
+                    using (var response = await httpClient.PutAsync($"{BASE_URL}/profile", requestContent))
                     {
                         Assert.True(response.IsSuccessStatusCode);
                         Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
@@ -224,22 +223,31 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             var factory = _factoryCollection.ForUpdate;
             using (var httpClient = await factory.CreateClientWithAccessTokenAsync(ADMIN_USER_NAME))
             {
-                string requestUrl = $"{BASE_URL}/{USER_NAME}/display-status";
-                using (var response = await httpClient.PutAsync(requestUrl, new StringContent("false")))
+                string testUserName = "user3";
+                string requestUrl = $"{BASE_URL}/display-status";
+                var testModel = new UserDisplayStatusBindingModel
+                {
+                    UserName = testUserName,
+                    IsDisplayed = true
+                };
+                string requestJson = JsonConvert.SerializeObject(testModel);
+                var requestContent = new StringContent(requestJson);
+                requestContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                using (var response = await httpClient.PutAsync(requestUrl, requestContent))
                 {
                     Assert.True(response.IsSuccessStatusCode);
                     Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
                     string responseJson = await response.Content.ReadAsStringAsync();
                     var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
                     Assert.False(details.IsError);
-                    Assert.Equal("Display status for user '@user1' has been updated successfully.", details.Message);
+                    Assert.Equal("Display status for user '@user3' has been updated successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserIdentity>>();
-                        var modifiedUser = await db.DomainUsers.FirstOrDefaultAsync(x => x.Identity.UserName == USER_NAME);
+                        var modifiedUser = await db.DomainUsers.FirstOrDefaultAsync(x => x.Identity.UserName == testUserName);
                         Assert.NotNull(modifiedUser);
-                        Assert.False(modifiedUser.Profile.DisplayAsTeamMember);
+                        Assert.True(modifiedUser.Profile.DisplayAsTeamMember);
                     }
                 }
             }

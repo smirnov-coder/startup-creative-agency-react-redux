@@ -35,7 +35,8 @@ export interface AuthState {
     isAuthenticated: boolean,
     isAdmin: boolean,
     isLoading: boolean,
-    errorMessage: string
+    errorMessage: string,
+    roles: string[]
 }
 
 export interface UsersState extends PartialState<Entities.DomainUser> {
@@ -68,43 +69,43 @@ export interface AppState {
 
 export const initialState: AppState = {
     services: {
-        isLoading: true,
+        isLoading: false,
         items: [],
         error: null,
         current: null
     },
     works: {
-        isLoading: true,
+        isLoading: false,
         items: [],
         error: null,
         current: null
     },
     blog: {
-        isLoading: true,
+        isLoading: false,
         items: [],
         error: null,
         current: null
     },
     brands: {
-        isLoading: true,
+        isLoading: false,
         items: [],
         error: null,
         current: null
     },
     testimonials: {
-        isLoading: true,
+        isLoading: false,
         items: [],
         error: null,
         current: null
     },
     contacts: {
-        isLoading: true,
+        isLoading: false,
         contactInfos: [],
         socialLinks: [],
         error: null
     },
     messages: {
-        isLoading: true,
+        isLoading: false,
         items: [],
         error: null,
         current: null,
@@ -120,7 +121,8 @@ export const initialState: AppState = {
         photo: "",
         isAdmin: false,
         isLoading: true,
-        errorMessage: ""
+        errorMessage: "",
+        roles: []
     },
     users: {
         isLoading: false,

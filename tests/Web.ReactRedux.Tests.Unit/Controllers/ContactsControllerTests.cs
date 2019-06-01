@@ -32,7 +32,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             var result = await _target.GetAsync();
 
             Assert.IsType<ContactsViewModel>(result);
-            var contacts = result.Contacts;
+            var contacts = result.ContactInfos;
             Assert.Equal(3, contacts.Count);
             Assert.Equal("Name #1", contacts.First().Name);
             Assert.Equal("Caption #1", contacts.First().Caption);
@@ -80,7 +80,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         {
             return new ContactsViewModel
             {
-                Contacts = new List<ContactInfoViewModel>
+                ContactInfos = new List<ContactInfoViewModel>
                 {
                     new ContactInfoViewModel
                     {

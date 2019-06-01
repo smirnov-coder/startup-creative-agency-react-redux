@@ -24,14 +24,20 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         }
 
         //
-        // GET api/blog?skip=0&take=2
+        // GET api/blog/public?skip=0&take=2
         //
-        [HttpGet]
+        [HttpGet("public")]
         [AllowAnonymous]
-        public async Task<IEnumerable<BlogPost>> ListAsync(int skip = 0, int take = 0)
+        public async Task<IEnumerable<BlogPost>> PublicListAsync(int skip = 0, int take = 0)
         {
             return (await _blogService.GetBlogPostsAsync(skip, take)).Select(blogPost => PrepareEntityForReturn(blogPost));
         }
+
+        //
+        // GET api/blog
+        //
+        [Authorize]
+        public async Task<IEnumerable<BlogPost>> PrivateListAsync() => await base.ListAsync();
 
         [NonAction]
         public override Task<IEnumerable<BlogPost>> ListAsync() => throw new NotSupportedException();

@@ -1,11 +1,13 @@
 ﻿import { UsersState, initialState as appState } from "@store/state";
 import { HomePageModelAction } from "@store/actions/appActions";
 import { ActionTypes } from "@store/actions/actionTypes";
-import { CurrentUserAction } from "@store/actions/usersActions";
+import { DomainUser } from "@store/entities";
+import { CurrentAction, ItemsAction } from "@store/actions/genericActions";
 
 type UsersActions = 
     | HomePageModelAction
-    | CurrentUserAction
+    | CurrentAction<DomainUser>
+    | ItemsAction<DomainUser>
 
 const initialState = appState.users;
 
@@ -40,18 +42,18 @@ function usersReducer(state: UsersState = initialState, action: UsersActions): U
                 ...state,
                 isLoading: false,
                 error: null,
-                current: (action as CurrentUserAction).payload.user,
+                current: (action as CurrentAction<DomainUser>).payload.item,
             };
         }
 
-        //case "ADD_USERS": {
-        //    return {
-        //        ...state,
-        //        isLoading: false,
-        //        error: null,
-        //        items: (action as AddUsersAction).payload.items
-        //    };
-        //}
+        case ActionTypes.USERS: {
+            return {
+                ...state,
+                isLoading: false,
+                error: null,
+                items: (action as ItemsAction<DomainUser>).payload.items
+            };
+        }
 
         default:
             return state;

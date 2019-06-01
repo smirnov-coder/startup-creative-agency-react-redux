@@ -27,7 +27,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         {
             var result = new ContactsViewModel
             {
-                Contacts = (await _contactsService.GetContactsAsync()).Select(contact => new ContactInfoViewModel
+                ContactInfos = (await _contactsService.GetContactsAsync()).Select(contact => new ContactInfoViewModel
                 {
                     Caption = contact.Caption,
                     Name = contact.Name,
@@ -47,9 +47,9 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // POST api/contacts
         //
         [HttpPost]
-        public async Task<IActionResult> SaveAsync(ContactsViewModel model)
+        public async Task<IActionResult> SaveAsync([FromForm]ContactsViewModel model)
         {
-            var contacts = model.Contacts.Select(contact => new ContactInfo(contact.Name)
+            var contacts = model.ContactInfos.Select(contact => new ContactInfo(contact.Name)
             {
                 Caption = contact.Caption,
                 Values = contact.Values.Select(x => x.Value).ToList()

@@ -26,14 +26,15 @@ export default function authReducer(state: AuthState = initialState.auth, action
         }
 
         case ActionTypes.INITIAL_APP_STATE: {
-            let { userName, photo, isAdmin, isAuthenticated } = (action as InitialAppStateAction).payload.initialState;
+            let { userName, photo, isAdmin, isAuthenticated, roles } = (action as InitialAppStateAction).payload.initialState;
             return {
                 ...state,
                 isLoading: false,
                 userName,
                 photo,
                 isAdmin,
-                isAuthenticated
+                isAuthenticated,
+                roles
             };
         }
 
@@ -67,34 +68,6 @@ export default function authReducer(state: AuthState = initialState.auth, action
                 errorMessage: (action as ErrorAction).payload.message
             };
         }
-
-        //case "INIT_LOGIN_PAGE":
-        //case "INIT_NOT_FOUND_PAGE": //console.log("state", state); console.log("action", action);//
-        //case "INIT_ACCESS_DENIED_PAGE": {
-        //    let { userName, photo, isAuthenticated } = action;
-        //    return {
-        //        ...state,
-        //        userName,
-        //        photo,
-        //        isAuthenticated,
-        //        isLoading: false
-        //    };
-        //}
-
-        //case "INIT_SERVICES_PAGE":
-        //case "INIT_ADD_SERVICE_PAGE":
-        //case "INIT_EDIT_SERVICE_PAGE":
-        //case "INIT_MY_PROFILE_PAGE": {
-        //    //console.log("state", state);//
-        //    let { userName, photo, isAuthenticated, isAdmin } = action;
-        //    return {
-        //        userName,
-        //        photo,
-        //        isAuthenticated,
-        //        isAdmin,
-        //        isLoading: false
-        //    };
-        //}
 
         default:
             return state;

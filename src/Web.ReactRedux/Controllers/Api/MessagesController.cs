@@ -70,10 +70,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // PUT api/messages
         //
         [HttpPut]
-        public async Task<IActionResult> UpdateReadStatusAsync([FromForm]int[] ids, [FromForm]bool isRead)
+        public async Task<IActionResult> UpdateReadStatusAsync(MessageReadStatusBindingModel model)
         {
-            return await PerformActionAsync(ids, async messageId =>
-                await _messageService.UpdateMessageReadStatusAsync(messageId, isRead), "updated");
+            return await PerformActionAsync(model.MessageIds, async messageId =>
+                await _messageService.UpdateMessageReadStatusAsync(messageId, model.IsRead), "updated");
         }
 
         //

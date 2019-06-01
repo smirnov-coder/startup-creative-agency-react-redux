@@ -3,15 +3,15 @@ import { connect } from "react-redux";
 import { Dispatch, bindActionCreators } from "redux";
 import { match, RouteComponentProps } from "react-router";
 
-export type ActionCreator = (...args: any[]) => void;
-export type PageInitializer = (routeMatch: match, actionCreator: ActionCreator) => ActionCreator;
+type ActionCreator = (...args: any[]) => void;
+type Initializer = (routeMatch: match, actionCreator: ActionCreator) => ActionCreator;
 
-export function withPageInitializer<T extends object>(pageInit: PageInitializer, actionCreator: ActionCreator) {
+export function withInitializer<T extends RouteComponentProps>(init: Initializer, actionCreator: ActionCreator) {
     return (WrappedComponent: React.ComponentType<T>) => {
-        class WithPageInitializer extends React.Component<DispatchProps & T & RouteComponentProps> {
+        class WithPageInitializer extends React.Component<DispatchProps & T> {
             componentDidMount(): void {
                 let { bindedActionCreator, match } = this.props;
-                pageInit(match, bindedActionCreator)();
+                init(match, bindedActionCreator)();
             }
 
             render(): JSX.Element {

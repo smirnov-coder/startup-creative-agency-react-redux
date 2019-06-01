@@ -167,16 +167,17 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional
 
         private async Task AddUsersAsync(ApplicationDbContext db, UserManager<UserIdentity> userManager)
         {
-            GetUserCollection().ForEach(async user =>
+            var users = GetUserCollection();
+            foreach (var user in users)
             {
                 string role = user.Identity.UserName == "admin" ? "Administrator" : "User";
                 string password = user.Identity.UserName == "admin" ? "Admin123" : "User123";
                 await userManager.CreateAsync(user.Identity as UserIdentity, password);
                 await userManager.AddToRoleAsync(user.Identity as UserIdentity, role);
-                if (user.Identity.UserName != "admin")
+                if (user.Identity.UserName != "admin" && user.Identity.UserName != "user3")
                     user.Profile.ChangeDisplayStatus(true);
-                await db.DomainUsers.AddAsync(user);
-            });
+                db.DomainUsers.Add(user);
+            }
             await db.SaveChangesAsync();
         }
 
@@ -191,16 +192,16 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional
             };
             return new List<DomainUser>
             {
-                new DomainUser(1, new UserIdentity("user1", "user1@example.com"),
-                    new UserProfile("FirstName #1", "LastName #1", "Job #1", "Path #1", socialLinks)),
-                new DomainUser(2, new UserIdentity("user2", "user2@example.com"),
-                    new UserProfile("FirstName #2", "LastName #2", "Job #2", "Path #2", socialLinks)),
-                new DomainUser(3, new UserIdentity("admin", "admin@example.com"),
+                new DomainUser(1, new UserIdentity("admin", "admin@example.com"),
                     new UserProfile("Admin", "Admin", "Administrator", string.Empty)),
-                new DomainUser(4, new UserIdentity("user4", "user4@example.com"),
-                    new UserProfile("FirstName #4", "LastName #4", "Job #4", "Path #4", socialLinks)),
-                new DomainUser(5, new UserIdentity("user5", "user5@example.com"),
-                    new UserProfile("FirstName #5", "LastName #5", "Job #5", "Path #5", socialLinks))
+                new DomainUser(2, new UserIdentity("user1", "user1@example.com"),
+                    new UserProfile("FirstName #1", "LastName #1", "Job #1", "Path #1", socialLinks)),
+                new DomainUser(3, new UserIdentity("user2", "user2@example.com"),
+                    new UserProfile("FirstName #2", "LastName #2", "Job #2", "Path #2", socialLinks)),
+                new DomainUser(4, new UserIdentity("user3", "user3@example.com"),
+                    new UserProfile("FirstName #3", "LastName #3", "Job #3", "Path #3", socialLinks)),
+                new DomainUser(5, new UserIdentity("user4", "user4@example.com"),
+                    new UserProfile("FirstName #4", "LastName #4", "Job #4", "Path #4", socialLinks))
             };
         }
 

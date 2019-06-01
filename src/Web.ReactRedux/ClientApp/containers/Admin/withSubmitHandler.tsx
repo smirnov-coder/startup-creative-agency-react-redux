@@ -10,22 +10,19 @@ type SubmitHandler = (formData: FormData) => void
 
 export function withSubmitHandler<T extends WrappedComponentProps>(onSubmit: SubmitHandler) {
     return (WrappedComponent: React.ComponentType<T>) => {
-        class WithSubmitHandler extends React.Component<DispatchProps & T> {
+        class WithSubmitHandler extends React.Component<DispatchProps> {
             render(): JSX.Element {
-                //let { onSubmit } = this.props;
-                return (
-                    <WrappedComponent {...this.props} />
-                );
+                return <WrappedComponent {...this.props} onSubmit={this.props.handleSubmit} />;
             }
         }
 
         interface DispatchProps {
-            onSubmit: (formData: FormData) => void;
+            handleSubmit: (formData: FormData) => void;
         }
 
         const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
             return {
-                onSubmit: bindActionCreators(onSubmit, dispatch)
+                handleSubmit: bindActionCreators(onSubmit, dispatch)
             };
         }
 

@@ -2,7 +2,7 @@
 import { Routes } from "@scripts/constants";
 import { Switch, Route, Redirect, match } from "react-router";
 import { compose } from "redux";
-import { withPageInitializer } from "@containers/Admin/withPageInitializer";
+import { withInitializer } from "@containers/Admin/withPageInitializer";
 import { withLoader } from "@containers/Admin/withLoader";
 import { withPageContentWrapper } from "./withPageContentWrapper";
 import Loader from "@components/Shared/Loader";
@@ -23,14 +23,14 @@ const WorksSubarea: React.SFC = () =>
 
 // Works page
 const WorksPage = compose(
-    withPageInitializer((routeMatch, actionCreator) => actionCreator, fetchWorks),
+    withInitializer((routeMatch, actionCreator) => actionCreator, fetchWorks),
     withLoader(Loader, state => state.works.isLoading),
     withPageContentWrapper("Work Example List")
 )(WorkExampleList);
 
 // AddWorkExample page
 const AddWorkExamplePage = compose(
-    withPageInitializer(
+    withInitializer(
         (routeMatch, actionCreator) => {
             return () => actionCreator({ Id: 0, Name: "", Category: "", ImagePath: "", Description: "" } as WorkExample);
         },
@@ -43,7 +43,7 @@ const AddWorkExamplePage = compose(
 
 // EditWorkExample page
 const EditWorkExamplePage = compose(
-    withPageInitializer(
+    withInitializer(
         (routeMatch, actionCreator) => {
             let id: number = (routeMatch.params as any).id;
             return () => actionCreator(id);

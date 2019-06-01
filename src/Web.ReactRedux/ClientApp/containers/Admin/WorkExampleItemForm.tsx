@@ -119,7 +119,7 @@ class WorkExampleItemForm extends React.Component<WorkExampleItemFormProps, Work
                     </div>
                     <div className="work-example-item-form__line form-group">
                         <label htmlFor="Description">Description</label>
-                        <textarea id="Description" name="description" className="work-example-item-form__description form-control" value={Description} onChange={(e) => this.handleChange(e, "Description")}></textarea>
+                        <textarea id="Description" name="Description" className="work-example-item-form__description form-control" value={Description} onChange={(e) => this.handleChange(e, "Description")}></textarea>
                     </div>
                     <div className="work-example-item-form__line form-group">
                         <label htmlFor="Image">Image</label>
