@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
@@ -29,7 +29,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // GET api/[controller]
         //
-        [AllowAnonymous]
         public virtual async Task<IEnumerable<TEntity>> ListAsync()
         {
             return (await PerformGetManyAsync()).Select(entity => PrepareEntityForReturn(entity));
@@ -41,7 +40,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // GET api/[controller]/5
         //
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public virtual async Task<ActionResult<TEntity>> GetAsync(TKey id)
         {
             var entity = await PerformGetAsync(id);
@@ -100,9 +98,9 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         protected abstract Task<TEntity> PerformAddAsync(TEntity entity);
 
         //
-        // PUT api/[controller]/5
+        // PUT api/[controller]
         //
-        [HttpPut("{id?}")]
+        [HttpPut]
         public virtual async Task<IActionResult> UpdateAsync([FromForm]TModel model)
         {
             var user = await _userService.GetUserAsync(User?.Identity?.Name);

@@ -1,9 +1,10 @@
 ﻿import * as React from "react";
-import { WorkExample } from "../../store/entities";
-import { ButtonModifiers, Button } from "./Button";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
-import "../../assets/lib/bootstrap-customized/js/bootstrap";
+import { WorkExample } from "@store/entities";
+import "@bootstrap/css";
+import "@bootstrap/js";
 import "./WorkExampleModal.scss";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import * as $ from "jquery";
 
 interface WorkExampleModalProps {
     workExample: WorkExample;
@@ -18,12 +19,9 @@ export class WorkExampleModal extends React.Component<WorkExampleModalProps> {
     }
 
     componentWillReceiveProps(nextProps: WorkExampleModalProps): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
-        if (nextProps.showModal) {
-            $(this.modal.current).modal("show");
-        }
+        nextProps.showModal
+            ? $(this.modal.current).modal("show")
+            : $(this.modal.current).modal("hide");
     }
 
     private modal = React.createRef<HTMLDivElement>();
@@ -67,4 +65,3 @@ export class WorkExampleModal extends React.Component<WorkExampleModalProps> {
         this.props.onClose();
     }
 }
-

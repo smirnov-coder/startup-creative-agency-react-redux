@@ -1,11 +1,15 @@
 ﻿import * as React from "react";
+import * as $ from "jquery";
 import { connect } from "react-redux";
 import { Dispatch, bindActionCreators } from "redux";
-import { Button, ButtonModifiers } from "../../components/Home/Button";
-import { signIn } from "../../store/actions/actionCreators";
 import "./LoginForm.scss";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import { signIn } from "@store/actions/authActions";
+import { RouteComponentProps } from "react-router";
+import { VALIDATION_OPTIONS } from "@scripts/constants";
+import { AppState } from "@store/state";
 
-type LoginFormProps = DispatchProps;
+type LoginFormProps = StateProps & DispatchProps & RouteComponentProps;
 
 interface LoginFormState {
     userName: string;
@@ -23,12 +27,11 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
         };
     }
 
+    private validator: JQueryValidation.Validator;
+
     componentDidMount(): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
-        $(this.loginForm.current).validate({
-            /// TODO: не забыть про валидацию формы
+        this.validator = $(this.form.current).validate({
+            ...VALIDATION_OPTIONS,
             rules: {
                 "user-name": {
                     required: true,
@@ -37,32 +40,30 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
                     required: true
                 }
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
-            },
             submitHandler: (form, event) => {
                 event.preventDefault();
-                // dispatch sign in here
-                this.props.signIn({ ...this.state }); //console.log("login form submitted");//
-            },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
+                let { state } = this.props.location;
+                let returnUrl: string = state ? state.returnUrl : null;
+                this.props.onSubmit({ ...this.state, returnUrl });
             }
-        })
+        });
     }
 
-    private loginForm = React.createRef<HTMLFormElement>();
+    componentWillUnmount(): void {
+        this.validator.destroy();
+    }
+
+    private form = React.createRef<HTMLFormElement>();
 
     render(): JSX.Element {
         let { userName, password, rememberMe } = this.state;
+        let { errorMessage } = this.props;
         return (
             <div className="login-form panel panel-default center-block">
                 <h3>Log in to Admin area.</h3>
                 <hr />
-                <form ref={this.loginForm}>
-                    {/*<div asp-validation-summary="ModelOnly"></div>*/}
+                <form ref={this.form}>
+                    {errorMessage ? <div className="login-form__error">{errorMessage}</div> : null}
                     <div className="form-group">
                         <label htmlFor="user-name" className="control-label">User Name</label>
                         <input id="user-name" name="user-name" className="login-form__user-name form-control"
@@ -78,7 +79,7 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
                         <input id="remember-me" name="remember-me" type="checkbox"
                             className="login-form__remember-me form-check-input"
                             value={`${rememberMe}`} onChange={(e) => this.handleChange(e, "rememberMe")} />
-                        <label htmlFor="remember-me">Remember Me?</label>
+                        <label htmlFor="remember-me" style={{ marginLeft: 5 }}>Remember me</label>
                     </div>
                     <div className="form-group">
                         <Button className="login-form__submit"
@@ -96,8 +97,18 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
         this.setState({
             ...this.state,
             [inputName]: value
-        }); //console.log(this.state);//
+        });
     }
+}
+
+interface StateProps {
+    errorMessage: string;
+}
+
+const mapStateToProps = (state: AppState): StateProps => {
+    return {
+        errorMessage: state.auth.errorMessage
+    };
 }
 
 interface SignInInfo {
@@ -108,13 +119,13 @@ interface SignInInfo {
 }
 
 interface DispatchProps {
-    signIn: ({ userName, password, rememberMe, returnUrl }: SignInInfo) => void;
+    onSubmit: ({ userName, password, rememberMe, returnUrl }: SignInInfo) => void;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     return {
-        signIn: bindActionCreators(signIn, dispatch),
-    }
+        onSubmit: bindActionCreators(signIn, dispatch),
+    };
 }
 
-export default connect(null, mapDispatchToProps)(LoginForm);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

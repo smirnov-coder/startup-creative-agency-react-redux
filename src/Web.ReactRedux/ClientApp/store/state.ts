@@ -1,61 +1,137 @@
-﻿import {
-    ServiceInfo,
-    DomainUser,
-    WorkExample,
-    BlogPost,
-    Brand,
-    Testimonial,    ContactInfo,
-    Message,
-    SocialLink,
-    BaseEntity
-} from "./entities";
+﻿import * as Entities from "./entities";
 import { RouterState } from "connected-react-router";
 
-interface PartialState<T = BaseEntity> {
+interface PartialState<T = Entities.BaseEntity> {
     isLoading: boolean;
     items: T[];
+    current: T;
     error: Error;
 }
 
-export type ServicesState = PartialState<ServiceInfo>;
-export type TeamMembersState = PartialState<DomainUser>;
-export type WorksState = PartialState<WorkExample>;
-export type BlogState = PartialState<BlogPost>;
-export type BrandsState = PartialState<Brand>;
-export type TestimonialsState = PartialState<Testimonial>;
-export type ContactsState = PartialState<ContactInfo>;
-export type SocialLinksState = PartialState<SocialLink>;
-export type MessagesState = PartialState<Message>;
+export type ServicesState = PartialState<Entities.ServiceInfo>;
+export type WorksState = PartialState<Entities.WorkExample>;
+export type BlogState = PartialState<Entities.BlogPost>;
+export type BrandsState = PartialState<Entities.Brand>;
+export type TestimonialsState = PartialState<Entities.Testimonial>;
 
-export interface ValidationProblemDetails {
-    title: string;
-    errors: any;
+export interface ContactsState {
+    isLoading: boolean;
+    contactInfos: Entities.ContactInfo[];
+    socialLinks: Entities.SocialLink[];
+    error: Error
 }
 
-export interface OperationDetailsState {
-    isError: boolean,
-    message: string,
-    validationError: ValidationProblemDetails
+export interface MessagesState extends PartialState<Entities.Message> {
+    newMessagesCount: number;
+    sendingResult: {
+        isError: boolean,
+        message: string
+    };
 }
 
 export interface AuthState {
     userName: string,
     photo: string,
     isAuthenticated: boolean,
-    isAdmin: boolean
+    isAdmin: boolean,
+    isLoading: boolean,
+    errorMessage: string,
+    roles: string[]
+}
+
+export interface UsersState extends PartialState<Entities.DomainUser> {
+    current: Entities.DomainUser
+}
+
+export interface Notification {
+    id: number;
+    type: "success" | "error";
+    text: string;
+}
+
+export interface NotificationsState {
+    items: Notification[]
 }
 
 export interface AppState {
     services: ServicesState,
-    teamMembers: TeamMembersState,
     works: WorksState,
     blog: BlogState,
     brands: BrandsState,
     testimonials: TestimonialsState,
     contacts: ContactsState,
-    socialLinks: SocialLinksState,
     messages: MessagesState,
-    operationDetails: OperationDetailsState,
     auth: AuthState,
+    users: UsersState,
+    notifications: NotificationsState,
     router: RouterState
+}
+
+export const initialState: AppState = {
+    services: {
+        isLoading: false,
+        items: [],
+        error: null,
+        current: null
+    },
+    works: {
+        isLoading: false,
+        items: [],
+        error: null,
+        current: null
+    },
+    blog: {
+        isLoading: false,
+        items: [],
+        error: null,
+        current: null
+    },
+    brands: {
+        isLoading: false,
+        items: [],
+        error: null,
+        current: null
+    },
+    testimonials: {
+        isLoading: false,
+        items: [],
+        error: null,
+        current: null
+    },
+    contacts: {
+        isLoading: false,
+        contactInfos: [],
+        socialLinks: [],
+        error: null
+    },
+    messages: {
+        isLoading: false,
+        items: [],
+        error: null,
+        current: null,
+        newMessagesCount: 0,
+        sendingResult: {
+            isError: false,
+            message: ""
+        }
+    },
+    auth: {
+        isAuthenticated: false,
+        userName: "",
+        photo: "",
+        isAdmin: false,
+        isLoading: true,
+        errorMessage: "",
+        roles: []
+    },
+    users: {
+        isLoading: false,
+        items: [],
+        current: null,
+        error: null
+    },
+    notifications: {
+        items: []
+    },
+    router: null
 }

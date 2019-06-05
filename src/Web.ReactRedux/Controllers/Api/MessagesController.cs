@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
@@ -44,7 +44,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // POST api/messages
         //
         [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> SaveAsync(MessageViewModel message)
+        public async Task<IActionResult> SaveAsync(MessageBindingModel message)
         {
             try
             {
@@ -70,10 +70,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // PUT api/messages
         //
         [HttpPut]
-        public async Task<IActionResult> UpdateReadStatusAsync([FromForm]int[] ids, [FromForm]bool isRead)
+        public async Task<IActionResult> UpdateReadStatusAsync(MessageReadStatusBindingModel model)
         {
-            return await PerformActionAsync(ids, async messageId =>
-                await _messageService.UpdateMessageReadStatusAsync(messageId, isRead), "updated");
+            return await PerformActionAsync(model.MessageIds, async messageId =>
+                await _messageService.UpdateMessageReadStatusAsync(messageId, model.IsRead), "updated");
         }
 
         //
@@ -92,7 +92,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             {
                 action.Invoke(messageId);
             }
-            return Task.FromResult<IActionResult>(Ok(OperationDetails.Error($"A set of entities of type '{typeof(Message)}' has been " +
+            return Task.FromResult<IActionResult>(Ok(OperationDetails.Success($"A set of entities of type '{typeof(Message)}' has been " +
                 $"{messagePart} successfully.")));
         }
     }

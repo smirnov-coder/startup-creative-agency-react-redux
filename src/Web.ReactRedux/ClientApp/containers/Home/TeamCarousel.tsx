@@ -1,35 +1,32 @@
 ﻿import * as React from "react";
-import { DomainUser } from "../../store/entities";
-import { connect } from "react-redux";
-import { TeamMember } from "../../components/Home/TeamMember";
+import { DomainUser } from "@store/entities";
+import { TeamMember } from "@components/Home/TeamMember";
 import OwlCarousel from "../../assets/lib/owl.carousel-customized/OwlCarousel";
 import { Options } from "../../assets/lib/owl.carousel-customized/OwlCarousel";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import "@bootstrap/css";
 import "./TeamCarousel.scss";
-import { Loader } from "../../components/Home/Loader";
-import { AppState } from "../../store/state";
+import Loader from "@components/Shared/Loader";
+import { compose } from "redux";
+import { withLoader } from "@containers/Admin/withLoader";
+import * as $ from "jquery";
+import { withDataFeed } from "@containers/Admin/withDataFeed";
 
-type TeamCarouselProps = StateProps;
+interface TeamCarouselProps {
+    items: DomainUser[];
+}
 
 class TeamCarousel extends React.Component<TeamCarouselProps> {
-    constructor(props: TeamCarouselProps) {
-        super(props);
-    }
-
     render(): JSX.Element {
-        let { isLoading, items } = this.props;
+        let { items } = this.props;
         let owlOptions = this.getOwlCarouselOptions();
         return (
             <section className="team">
                 <h3 className="sr-only">Our Team</h3>
-                {isLoading
-                    ? <Loader />
-                    : <OwlCarousel className="team__carousel" {...owlOptions} onRefreshed={this.addTeamMemberHover}>
-                        {items.map(teamMember => (
-                            <TeamMember key={teamMember.Id} {...teamMember} />
-                        ))}
-                      </OwlCarousel>
-                }
+                <OwlCarousel className="team__carousel" {...owlOptions} onRefreshed={this.addTeamMemberHover}>
+                    {items.map((item, index) => (
+                        <TeamMember key={index} {...item} />
+                    ))}
+                </OwlCarousel>
             </section>
         );
     }
@@ -51,27 +48,16 @@ class TeamCarousel extends React.Component<TeamCarouselProps> {
             navText: [prevButtonIcon, nextButtonIcon],
             responsiveClass: true,
             responsive: {
-                0: {
-                    items: 1
-                },
-                480: {
-                    items: 2
-                },
-                768: {
-                    items: 3
-                },
-                992: {
-                    items: 4
-                }
+                0: { items: 1 },
+                480: { items: 2 },
+                768: { items: 3 },
+                992: { items: 4 }
             }
-        }
+        };
     }
 
     // Из-за особенностей работы (и недостатков) OwlCarousel, приходится вешать обработчик события наведения мыши здесь.
     addTeamMemberHover(): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
         let $teamMember = $(".team-member");
         let overlaySelector = ".team-member__img-overlay";
         let duration: number = 100;
@@ -85,16 +71,9 @@ class TeamCarousel extends React.Component<TeamCarouselProps> {
     }
 }
 
-interface StateProps {
-    isLoading: boolean;
-    items: DomainUser[];
-}
+const composed = compose(
+    withLoader(Loader, state => state.users.isLoading),
+    withDataFeed(state => state.users.items, "items")
+);
 
-const mapStateToProps = (state: AppState): StateProps => {
-    return {
-        isLoading: state.teamMembers.isLoading,
-        items: state.teamMembers.items
-    };
-}
-
-export default connect(mapStateToProps, null)(TeamCarousel);
+export default composed(TeamCarousel);

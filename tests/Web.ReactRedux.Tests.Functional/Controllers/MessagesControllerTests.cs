@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
@@ -88,8 +89,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 {
                     Assert.False(response.IsSuccessStatusCode);
                     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal($"The entity of type '{typeof(Message)}' with key value '101' for 'Id' not found.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.True(details.IsError);
+                    Assert.Equal($"The entity of type '{typeof(Message)}' with key value '101' for 'Id' not found.", details.Message);
                 }
             }
         }
@@ -101,7 +105,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             using (var httpClient = factory.CreateClient())
             {
                 int expectedCount = 4;
-                var model = new MessageViewModel
+                var model = new MessageBindingModel
                 {
                     Name = "Test Name",
                     Email = "test@example.com",
@@ -113,8 +117,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 using (var response = await httpClient.PostAsync(BASE_URL, new StringContent(json, Encoding.UTF8, "application/json")))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal("Thank you for your message!", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal("Thank you for your message!", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         using (var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
@@ -142,17 +149,21 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             using (var httpClient = await factory.CreateClientWithAccessTokenAsync(USER_NAME))
             {
                 int expectedCount = 3;
-                var model = new Dictionary<string, string>
+                var model = new MessageReadStatusBindingModel
                 {
-                    ["ids[0]"] = "1",
-                    ["ids[1]"] = "2",
-                    ["isRead"] = "false"
+                    MessageIds = new int[] { 1, 2 },
+                    IsRead = false
                 };
-                using (var response = await httpClient.PutAsync(BASE_URL, new FormUrlEncodedContent(model)))
+                string json = JsonConvert.SerializeObject(model);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                using (var response = await httpClient.PutAsync(BASE_URL, content))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal($"A set of entities of type '{typeof(Message)}' has been updated successfully.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal($"A set of entities of type '{typeof(Message)}' has been updated successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         using (var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
@@ -179,8 +190,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 using (var response = await httpClient.SendAsync(request))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal($"A set of entities of type '{typeof(Message)}' has been deleted successfully.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal($"A set of entities of type '{typeof(Message)}' has been deleted successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         using (var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())

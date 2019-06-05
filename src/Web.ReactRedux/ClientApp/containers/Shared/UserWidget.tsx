@@ -1,12 +1,11 @@
 ﻿import * as React from "react";
-//import { RouteComponentProps, withRouter } from "react-router";
 import { bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
-import { signOut } from "../../store/actions/actionCreators";
 import "./UserWidget.scss";
-import { AppState } from "../../store/state";
+import { AppState } from "@store/state";
+import { signOut } from "@store/actions/authActions";
 
-type UserWidgetProps = StateProps & DispatchProps /*& RouteComponentProps*/;
+type UserWidgetProps = StateProps & DispatchProps;
 
 class UserWidget extends React.Component<UserWidgetProps> {
     constructor(props: UserWidgetProps) {
@@ -15,11 +14,11 @@ class UserWidget extends React.Component<UserWidgetProps> {
     }
 
     render(): JSX.Element {
-        let { userName = "", photo = "" } = this.props;
+        let { userName, photo } = this.props;
         return (
             <div className="user-widget">
                 <div className="user-widget__img-holder">
-                    <img src={photo} className={`user-widget__img ${photo !== "" ? "" : "user-widget__img--hidden"}`}
+                    <img src={photo} className={`user-widget__img ${photo ? "" : "user-widget__img--hidden"}`}
                         alt={userName} />
                 </div>
                 <div className="user-widget__info">
@@ -35,8 +34,6 @@ class UserWidget extends React.Component<UserWidgetProps> {
     handleClick(event: React.MouseEvent): void {
         event.preventDefault();
         this.props.onLogout();
-        /// TODO: Как сделать редирект???
-        //this.props.history.push("/");
     }
 }
 
@@ -62,4 +59,4 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     };
 }
 
-export default /*withRouter(*/connect(mapStateToProps, mapDispatchToProps)(UserWidget)/*)*/;
+export default connect(mapStateToProps, mapDispatchToProps)(UserWidget);

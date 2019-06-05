@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import findByType from "../../scripts/findComponentsByType";
+import findByType from "@scripts/findComponentsByType";
 import "./Menu.scss";
 
 type MenuItemProps = React.PropsWithChildren<{ className?: string }>;
@@ -14,10 +14,6 @@ interface MenuProps {
 
 export class Menu extends React.Component<MenuProps> {
     static Item: (props: MenuItemProps) => JSX.Element;
-
-    constructor(props: MenuProps) {
-        super(props);
-    }
 
     renderItem(item: React.ReactElement): JSX.Element {
         let { className = "", children } = item.props;

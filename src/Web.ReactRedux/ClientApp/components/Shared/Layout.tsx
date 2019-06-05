@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import findByType from "../../scripts/findComponentsByType";
+import findByType from "@scripts/findComponentsByType";
 import "./Layout.scss";
 
 type SubcomponentProps = React.PropsWithChildren<{}>;

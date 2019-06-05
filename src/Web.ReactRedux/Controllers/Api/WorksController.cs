@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
-    public class WorksController : ApiControllerBase<WorkExampleViewModel, WorkExample, int>
+    public class WorksController : ApiControllerBase<WorkExampleBindingModel, WorkExample, int>
     {
         private readonly IWorkExampleService _workExampleService;
         private readonly IFileService _fileService;
@@ -21,7 +21,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             _fileService = fileService;
         }
 
-        protected override async Task<WorkExample> CreateEntityFromModelAsync(WorkExampleViewModel model, DomainUser creator)
+        protected override async Task<WorkExample> CreateEntityFromModelAsync(WorkExampleBindingModel model, DomainUser creator)
         {
             var workExample = new WorkExample(model.Id, creator)
             {

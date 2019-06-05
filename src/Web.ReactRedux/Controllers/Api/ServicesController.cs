@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
-    public class ServicesController : ApiControllerBase<ServiceInfoViewModel, ServiceInfo, int>
+    public class ServicesController : ApiControllerBase<ServiceInfoBindingModel, ServiceInfo, int>
     {
         private readonly IServiceInfoService _serviceInfoService;
 
@@ -28,7 +28,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             return await _serviceInfoService.GetServiceInfoAsync(id);
         }
 
-        protected override Task<ServiceInfo> CreateEntityFromModelAsync(ServiceInfoViewModel model, DomainUser creator)
+        protected override Task<ServiceInfo> CreateEntityFromModelAsync(ServiceInfoBindingModel model, DomainUser creator)
         {
             var serviceInfo = new ServiceInfo(model.Id, creator)
             {

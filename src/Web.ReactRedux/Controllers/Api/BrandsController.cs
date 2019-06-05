@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
-    public class BrandsController : ApiControllerBase<BrandViewModel, Brand, int>
+    public class BrandsController : ApiControllerBase<BrandBindingModel, Brand, int>
     {
         private readonly IBrandService _brandService;
         private readonly IFileService _fileService;
@@ -23,7 +23,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             _fileService = fileService;
         }
 
-        protected override async Task<Brand> CreateEntityFromModelAsync(BrandViewModel model, DomainUser creator)
+        protected override async Task<Brand> CreateEntityFromModelAsync(BrandBindingModel model, DomainUser creator)
         {
             var brand = new Brand(model.Id, creator)
             {

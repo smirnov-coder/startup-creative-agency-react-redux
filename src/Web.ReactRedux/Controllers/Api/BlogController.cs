@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
-    public class BlogController : ApiControllerBase<BlogPostViewModel, BlogPost, int>
+    public class BlogController : ApiControllerBase<BlogPostBindingModel, BlogPost, int>
     {
         private readonly IBlogService _blogService;
         private readonly IFileService _fileService;
@@ -24,19 +24,25 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         }
 
         //
-        // GET api/blog?skip=0&take=2
+        // GET api/blog/public?skip=0&take=2
         //
-        [HttpGet]
+        [HttpGet("public")]
         [AllowAnonymous]
-        public async Task<IEnumerable<BlogPost>> ListAsync(int skip = 0, int take = 0)
+        public async Task<IEnumerable<BlogPost>> PublicListAsync(int skip = 0, int take = 0)
         {
             return (await _blogService.GetBlogPostsAsync(skip, take)).Select(blogPost => PrepareEntityForReturn(blogPost));
         }
 
+        //
+        // GET api/blog
+        //
+        [Authorize]
+        public async Task<IEnumerable<BlogPost>> PrivateListAsync() => await base.ListAsync();
+
         [NonAction]
         public override Task<IEnumerable<BlogPost>> ListAsync() => throw new NotSupportedException();
 
-        protected override async Task<BlogPost> CreateEntityFromModelAsync(BlogPostViewModel model, DomainUser creator)
+        protected override async Task<BlogPost> CreateEntityFromModelAsync(BlogPostBindingModel model, DomainUser creator)
         {
             var blogPost = new BlogPost(model.Id, creator)
             {

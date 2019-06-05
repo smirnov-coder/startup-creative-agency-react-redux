@@ -1,5 +1,6 @@
 ﻿import * as React from "react";
 import "./ContactFormModal.scss";
+import * as $ from "jquery";
 
 interface ContactFormModalProps {
     text: string;
@@ -15,12 +16,9 @@ export class ContactFormModal extends React.Component<ContactFormModalProps> {
     }
 
     componentWillReceiveProps(nextProps: ContactFormModalProps): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
-        if (nextProps.showModal) {
-            $(this.modal.current).modal("show");
-        }
+        nextProps.showModal
+            ? $(this.modal.current).modal("show")
+            : $(this.modal.current).modal("hide");
     }
 
     private modal = React.createRef<HTMLDivElement>();

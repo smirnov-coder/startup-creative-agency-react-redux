@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 import { DomainUser } from "../../store/entities";
-import { SocialLink, SocialLinkModifiers } from "./SocialLink";
+import SocialLink, { SocialLinkModifiers } from "./SocialLink";
 import "./TeamMember.scss";
 import { Menu } from "./Menu";
 

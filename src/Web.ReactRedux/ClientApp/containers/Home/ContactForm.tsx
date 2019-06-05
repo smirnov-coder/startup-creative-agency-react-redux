@@ -1,13 +1,16 @@
 ﻿import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { Button } from "../../components/Home/Button";
-import { sendMessage } from "../../store/actions/actionCreators";
 import "./ContactForm.scss";
+import { ContactFormModal } from "@components/Home/ContactFormModal";
+import { AppState } from "@store/state";
+import Button from "@components/Shared/Button";
+import Loader from "@components/Shared/Loader";
+import { OperationDetails } from "@store/actions/appActions";
+import { sendMessage, clearSendingResult } from "@store/actions/messagesActions";
+import * as $ from "jquery";
 import "jquery-validation";
-import { Loader } from "../../components/Home/Loader";
-import { ContactFormModal } from "../../components/Home/ContactFormModal";
-import { AppState, OperationDetailsState } from "../../store/state";
+import { VALIDATION_OPTIONS } from "@scripts/constants";
 
 export interface ContactMessage {
     name: string;
@@ -29,11 +32,11 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
         super(props);
         this.state = {
             message: {
+                text: "",
                 name: "",
-                email: "",
                 company: "",
                 subject: "",
-                text: ""
+                email: ""
             },
             showModal: false
         };
@@ -41,10 +44,12 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
         this.closeModal = this.closeModal.bind(this);
     }
 
-    private contactForm = React.createRef<HTMLFormElement>();
+    private form = React.createRef<HTMLFormElement>();
+    private validator: JQueryValidation.Validator;
 
     componentDidMount(): void {
-        $(this.contactForm.current).validate({
+        this.validator = $(this.form.current).validate({
+            ...VALIDATION_OPTIONS,
             rules: {
                 name: {
                     required: true,
@@ -66,35 +71,42 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
                     maxlength: 5000
                 }
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
+            messages: {
+                name: {
+                    required: "Please enter your name."
+                },
+                email: {
+                    required: "Please enter your e-mail address."
+                },
+                text: {
+                    required: "Please enter your message."
+                }
             },
             submitHandler: (form, event) => {
                 event.preventDefault();
-                this.props.sendMessage(this.state.message);
-            },
-            invalidHandler: (event, validator) => {
-                console.log("Form data is invalid.");//
+                this.props.onSendMessage(this.state.message);
             }
         });
     }
 
+    componentWillUnmount(): void {
+        this.validator.destroy();
+    }
+
     componentWillReceiveProps(nextProps: ContactFormProps): void {
         this.setState({
-            showModal: nextProps.operationDetails ? true : false
+            showModal: !!nextProps.sendingResult.message
         });
     }
 
     render(): JSX.Element {
         let { name, email, company, subject, text } = this.state.message;
-        let { isLoading, operationDetails } = this.props;
+        let { isLoading, sendingResult } = this.props;
         return (
             <section className="contact-form">
                 <h3 className="sr-only">Send Us a Message</h3>
                 <div className="row">
-                    <form ref={this.contactForm}>
+                    <form ref={this.form}>
                         <div className="contact-form__line col-md-6">
                             <label htmlFor="name" className="sr-only">Name</label>
                             <input id="name" name="name" className="contact-form__text-input" placeholder="Your Name"
@@ -108,8 +120,7 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
                         <div className="contact-form__line col-md-6">
                             <label htmlFor="subject" className="sr-only">Subject</label>
                             <input id="subject" name="subject" className="contact-form__text-input"
-                                placeholder="Your Subject" value={subject}
-                                onChange={(e) => this.handleChange(e, "subject")} />
+                                placeholder="Your Subject" value={subject} onChange={(e) => this.handleChange(e, "subject")} />
                         </div>
                         <div className="contact-form__line col-md-6">
                             <label htmlFor="company" className="sr-only">Company Name</label>
@@ -135,8 +146,8 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
                     {isLoading ? <Loader modifiers={["loader--behavior-fill", "loader--bg-translucent"]} /> : null}
                 </div>
                 <ContactFormModal showModal={this.state.showModal}
-                    text={operationDetails.message}
-                    isError={operationDetails.isError}
+                    text={sendingResult.message}
+                    isError={sendingResult.isError}
                     onClose={this.closeModal} />
             </section>
         );
@@ -145,14 +156,15 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
     closeModal(): void {
         this.setState({
             message: {
+                text: "",
                 name: "",
-                email: "",
                 company: "",
                 subject: "",
-                text: ""
+                email: ""
             },
             showModal: false
         });
+        this.props.onResultModalClose();
     }
 
     handleChange(event: React.ChangeEvent, inputName: string): void {
@@ -162,29 +174,31 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
                 ...this.state.message,
                 [inputName]: value
             }
-        }); //console.log(this.state.message);//
+        });
     }
 }
 
 interface StateProps {
     isLoading: boolean;
-    operationDetails: OperationDetailsState,
+    sendingResult: OperationDetails,
 }
 
 const mapStateToProps = (state: AppState): StateProps => {
     return {
         isLoading: state.messages.isLoading,
-        operationDetails: state.operationDetails
+        sendingResult: state.messages.sendingResult
     };
 }
 
 interface DispatchProps {
-    sendMessage: (message: ContactMessage) => void
+    onSendMessage: (message: ContactMessage) => void,
+    onResultModalClose: () => void
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     return {
-        sendMessage: bindActionCreators(sendMessage, dispatch)
+        onSendMessage: bindActionCreators(sendMessage, dispatch),
+        onResultModalClose: bindActionCreators(clearSendingResult, dispatch)
     };
 }
 

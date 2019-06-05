@@ -1,31 +1,28 @@
 ﻿import { combineReducers } from "redux"
 import { History } from "history"
 import { connectRouter } from "connected-react-router"
-import {
-    servicesReducer,
-    teamMembersReducer,
-    worksReducer,
-    blogReducer,
-    brandsReducer,
-    testimonialsReducer,    contactsReducer,
-    messagesReducer,
-    socialLinksReducer,
-    authReducer,
-    operationDetailsReducer,
-} from "./reducers";
+import servicesReducer from "./servicesReducer";
+import worksReducer from "./worksReducer";
+import blogReducer from "./blogReducer";
+import brandsReducer from "./brandsReducer";
+import testimonialsReducer from "./testimonialsReducer";
+import contactsReducer from "./contactsReducer";
+import messagesReducer from "./messagesReducer";
+import authReducer from "./authReducer";
+import usersReducer from "./usersReducer";
+import notificationsReducer from "./notificationsReducer";
 
 const rootReducer = (history: History) => combineReducers({
     services: servicesReducer,
-    teamMembers: teamMembersReducer,
     works: worksReducer,
     blog: blogReducer,
     brands: brandsReducer,
     testimonials: testimonialsReducer,
     contacts: contactsReducer,
     messages: messagesReducer,
-    socialLinks: socialLinksReducer,
     auth: authReducer,
-    operationDetails: operationDetailsReducer,
+    users: usersReducer,
+    notifications: notificationsReducer,
 
     router: connectRouter(history)
 });

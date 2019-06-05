@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
-    public class TestimonialsController : ApiControllerBase<TestimonialViewModel, Testimonial, int>
+    public class TestimonialsController : ApiControllerBase<TestimonialBindingModel, Testimonial, int>
     {
         private readonly ITestimonialService _testimonialService;
 
@@ -17,7 +17,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             _testimonialService = testimonialService;
         }
 
-        protected override Task<Testimonial> CreateEntityFromModelAsync(TestimonialViewModel model, DomainUser creator)
+        protected override Task<Testimonial> CreateEntityFromModelAsync(TestimonialBindingModel model, DomainUser creator)
         {
             var testimonial = new Testimonial(model.Id, creator)
             {

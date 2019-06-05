@@ -3,6 +3,7 @@
 const webpack = require("webpack");
 const path = require("path");
 const CheckerPlugin = require("awesome-typescript-loader").CheckerPlugin;
+const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 const CleanPlugin = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
@@ -29,8 +30,14 @@ module.exports = {
 
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],
-        alias: { "react-dom": "@hot-loader/react-dom" }
+        alias: {
+            "react-dom": "@hot-loader/react-dom",
+        },
+        plugins: [
+            new TsConfigPathsPlugin()
+        ],
     },
+
     module: {
         rules: [
             //{
@@ -114,7 +121,8 @@ module.exports = {
                 to: "./"
             }
         ]),
-        new CheckerPlugin()
+        //new TsConfigPathsPlugin(),
+        new CheckerPlugin(),
         //new webpack.HotModuleReplacementPlugin(),
     ]
 };

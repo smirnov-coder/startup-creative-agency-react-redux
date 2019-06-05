@@ -21,17 +21,12 @@ interface SocialLinkProps {
     modifiers?: string[];
 }
 
-export class SocialLink extends React.Component<SocialLinkProps> {
-    constructor(props: SocialLinkProps) {
-        super(props);
-    }
-
-    render(): JSX.Element {
-        const { url, icon, modifiers } = this.props;
-        return (
-            <a href={url} target="_blank" className={`social-link ${modifiers ? modifiers.join(" ") : ""}`}>
-                <i className={icon}></i>
-            </a>
-        );
-    }
+const SocialLink: React.SFC<SocialLinkProps> = ({ url, icon, modifiers }: SocialLinkProps) => {
+    return (
+        <a href={url} target="_blank" className={`social-link ${modifiers ? modifiers.join(" ") : ""}`}>
+            <i className={icon}></i>
+        </a>
+    );
 }
+
+export default SocialLink;

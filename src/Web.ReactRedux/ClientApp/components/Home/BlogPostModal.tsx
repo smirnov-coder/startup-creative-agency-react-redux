@@ -1,8 +1,10 @@
 ﻿import * as React from "react";
-import { BlogPost, DomainUser } from "../../store/entities";
-import { ButtonModifiers, Button } from "./Button";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import { BlogPost } from "@store/entities";
+import "@bootstrap/css";
 import "./BlogPostModal.scss";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import * as $ from "jquery";
+import { getUserFullName } from "@scripts/utils";
 
 interface BlogPostModalProps {
     blogPost: BlogPost;
@@ -17,12 +19,9 @@ export class BlogPostModal extends React.Component<BlogPostModalProps> {
     }
 
     componentWillReceiveProps(nextProps: BlogPostModalProps): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
-        if (nextProps.showModal) {
-            $(this.modal.current).modal("show");
-        }
+        nextProps.showModal
+            ? $(this.modal.current).modal("show")
+            : $(this.modal.current).modal("hide");
     }
 
     private modal = React.createRef<HTMLDivElement>();
@@ -47,11 +46,11 @@ export class BlogPostModal extends React.Component<BlogPostModalProps> {
                                 <div className="modal-body clearfix">
                                     <img src={blogPost.ImagePath} alt={blogPost.Title}
                                         className="blog-post__img img-responsive center-block" />
-                                    <div className="blog-post__content" dangerouslySetInnerHTML={{ __html: blogPost.Content }}></div>
+                                    <div className="blog-post__content" dangerouslySetInnerHTML={{ __html: blogPost.Content }}>
+                                    </div>
                                 </div>
                                 <div className="modal-footer custom-modal__footer">
-                                    <Button
-                                        modifiers={[ButtonModifiers.Size.SMALL]}
+                                    <Button modifiers={[ButtonModifiers.Size.SMALL]}
                                         className="custom-modal__close"
                                         children="Close"
                                         onClick={this.handleClose} />
@@ -82,13 +81,6 @@ export class BlogPostModal extends React.Component<BlogPostModalProps> {
     }
 
     getBlogPostMetadata(date: string, blogPost: BlogPost): string {
-        return `${date} By ${this.getFullName(blogPost.CreatedBy)} in ${blogPost.Category}`;
-    }
-
-    getFullName(user: DomainUser): string {
-        if (!user || !user.Profile) {
-            return "NULL";
-        }
-        return `${user.Profile.FirstName} ${user.Profile.LastName}`;
+        return `${date} By ${getUserFullName(blogPost.CreatedBy)} in ${blogPost.Category}`;
     }
 }

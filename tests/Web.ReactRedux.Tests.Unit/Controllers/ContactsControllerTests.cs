@@ -8,7 +8,7 @@ using Moq;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Web.ReactRedux.Controllers.Api;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
@@ -32,7 +32,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             var result = await _target.GetAsync();
 
             Assert.IsType<ContactsViewModel>(result);
-            var contacts = result.Contacts;
+            var contacts = result.ContactInfos;
             Assert.Equal(3, contacts.Count);
             Assert.Equal("Name #1", contacts.First().Name);
             Assert.Equal("Caption #1", contacts.First().Caption);
@@ -70,14 +70,17 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
-            Assert.Equal("Company contacts saved successfully.", result.Value as string);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
+            Assert.Equal("Company contacts saved successfully.", details.Message);
         }
 
         private ContactsViewModel GetTestContactsViewModel()
         {
             return new ContactsViewModel
             {
-                Contacts = new List<ContactInfoViewModel>
+                ContactInfos = new List<ContactInfoViewModel>
                 {
                     new ContactInfoViewModel
                     {

@@ -8,4 +8,12 @@
     &__remember-me:hover {
         cursor: pointer;
     }
+
+    &__error {
+        margin-bottom: 15px;
+        font-family: "Roboto Slab", serif;
+        font-size: $default-font-size;
+        font-weight: map-get($font-weights, 'medium');
+        color: #c0301c;
+    }
 }

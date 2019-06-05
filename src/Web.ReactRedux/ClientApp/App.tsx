@@ -1,30 +1,86 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import { Provider } from "react-redux";
-import configureStore, { history } from "./store/configureStore";
+import { history } from "./store/configureStore";
 import { ConnectedRouter } from "connected-react-router";
-import { Switch, Route } from "react-router";
-import HomePage from "./containers/Home/HomePage";
-import AuthArea from "./components/Auth/AuthArea";
-import NotFoundPage from "./containers/Shared/NotFoundPage";
+import { Switch, Route, Redirect } from "react-router";
+import HomePage from "@containers/Home/HomePage";
+import AuthArea from "@components/Auth/AuthArea";
+import NotFoundPage from "@containers/Shared/NotFoundPage";
+import AdminArea from "@components/Admin/AdminArea";
+import { Dispatch, bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { fetchInitialAppState } from "@store/actions/appActions";
+import { Routes } from "@scripts/constants";
 
-const store = configureStore();
+type AppProps = DispatchProps;
 
-const App: React.SFC = () => {
-    return (
-        <Provider key={Date.now()} store={store}>
+class App extends React.Component<AppProps> {
+    componentDidMount(): void {
+        this.props.initAppState();
+    }
+    /// TODO: Вынести ConnectedRouter в index.tsx и обернуть в ХОКи.
+    render(): JSX.Element {
+        return (
             <ConnectedRouter history={history}>
                 <Switch>
-                    <Route exact path="/" component={HomePage} />
-                    <Route path="/auth" component={AuthArea} />
-                    <Route component={NotFoundPage} />
+                    <Route exact path={Routes.HOME} component={HomePage} />
+                    <Route path={Routes.AUTH_AREA} component={AuthArea} />
+                    <Route path={Routes.ADMIN_AREA} component={AdminArea} />
+                    <Route path={Routes.NOT_FOUND} component={NotFoundPage} />
+                    <Redirect to={Routes.NOT_FOUND} />
                 </Switch>
             </ConnectedRouter>
-        </Provider>
-    );
+        );
+    }
 }
 
-export default hot(module)(App);
+interface DispatchProps {
+    initAppState: () => void;
+}
+
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+    return {
+        initAppState: bindActionCreators(fetchInitialAppState, dispatch)
+    };
+}
+
+const ConnectedApp = connect(null, mapDispatchToProps)(App);
+
+export default hot(module)(ConnectedApp);
+
+
+//////////////////////////////////////// #3
+
+//import * as React from "react";
+//import { hot } from "react-hot-loader";
+//import { Provider } from "react-redux";
+//import configureStore, { history } from "./store/configureStore";
+//import { ConnectedRouter } from "connected-react-router";
+//import { Switch, Route, Redirect } from "react-router";
+//import HomePage from "@containers/Home/HomePage";
+//import AuthArea from "@components/Auth/AuthArea";
+//import NotFoundPage from "@containers/Shared/NotFoundPage";
+//import AdminArea from "@components/Admin/AdminArea";
+
+//const store = configureStore();
+
+//const App: React.SFC = () => {
+//    return (
+//        <Provider key={Date.now()} store={store}>
+//            <ConnectedRouter history={history}>
+//                <Switch>
+//                    <Route exact path="/" component={HomePage} />
+//                    <Route path="/auth" component={AuthArea} />
+//                    <Route path="/admin" component={AdminArea} />
+//                    <Route path="/notfound" component={NotFoundPage} />
+//                    <Redirect to="/notfound" />
+//                </Switch>
+//            </ConnectedRouter>
+//        </Provider>
+//    );
+//}
+
+//export default hot(module)(App);
 
 
 ////////////////////////////// #2

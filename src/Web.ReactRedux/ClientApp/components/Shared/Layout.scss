@@ -22,7 +22,9 @@
     }
 
     &__sidebar {
-
+        margin: 0;
+        padding: 15px 0;
+        border-right: 1px solid $primary-color;
     }
 
     &__content {

@@ -1,17 +1,22 @@
 ﻿import * as React from "react";
-import { BlogPost } from "../../store/entities";
+import { BlogPost } from "@store/entities";
 import { connect } from "react-redux";
-import { BlogPostPreview } from "../../components/Home/BlogPostPreview";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import { BlogPostPreview } from "@components/Home/BlogPostPreview";
+import "@bootstrap/css";
 import "./Blog.scss";
-import { BlogPostModal } from "../../components/Home/BlogPostModal";
-import { Button } from "../../components/Home/Button";
-import { Loader } from "../../components/Home/Loader";
-import { Dispatch, bindActionCreators } from "redux";
-import { getBlogPosts } from "../../store/actions/actionCreators";
-import { AppState } from "../../store/state";
+import { BlogPostModal } from "@components/Home/BlogPostModal";
+import { Dispatch, bindActionCreators, compose } from "redux";
+import { AppState } from "@store/state";
+import Loader from "@components/Shared/Loader";
+import Button from "@components/Shared/Button";
+import { fetchBlogPosts } from "@store/actions/blogActions";
+import { withDataFeed } from "@containers/Admin/withDataFeed";
 
-type BlogProps = StateProps & DispatchProps;
+interface ComponentProps {
+    items: BlogPost[];
+}
+
+type BlogProps = ComponentProps & StateProps & DispatchProps;
    
 interface BlogState {
     showModal: boolean;
@@ -25,17 +30,7 @@ class Blog extends React.Component<BlogProps, BlogState> {
         super(props);
         this.state = {
             showModal: false,
-            blogPost: {
-                Id: 0,
-                Title: "",
-                Category: "",
-                Content: "",
-                ImagePath: "",
-                CreatedBy: null,
-                CreatedOn: null,
-                LastUpdatedBy: null,
-                LastUpdatedOn: null
-            },
+            blogPost: {} as BlogPost,
             itemsCount: 0,
             showButton: false
         };
@@ -70,7 +65,7 @@ class Blog extends React.Component<BlogProps, BlogState> {
             }
         }
 
-        let separator: JSX.Element = <hr className="blog-post-list__separator" />;
+        let separator = <hr className="blog-post-list__separator" />;
         return (
             <section className="blog-post-list">
                 <h3 className="sr-only">Blog Post List</h3>
@@ -98,7 +93,7 @@ class Blog extends React.Component<BlogProps, BlogState> {
     loadBlogPosts(): void {
         let skip: number = this.props.items.length;
         let take: number = 2;
-        this.props.getBlogPosts(skip, take);
+        this.props.getBlogPosts({ skip, take });
     }
 
     closeModal(): void {
@@ -110,31 +105,39 @@ class Blog extends React.Component<BlogProps, BlogState> {
     onViewBlogPost(id: number): void {
         this.setState({
             showModal: true,
-            blogPost: this.props.items.find(x => x.Id === id)
+            blogPost: this.props.items.find(item => item.Id === id)
         });
     }
 }
 
 interface StateProps {
     isLoading: boolean;
-    items: BlogPost[];
 }
 
 const mapStateToProps = (state: AppState): StateProps => {
     return {
         isLoading: state.blog.isLoading,
-        items: state.blog.items
     };
 }
 
+interface GetBlogPostsParams {
+    skip: number;
+    take: number;
+}
+
 interface DispatchProps {
-    getBlogPosts: (skip: number, take: number) => void
+    getBlogPosts: ({ skip, take }: GetBlogPostsParams) => void
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     return {
-        getBlogPosts: bindActionCreators(getBlogPosts, dispatch)
+        getBlogPosts: bindActionCreators(fetchBlogPosts, dispatch)
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Blog);
+const composed = compose(
+    withDataFeed(state => state.blog.items, "items"),
+    connect(mapStateToProps, mapDispatchToProps)
+);
+
+export default composed(Blog);

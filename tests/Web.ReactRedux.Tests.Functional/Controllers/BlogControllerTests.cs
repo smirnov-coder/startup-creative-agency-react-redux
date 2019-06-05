@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
@@ -39,7 +40,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
         [Fact]
         public async Task CanGetBlogPost()
         {
-            using (var httpClient = _factoryCollection.ForRead.CreateClient())
+            using (var httpClient = await _factoryCollection.ForRead.CreateClientWithAccessTokenAsync(USER_NAME))
             {
                 using (var response = await httpClient.GetAsync($"{BASE_URL}/1"))
                 {
@@ -58,11 +59,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
         }
 
         [Fact]
-        public async Task CanGetBlogPosts()
+        public async Task CanGetPublicBlogPosts()
         {
             using (var httpClient = _factoryCollection.ForRead.CreateClient())
             {
-                using (var response = await httpClient.GetAsync($"{BASE_URL}?skip=1&take=3"))
+                using (var response = await httpClient.GetAsync($"{BASE_URL}/public?skip=1&take=3"))
                 {
                     Assert.True(response.IsSuccessStatusCode);
                     Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
@@ -141,7 +142,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     ["Content"] = "New Content",
                     ["ImagePath"] = "Old Path"
                 };
-                using (var response = await httpClient.PutAsync($"{BASE_URL}/{id}", new FormUrlEncodedContent(model)))
+                using (var response = await httpClient.PutAsync(BASE_URL, new FormUrlEncodedContent(model)))
                 {
                     Assert.True(response.IsSuccessStatusCode);
                     using (var scope = factory.Server.Host.Services.CreateScope())
@@ -205,9 +206,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     {
                         Assert.False(response.IsSuccessStatusCode);
                         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-                        string message = await response.Content.ReadAsStringAsync();
+                        Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                        string responseJson = await response.Content.ReadAsStringAsync();
+                        var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                        Assert.True(details.IsError);
                         Assert.Equal($"The entity of type '{typeof(BlogPost)}' with key value '1' for 'Id' is already exists. " +
-                            $"If you want to update it, use 'Update' method", message);
+                            $"If you want to update it, use 'Update' method", details.Message);
                     }
                 }
             }
@@ -219,22 +223,24 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             var factory = _factoryCollection.ForUpdate;
             using (var httpClient = await factory.CreateClientWithAccessTokenAsync(USER_NAME))
             {
-                int id = 101;
                 var model = new Dictionary<string, string>
                 {
-                    ["Id"] = id.ToString(),
+                    ["Id"] = "101",
                     ["Title"] = "New Title",
                     ["Category"] = "New Category",
                     ["Content"] = "New Content",
                     ["ImagePath"] = "Old Path"
                 };
-                using (var response = await httpClient.PutAsync($"{BASE_URL}/{id}", new FormUrlEncodedContent(model)))
+                using (var response = await httpClient.PutAsync(BASE_URL, new FormUrlEncodedContent(model)))
                 {
                     Assert.False(response.IsSuccessStatusCode);
                     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.True(details.IsError);
                     Assert.Equal($"The entity of type '{typeof(BlogPost)}' with key value '101' for 'Id' " +
-                        $"that you trying to update doesn't exist. To add new entity, use 'Add' method.", message);
+                        $"that you trying to update doesn't exist. To add new entity, use 'Add' method.", details.Message);
                 }
             }
         }
@@ -250,9 +256,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 {
                     Assert.False(response.IsSuccessStatusCode);
                     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.True(details.IsError);
                     Assert.Equal($"The entity type '{typeof(BlogPost)}' with key value '101' for 'Id' not found.", 
-                        message);
+                        details.Message);
                 }
             }
         }

@@ -1,7 +1,8 @@
 ﻿import * as React from "react";
-import { WorkExample } from "../../store/entities";
-import { Button, ButtonModifiers } from "./Button";
+import { WorkExample } from "@store/entities";
 import "./WorkExamplePreview.scss";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import * as $ from "jquery";
 
 interface WorkExamplePreviewProps {
     workExample: WorkExample;
@@ -18,9 +19,6 @@ export class WorkExamplePreview extends React.Component<WorkExamplePreviewProps>
     private overlay = React.createRef<HTMLDivElement>();
 
     componentDidMount(): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.")
-        }
         $(this.hoverArea.current).hover(() => {
             $(this.overlay.current).slideToggle();
         });

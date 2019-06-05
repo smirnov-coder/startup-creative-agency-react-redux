@@ -9,7 +9,7 @@ using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
 using StartupCreativeAgency.Web.ReactRedux.Controllers.Api;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
@@ -52,11 +52,14 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
 
             Assert.IsType<ActionResult<DomainUser>>(actionResult);
             Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+            Assert.Null(actionResult.Value);
             var result = actionResult.Result as NotFoundObjectResult;
             Assert.Equal(404, result.StatusCode);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.True(details.IsError);
             Assert.Equal($"The entity of type '{typeof(DomainUser)}' with value 'UserName #1' " +
-                    $"for 'UserName' not found.", result.Value as string);
-            Assert.Null(actionResult.Value);
+                $"for 'UserName' not found.", details.Message);
         }
 
         [Fact]
@@ -71,7 +74,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
-            Assert.Equal($"User '@Test UserName' has been registered successfully.", result.Value as string);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
+            Assert.Equal("User '@Test UserName' has been registered successfully.", details.Message);
         }
 
         [Fact]
@@ -84,7 +90,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<BadRequestObjectResult>(actionResult);
             var result = actionResult as BadRequestObjectResult;
             Assert.Equal(400, result.StatusCode);
-            Assert.Equal($"User '@Test UserName' already exists.", result.Value as string);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.True(details.IsError);
+            Assert.Equal("User '@Test UserName' already exists.", details.Message);
         }
 
         [Fact]
@@ -93,7 +102,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             _mockUserService.Setup(x => x.GetUserAsync(It.IsAny<string>()))
                 .ReturnsAsync(new DomainUser(new UserIdentity("Test UserName", "Test Email")));
 
-            var actionResult = await _target.UpdateProfileAsync(null, GetTestProfileModel());
+            var actionResult = await _target.UpdateProfileAsync(GetTestProfileModel());
 
             _mockUserService.Verify(x => x.UpdateUserPersonalInfoAsync("Test UserName", "Test FirstName",
                 "Test LastName", "Test Job", "Test Path"), Times.Once());
@@ -106,30 +115,31 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
-            Assert.Equal("Your profile has been updated successfully.", result.Value as string);
-        }
-
-        [Fact]
-        public async Task UpdateProfileAsync_Bad_BadRequest()
-        {
-            var actionResult = await _target.UpdateProfileAsync("Test UserName", GetTestProfileModel());
-
-            Assert.IsType<BadRequestObjectResult>(actionResult);
-            var result = actionResult as BadRequestObjectResult;
-            Assert.Equal(400, result.StatusCode);
-            Assert.Equal("UserName mismatch.", result.Value as string);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
+            Assert.Equal("Your profile has been updated successfully.", details.Message);
         }
 
         [Fact]
         public async Task UpdateDisplayStatusAsync_Good()
         {
-            var actionResult = await _target.UpdateDisplayStatusAsync("Test UserName", true);
+            var testModel = new UserDisplayStatusBindingModel
+            {
+                UserName = "Test UserName",
+                IsDisplayed = true
+            };
+
+            var actionResult = await _target.UpdateDisplayStatusAsync(testModel);
 
             _mockUserService.Verify(x => x.UpdateUserDisplayStatusAsync("Test UserName", true), Times.Once());
             Assert.IsType<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
-            Assert.Equal($"Display status for user '@Test UserName' has been updated successfully.", result.Value as string);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
+            Assert.Equal("Display status for user '@Test UserName' has been updated successfully.", details.Message);
         }
 
         [Fact]
@@ -141,14 +151,17 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
             Assert.Equal($"The entity of type '{typeof(DomainUser)}' with value 'Test UserName' for " +
-                $"'UserName' deleted successfully.", result.Value as string);
+                $"'UserName' deleted successfully.", details.Message);
         }
 
-        private MyProfileViewModel GetTestProfileModel() =>
-            new MyProfileViewModel
+        private MyProfileBindingModel GetTestProfileModel() =>
+            new MyProfileBindingModel
             {
-                PersonalInfo = new PersonalInfoViewModel
+                PersonalInfo = new PersonalInfoBindingModel
                 {
                     FirstName = "Test FirstName",
                     LastName = "Test LastName",
@@ -163,8 +176,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                 }
             };
 
-        private RegisterUserViewModel GetTestRegisterModel() =>
-            new RegisterUserViewModel
+        private RegisterUserBindingModel GetTestRegisterModel() =>
+            new RegisterUserBindingModel
             {
                 UserName = "Test UserName",
                 Email = "Test Email",

@@ -1,15 +1,19 @@
 ﻿import * as React from "react";
-import { WorkExample } from "../../store/entities";
-import { connect } from "react-redux";
-import { GalleryFilter } from "../../components/Home/GalleryFilter";
-import { WorkExamplePreview } from "../../components/Home/WorkExamplePreview";
-import { WorkExampleModal } from "../../components/Home/WorkExampleModal";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import { WorkExample } from "@store/entities";
+import { GalleryFilter } from "@components/Home/GalleryFilter";
+import { WorkExamplePreview } from "@components/Home/WorkExamplePreview";
+import { WorkExampleModal } from "@components/Home/WorkExampleModal";
+import "@bootstrap/css";
 import "./Gallery.scss";
-import { Loader } from "../../components/Home/Loader";
-import { AppState } from "../../store/state";
+import Loader from "@components/Shared/Loader";
+import * as $ from "jquery";
+import { compose } from "redux";
+import { withLoader } from "@containers/Admin/withLoader";
+import { withDataFeed } from "@containers/Admin/withDataFeed";
 
-type GalleryProps = StateProps;
+interface GalleryProps {
+    items: WorkExample[];
+}
 
 interface GalleryState {
     activeFilter: string;
@@ -23,17 +27,7 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
         this.state = {
             activeFilter: "*",
             showModal: false,
-            workExample: {
-                Id: 0,
-                Name: "",
-                Category: "",
-                Description: "",
-                ImagePath: "",
-                CreatedBy: null,
-                CreatedOn: null,
-                LastUpdatedBy: null,
-                LastUpdatedOn: null
-            }
+            workExample: {} as WorkExample
         };
         this.changeFilter = this.changeFilter.bind(this);
         this.viewWorkExample = this.viewWorkExample.bind(this);
@@ -44,8 +38,8 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
 
     render(): JSX.Element {
         let categories: string[] = this.props.items.map(workExample => workExample.Category);
-        let { isLoading, items } = this.props;
-        let { activeFilter, showModal } = this.state;
+        let { items } = this.props;
+        let { activeFilter, ...restState } = this.state;
         let elements: JSX.Element[] = [];
         for (let index = 0; index < items.length; index++) {
             if (!this.itemRefs[index]) {
@@ -62,17 +56,12 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
             <section className="gallery">
                 <h3 className="sr-only">Work Example Gallery</h3>
                 <div className="gallery__filter">
-                    {isLoading
-                        ? <Loader />
-                        : <GalleryFilter categories={categories} activeFilter={activeFilter}
-                                onChangeFilter={this.changeFilter} />
-                    }
+                    <GalleryFilter categories={categories} activeFilter={activeFilter} onChangeFilter={this.changeFilter} />
                 </div>
                 <div className="gallery__items row">
-                    { isLoading ? <Loader /> : elements.map(element => element) }
+                    {elements.map(element => element)}
                 </div>
-                <WorkExampleModal workExample={this.state.workExample} showModal={showModal}
-                    onClose={this.closeModal} />
+                <WorkExampleModal onClose={this.closeModal} {...restState} />
             </section>
         );
     }
@@ -80,11 +69,11 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
     closeModal(): void {
         this.setState({
             showModal: false
-        })
+        });
     }
 
     viewWorkExample(id: number): void {
-        let workExample = this.props.items.find(x => x.Id === id);
+        let workExample = this.props.items.find(item => item.Id === id);
         this.setState({
             showModal: true,
             workExample
@@ -92,9 +81,6 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
     }
 
     changeFilter(activeFilter: string): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
         this.setState({
             activeFilter
         });
@@ -110,16 +96,9 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
     }
 }
 
-interface StateProps {
-    isLoading: boolean;
-    items: WorkExample[];
-}
+const composed = compose(
+    withLoader(Loader, state => state.works.isLoading),
+    withDataFeed(state => state.works.items, "items")
+);
 
-const mapStateToProps = (state: AppState): StateProps => {
-    return {
-        isLoading: state.works.isLoading, 
-        items: state.works.items
-    };
-}
-
-export default connect(mapStateToProps, null)(Gallery);
+export default composed(Gallery);

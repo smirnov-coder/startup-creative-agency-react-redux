@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 import "./Section.scss";
-import findByType from "../../scripts/findComponentsByType";
+import findByType from "@scripts/findComponentsByType";
 
 type SubcomponentProps = React.PropsWithChildren<{}>;
 
@@ -20,9 +20,7 @@ export class Section extends React.Component {
         if (!header) {
             return null;
         }
-        return (
-            <div className="section__header">{(header as React.ReactElement).props.children}</div>
-        );
+        return <div className="section__header">{(header as React.ReactElement).props.children}</div>;
     }
 
     renderContent(): JSX.Element {
@@ -31,9 +29,7 @@ export class Section extends React.Component {
         if (!content) {
             return null;
         }
-        return (
-            <div className="section__content">{(content as React.ReactElement).props.children}</div>
-        );
+        return <div className="section__content">{(content as React.ReactElement).props.children}</div>;
     }
 
     render(): JSX.Element {

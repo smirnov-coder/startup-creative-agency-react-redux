@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Shared", "tests\Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.ReactRedux.Tests.Unit", "tests\Web.ReactRedux.Tests.Unit\Web.ReactRedux.Tests.Unit.csproj", "{EED51E11-DAD3-4495-A42A-5DBEF0F5004D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.ReactRedux.Tests.Functional", "tests\Web.ReactRedux.Tests.Functional\Web.ReactRedux.Tests.Functional.csproj", "{F7D49359-EA01-48A9-8DA8-A7225538E6F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.ReactRedux.Tests.Functional", "tests\Web.ReactRedux.Tests.Functional\Web.ReactRedux.Tests.Functional.csproj", "{F7D49359-EA01-48A9-8DA8-A7225538E6F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

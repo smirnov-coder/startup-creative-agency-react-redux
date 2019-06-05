@@ -1,9 +1,10 @@
 ﻿import * as React from "react";
-import { BlogPost, DomainUser } from "../../store/entities";
-import { Button, ButtonModifiers } from "./Button";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import { BlogPost } from "@store/entities";
+import "@bootstrap/css";
 import "./BlogPostPreview.scss";
-import smoothScroll from "../../scripts/smoothScroll";
+import smoothScroll from "@scripts/smoothScroll";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import { getUserFullName } from "@scripts/utils";
 
 interface BlogPostPreviewProps {
     blogPost: BlogPost;
@@ -49,7 +50,7 @@ export class BlogPostPreview extends React.Component<BlogPostPreviewProps> {
                             <div className="blog-post-preview-header__author">
                                 By&nbsp;
                                 <span className={authorNameClassList.join(" ")} onClick={this.scrollToTeam}>
-                                    {this.getFullName(blogPost.CreatedBy)}
+                                    {getUserFullName(blogPost.CreatedBy)}
                                 </span>
                                 &nbsp;in&nbsp;
                                 <span className={authorGroupClassList.join(" ")} onClick={this.scrollToGallery}>
@@ -60,9 +61,9 @@ export class BlogPostPreview extends React.Component<BlogPostPreviewProps> {
                     </header>
                     <div className="blog-post-preview__text" dangerouslySetInnerHTML={{ __html: blogPost.Content }}></div>
                     <Button modifiers={[ButtonModifiers.Style.LINK, "custom-link--color-secondary"]}
-                        className="blog-post-preview__button" onClick={this.handleView}>
-                        Read More
-                    </Button>
+                        className="blog-post-preview__button"
+                        onClick={this.handleView}
+                        children="Read More" />
                 </div>
             </article>
         );
@@ -113,9 +114,5 @@ export class BlogPostPreview extends React.Component<BlogPostPreviewProps> {
 
     getMonthShortName(date: Date): string {
         return new Date(date).toLocaleDateString("en-US", { month: "short" }).toLowerCase();
-    }
-
-    getFullName(user: DomainUser): string {
-        return `${user.Profile.FirstName} ${user.Profile.LastName}`
     }
 }

@@ -20,15 +20,8 @@ interface DashProps {
     className?: string;
 }
 
-export class Dash extends React.Component<DashProps> {
-    constructor(props: DashProps) {
-        super(props);
-    }
-
-    render(): JSX.Element {
-        let { className = "", modifiers, ...restProps } = this.props;
-        return (
-            <hr className={`dash ${modifiers ? modifiers.join(" ") : ""} ${className}`} {...restProps} />
-        );
-    }
+const Dash: React.SFC<DashProps> = ({ className = "", modifiers, ...restProps }: DashProps) => {
+    return <hr className={`dash ${modifiers ? modifiers.join(" ") : ""} ${className}`} {...restProps} />;
 }
+
+export default Dash;

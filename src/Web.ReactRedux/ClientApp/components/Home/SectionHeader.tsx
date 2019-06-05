@@ -58,7 +58,7 @@ export class SectionHeader extends React.Component {
                 {this.renderSeparator()}
                 {this.renderSubtitle()}
             </header>
-        )
+        );
     }
 }
 

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using StartupCreativeAgency.Web.ReactRedux.Infrastructure;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
@@ -35,10 +35,16 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                 using (var response = await httpClient.PostAsync("/api/auth/token", requestContent))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    Assert.Equal("text/plain", response.Content.Headers.ContentType.MediaType);
-                    var result = await response.Content.ReadAsStringAsync();
-                    Assert.False(string.IsNullOrWhiteSpace(result));
-                    Assert.True(JwtHelper.IsValid(result));
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<AuthResult>(responseJson);
+                    Assert.False(string.IsNullOrWhiteSpace(result.AccessToken));
+                    Assert.True(JwtHelper.IsValid(result.AccessToken));
+                    Assert.Equal("user1", result.AppState.UserName);
+                    Assert.False(result.AppState.Photo.StartsWith("~"));
+                    Assert.True(result.AppState.IsAuthenticated);
+                    Assert.False(result.AppState.IsAdmin);
+                    Assert.Equal(0, result.AppState.NewMessagesCount);
                 }
             }
         }

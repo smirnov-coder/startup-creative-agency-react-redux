@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using StartupCreativeAgency.Domain.Abstractions.Services;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
@@ -35,11 +35,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
                     var resultJson = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<ContactsViewModel>(resultJson);
-                    Assert.Equal(3, result.Contacts.Count);
-                    Assert.Equal("Address", result.Contacts.First().Name);
-                    Assert.Equal(3, result.Contacts.First().Values.Count);
-                    Assert.Equal("Email", result.Contacts.Last().Name);
-                    Assert.Equal(2, result.Contacts.Last().Values.Count);
+                    Assert.Equal(3, result.ContactInfos.Count);
+                    Assert.Equal("Address", result.ContactInfos.First().Name);
+                    Assert.Equal(3, result.ContactInfos.First().Values.Count);
+                    Assert.Equal("Email", result.ContactInfos.Last().Name);
+                    Assert.Equal(2, result.ContactInfos.Last().Values.Count);
                     Assert.Equal(4, result.SocialLinks.Count);
                     Assert.Equal("Facebook", result.SocialLinks.First().NetworkName);
                     Assert.Equal("Link #1", result.SocialLinks.First().Url);
@@ -55,31 +55,22 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             var factory = _factoryCollection.ForUpdate;
             using (var httpClient = await factory.CreateClientWithAccessTokenAsync(USER_NAME))
             {
-                var model = new ContactsViewModel
+                var model = new Dictionary<string, string>
                 {
-                    Contacts = new ContactInfoViewModel[]
-                    {
-                        new ContactInfoViewModel
-                        {
-                             Name = "New Name",
-                             Caption = "New Caption",
-                             Values = new ContactValue[]
-                             {
-                                 new ContactValue { Value = "New Value"}
-                             }
-                        }
-                    },
-                    SocialLinks = new SocialLinkViewModel[]
-                    {
-                        new SocialLinkViewModel { NetworkName = "New Network", Url = "New Url"}
-                    }
+                    ["ContactInfos[0].Name"] = "New Name",
+                    ["ContactInfos[0].Caption"] = "New Caption",
+                    ["ContactInfos[0].Values[0].Value"] = "New Value",
+                    ["SocialLinks[0].NetworkName"] = "New Network",
+                    ["SocialLinks[0].Url"] = "New Url"
                 };
-                var json = JsonConvert.SerializeObject(model);
-                using (var response = await httpClient.PostAsync(BASE_URL, new StringContent(json, Encoding.UTF8, "application/json")))
+                using (var response = await httpClient.PostAsync(BASE_URL, new FormUrlEncodedContent(model)))
                 {
                     Assert.True(response.IsSuccessStatusCode);
-                    string message = await response.Content.ReadAsStringAsync();
-                    Assert.Equal("Company contacts saved successfully.", message);
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    var details = JsonConvert.DeserializeObject<OperationDetails>(responseJson);
+                    Assert.False(details.IsError);
+                    Assert.Equal("Company contacts saved successfully.", details.Message);
                     using (var scope = factory.Server.Host.Services.CreateScope())
                     {
                         var contactsService = scope.ServiceProvider.GetRequiredService<IContactsService>();

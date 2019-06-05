@@ -9,6 +9,7 @@ using StartupCreativeAgency.Domain.Abstractions.Exceptions;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Web.ReactRedux.Controllers.Api;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
@@ -56,8 +57,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<NotFoundObjectResult>(actionResult.Result);
             var result = actionResult.Result as NotFoundObjectResult;
             Assert.Equal(404, result.StatusCode);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.True(details.IsError);
             Assert.Equal($"The entity of type '{typeof(BaseEntity<int>)}' with key value '101' " +
-                $"for 'Id' not found.", result.Value as string);
+                $"for 'Id' not found.", details.Message);
         }
 
         [Fact]
@@ -70,8 +74,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsAssignableFrom<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
             Assert.Equal($"The entity of type '{typeof(BaseEntity<int>)}' with key value '101' for " +
-                $"'Id' saved successfully.", result.Value as string);
+                $"'Id' saved successfully.", details.Message);
         }
 
         [Fact]
@@ -85,8 +92,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsAssignableFrom<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
             Assert.Equal($"The entity of type '{typeof(BaseEntity<int>)}' with key value '101' for " +
-                $"'Id' updated successfully.", result.Value as string);
+                $"'Id' updated successfully.", details.Message);
         }
 
         [Fact]
@@ -99,8 +109,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsAssignableFrom<OkObjectResult>(actionResult);
             var result = actionResult as OkObjectResult;
             Assert.Equal(200, result.StatusCode);
+            Assert.IsType<OperationDetails>(result.Value);
+            var details = result.Value as OperationDetails;
+            Assert.False(details.IsError);
             Assert.Equal($"The entity of type '{typeof(BaseEntity<int>)}' with key value '101' for " +
-                $"'Id' deleted successfully.", result.Value as string);
+                $"'Id' deleted successfully.", details.Message);
         }
     }
 
