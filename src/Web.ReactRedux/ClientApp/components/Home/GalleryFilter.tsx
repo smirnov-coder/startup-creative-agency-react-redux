@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 import "./GalleryFilter.scss";
 import { Menu } from "./Menu";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 
 interface GalleryFilterProps {
     categories: string[];
@@ -19,8 +19,8 @@ export class GalleryFilter extends React.Component<GalleryFilterProps> {
         let allCategories: string[] = this.props.categories;
         let uniqueCategories: string[] = [...new Set(allCategories)];
         uniqueCategories.unshift("*");
-        let itemClass: string = "gallery-filter__item";
-        let activeClass: string = "gallery-filter__item--active";
+        let itemClass = "gallery-filter__item";
+        let activeClass = "gallery-filter__item--active";
         return (
             <Menu className="gallery-filter" modifiers={["menu--style-inline"]}>
                 {uniqueCategories.map(category => (

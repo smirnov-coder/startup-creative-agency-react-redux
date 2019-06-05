@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 import "./PersonalInfo.scss";
 import { ListItem } from "./ListItem";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import "@bootstrap/css";
 import { FileInput } from "./FileInput";
 
 export interface PersonalInfoProps {
@@ -12,16 +12,15 @@ export interface PersonalInfoProps {
     photoFilePath: string;
 }
 
-const PersonalInfo: React.SFC<PersonalInfoProps> = (props: PersonalInfoProps) => {
-    let user: PersonalInfoProps = {
-        userName: props.userName,
-        firstName: props.firstName ? props.firstName : "",
-        lastName: props.lastName ? props.lastName : "",
-        jobPosition: props.jobPosition ? props.jobPosition : "",
-        photoFilePath: props.photoFilePath ? props.photoFilePath : ""
-    };
-    let photoModifier: string = user.photoFilePath === "" ? "personal-info__photo--hidden" : "";
-    let prefix: string = "PersonalInfo";
+const PersonalInfo: React.SFC<PersonalInfoProps> = ({
+    userName,
+    firstName,
+    lastName,
+    jobPosition,
+    photoFilePath
+}: PersonalInfoProps) => {
+    let photoModifier = !photoFilePath ? "personal-info__photo--hidden" : "";
+    let prefix = "PersonalInfo";
     let names = {
         firstName: `${prefix}.FirstName`,
         lastName: `${prefix}.LastName`,
@@ -37,10 +36,10 @@ const PersonalInfo: React.SFC<PersonalInfoProps> = (props: PersonalInfoProps) =>
                     Personal Information
                 </ListItem.Header>
                 <ListItem.Content>
-                    <input type="hidden" id={names.photoFilePath} name={names.photoFilePath} defaultValue={user.photoFilePath} />
+                    <input type="hidden" id={names.photoFilePath} name={names.photoFilePath} defaultValue={photoFilePath} />
                     <div className="personal-info__photo-holder">
                         <img className={`personal-info__photo ${photoModifier}`}
-                            src={user.photoFilePath} alt={`${user.firstName} ${user.lastName}`} />
+                            src={photoFilePath} alt={`${firstName} ${lastName}`} />
                     </div>
                     <div className="personal-info__description">
                         <div className="list-item__content-line form-group">
@@ -48,7 +47,7 @@ const PersonalInfo: React.SFC<PersonalInfoProps> = (props: PersonalInfoProps) =>
                                 User Name
                         </label>
                             <div className="col-sm-10">
-                                <p className="personal-info__user-name form-control-static">{user.userName}</p>
+                                <p className="personal-info__user-name form-control-static">{userName}</p>
                             </div>
                         </div>
                         <div className="list-item__content-line form-group">
@@ -57,7 +56,7 @@ const PersonalInfo: React.SFC<PersonalInfoProps> = (props: PersonalInfoProps) =>
                             </label>
                             <div className="col-sm-10">
                                 <input id={names.firstName} name={names.firstName} className="personal-info__first-name form-control"
-                                    defaultValue={user.firstName} />
+                                    defaultValue={firstName} />
                             </div>
                         </div>
                         <div className="list-item__content-line form-group">
@@ -66,7 +65,7 @@ const PersonalInfo: React.SFC<PersonalInfoProps> = (props: PersonalInfoProps) =>
                             </label>
                             <div className="col-sm-10">
                                 <input id={names.lastName} name={names.lastName} className="personal-info__last-name form-control"
-                                    defaultValue={user.lastName} />
+                                    defaultValue={lastName} />
                             </div>
                         </div>
                         <div className="list-item__content-line form-group">
@@ -75,7 +74,7 @@ const PersonalInfo: React.SFC<PersonalInfoProps> = (props: PersonalInfoProps) =>
                             </label>
                             <div className="col-sm-10">
                                 <input id={names.jobPosition} name={names.jobPosition} className="personal-info__job form-control"
-                                    defaultValue={user.jobPosition} />
+                                    defaultValue={jobPosition} />
                             </div>
                         </div>
                         <div className="list-item__content-line form-group">

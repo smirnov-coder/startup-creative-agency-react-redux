@@ -1,50 +1,64 @@
 ﻿import * as React from "react";
 import * as $ from "jquery";
-import { Dispatch, bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
-import { AppState } from "@store/state";
-import { registerUser } from "@store/actions/usersActions";
+import "jquery-validation/dist/additional-methods";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import "./RegisterUserForm.scss";
+import "@bootstrap/css";
+import { VALIDATION_OPTIONS } from "@scripts/constants";
 
-type RegisterUserFormProps = StateProps & DispatchProps;
+interface RegisterUserFormProps {
+    roles: string[];
+    onSubmit: (formData: FormData) => void;
+}
 
-class RegisterUserForm extends React.Component<RegisterUserFormProps> {
+export class RegisterUserForm extends React.Component<RegisterUserFormProps> {
     private validator: JQueryValidation.Validator;
 
     componentDidMount(): void {
         let $form = $(this.form.current);
         this.validator = $form.validate({
-            /// TODO: validation don't forget to
+            ...VALIDATION_OPTIONS,
             rules: {
                 UserName: {
-                    required: true
+                    required: true,
+                    minlength: 3,
+                    maxlength: 20,
+                    pattern: /^[A-Za-z0-9\-_]+$/
                 },
                 Password: {
-                    required: true
+                    required: true,
+                    minlength: 6,
+                    maxlength: 20,
+                    pattern: /^.*(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/
                 },
                 ConfirmPassword: {
-                    required: true
+                    required: true,
+                    equalTo: "#Password"
                 },
                 Email: {
                     required: true,
+                    maxlength: 50,
                     email: true
                 },
                 Role: {
-                    required: true
+                    required: true,
+                    maxlength: 20
                 }
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
+            messages: {
+                UserName: {
+                    pattern: "User name may consist of uppercase letters, lowercase letters, numbers and symbols '-', '_'"
+                },
+                Password: {
+                    pattern: "Password must contain at least one uppercase letter, one lowercase letter and one digit."
+                },
+                ConfirmPassword: {
+                    equalTo: "Please enter password again."
+                }
             },
             submitHandler: (form, event) => {
                 event.preventDefault();
                 this.props.onSubmit(new FormData($form[0] as HTMLFormElement));
-            },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
             }
         });
     }
@@ -80,8 +94,8 @@ class RegisterUserForm extends React.Component<RegisterUserFormProps> {
                         <label htmlFor="Role">Role</label>
                         <select id="Role" name="Role" className="register-form__role form-control">
                             <option value="">--- Choose role ---</option>
-                            {this.props.roles.map(role => (
-                                <option key={role} value={role}>{role}</option>
+                            {this.props.roles.map((role, index) => (
+                                <option key={index} value={role}>{role}</option>
                             ))}
                         </select>
                     </div>
@@ -96,25 +110,3 @@ class RegisterUserForm extends React.Component<RegisterUserFormProps> {
         );
     }
 }
-
-interface StateProps {
-    roles: string[];
-}
-
-const mapStateToProps = (state: AppState): StateProps => {
-    return {
-        roles: state.auth.roles
-    };
-}
-
-interface DispatchProps {
-    onSubmit: (formData: FormData) => void;
-}
-
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
-    return {
-        onSubmit: bindActionCreators(registerUser, dispatch)
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterUserForm);

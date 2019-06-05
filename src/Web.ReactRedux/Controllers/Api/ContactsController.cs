@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {

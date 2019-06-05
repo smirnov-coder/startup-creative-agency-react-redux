@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
+namespace StartupCreativeAgency.Web.ReactRedux.Models
 {
-    public class TestimonialViewModel
+    public class TestimonialBindingModel
     {
-        [HiddenInput]
+        [Required]
         public int Id { get; set; }
 
         [Required]

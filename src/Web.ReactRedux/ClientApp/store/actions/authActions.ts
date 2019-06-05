@@ -1,8 +1,9 @@
 ﻿import { Dispatch, Action } from "redux";
 import { push } from "connected-react-router";
-import { createSimpleAction, OperationDetails, ValidationProblemDetails, InitialAppState } from "./appActions";
+import { createNonPayloadAction, OperationDetails, ValidationProblemDetails, InitialAppState } from "./appActions";
+import { GLOBALS, Routes, TOKEN_STORAGE_KEY, HttpMethod } from "@scripts/constants";
+import { handleResponse } from "./genericActions";
 import { ActionTypes } from "./actionTypes";
-import { GLOBALS, Routes, TOKEN_STORAGE_KEY } from "@scripts/constants";
 
 interface SignInInfo {
     userName: string;
@@ -17,22 +18,23 @@ interface AuthResult {
 }
 
 export const signIn = ({ userName, password, rememberMe, returnUrl }: SignInInfo) => (dispatch: Dispatch) => {
-    dispatch(createSimpleAction(ActionTypes.REQUEST_AUTH));
+    dispatch(createNonPayloadAction(ActionTypes.REQUEST_AUTH));
     let options: RequestInit = {
-        method: "POST",
+        method: HttpMethod.POST,
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ userName, password })
     };
-    return fetch(GLOBALS.api.accessToken, options)
+    let url: string = GLOBALS.api.accessToken;
+    return fetch(url, options)
         .then((response: Response) => {
-            return response.json();
+            return handleResponse(response, dispatch, dispatch =>
+                dispatch(createNonPayloadAction(ActionTypes.REQUEST_AUTH_COMPLETED)));
         })
         .then((data: OperationDetails | ValidationProblemDetails | AuthResult) => {
             if ("accessToken" in data) {
                 dispatch(doSignIn(data, rememberMe));
-                /// TODO: Добавить ссылку на май профайл
                 dispatch(push(returnUrl ? returnUrl : Routes.MY_PROFILE));
                 return;
             }
@@ -44,8 +46,9 @@ export const signIn = ({ userName, password, rememberMe, returnUrl }: SignInInfo
             }
             dispatch(signInError(errorMessage));
         })
-        .catch((error: Error) => {
-            console.error("signIn error", error);//
+        .catch(error => {
+            console.error(`Failed to authenticate user '${userName}'. An error response was received from ${url}.`);
+            console.error(error);
         });
 }
 

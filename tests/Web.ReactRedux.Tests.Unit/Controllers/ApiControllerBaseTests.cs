@@ -9,7 +9,7 @@ using StartupCreativeAgency.Domain.Abstractions.Exceptions;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Web.ReactRedux.Controllers.Api;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers

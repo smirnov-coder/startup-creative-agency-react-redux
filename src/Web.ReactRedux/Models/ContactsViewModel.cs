@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
+namespace StartupCreativeAgency.Web.ReactRedux.Models
 {
     public class ContactsViewModel
     {
@@ -19,12 +19,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 
     public class ContactInfoViewModel
     {
-        [Required, HiddenInput]
+        [Required]
         [JsonProperty(nameof(Name))]
         public string Name { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [StringLength(30)]
         [JsonProperty(nameof(Caption))]
         public string Caption { get; set; }
 
@@ -35,7 +35,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
     public class ContactValue
     {
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
         [JsonProperty(nameof(Value))]
         public string Value { get; set; }
     }
@@ -48,7 +48,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
         public string NetworkName { get; set; }
 
         [StringLength(100)]
-        [DataType(DataType.Url)]
         [JsonProperty(nameof(Url))]
         public string Url { get; set; }
     }

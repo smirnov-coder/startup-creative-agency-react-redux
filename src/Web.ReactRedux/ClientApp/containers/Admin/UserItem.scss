@@ -58,7 +58,12 @@
         &-label {
             font-weight: map-get($font-weights, 'medium');
             margin-left: 5px;
+            cursor: pointer;
         }
+    }
+
+    &__is-displayed {
+        cursor: pointer;
     }
 
     &__update, &__delete {

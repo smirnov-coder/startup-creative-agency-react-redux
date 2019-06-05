@@ -1,7 +1,8 @@
-﻿import { Dispatch, Action } from "redux";
+﻿import { Action } from "redux";
 import * as Entities from "@store/entities";
 import { ActionTypes } from "./actionTypes";
 import { GLOBALS, TOKEN_STORAGE_KEY } from "@scripts/constants";
+import { fetchData } from "./genericActions";
 
 export interface InitialAppState {
     userName: string;
@@ -12,25 +13,21 @@ export interface InitialAppState {
     roles: string[];
 }
 
-export const fetchInitialAppState = () => (dispatch: Dispatch) => {
-    dispatch(createSimpleAction(ActionTypes.REQUEST_AUTH));
-    dispatch(createSimpleAction(ActionTypes.REQUEST_MESSAGES));
-    let accessToken: string = readAccessToken();
-    let options: RequestInit = {
-        headers: !accessToken ? {} : {
-            Authorization: `Bearer ${accessToken}`
-        }
-    };
-    let uri: string = GLOBALS.api.initialState;
-    return fetch(uri, options)
-        .then(response => response.json())
-        .then((data: InitialAppState) => {
-            //console.log("initial state", data);//
-            dispatch(initAppState(data));
-        })
-        .catch(error => {
-            console.error("fetchInitialAppState error", error);
-        });
+export function fetchInitialAppState() {
+    let url: string = GLOBALS.api.initialState;
+    return fetchData<InitialAppState>({
+        url,
+        requestInit: dispatch => {
+            dispatch(createNonPayloadAction(ActionTypes.REQUEST_AUTH));
+            dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES));
+        },
+        requestComplete: dispatch => {
+            dispatch(createNonPayloadAction(ActionTypes.REQUEST_AUTH_COMPLETED));
+            dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES_COMPLETED));
+        },
+        success: data => initAppState(data),
+        errorMessage: `Failed to fetch initial app state from ${url}.`
+    })
 }
 
 export interface InitialAppStateAction extends Action {
@@ -48,7 +45,7 @@ const initAppState = (state: InitialAppState): InitialAppStateAction => {
     };
 }
 
-export const createSimpleAction = (type: string): Action => { return { type } };
+export const createNonPayloadAction = (type: string): Action => { return { type } };
 
 export function readAccessToken(): string {
     let token: string = window.sessionStorage.getItem(TOKEN_STORAGE_KEY);
@@ -69,19 +66,15 @@ interface HomePageModel {
     socialLinks: Entities.SocialLink[];
 }
 
-export const fetchHomePageModel = () => (dispatch: Dispatch) => {
-    dispatch(createSimpleAction(ActionTypes.REQUEST_HOME_PAGE_MODEL));
-    return fetch(GLOBALS.api.homeModel)
-        .then(response => {
-            return response.json();
-        })
-        .then((data: HomePageModel) => {
-            //console.log("data", data);//
-            dispatch(initHomePage(data));
-        })
-        .catch((error: Error) => {
-            console.error("fetchHomePageModel error", error);//
-        });
+export function fetchHomePageModel() {
+    let url: string = GLOBALS.api.homeModel;
+    return fetchData<HomePageModel>({
+        url,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_HOME_PAGE_MODEL)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_HOME_PAGE_MODEL_COMPLETED)),
+        success: data => initHomePage(data),
+        errorMessage: `Failed to fetch home page model from ${url}.`
+    });
 }
 
 export interface HomePageModelAction extends Action {

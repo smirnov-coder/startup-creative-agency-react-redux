@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
-    public class BlogController : ApiControllerBase<BlogPostViewModel, BlogPost, int>
+    public class BlogController : ApiControllerBase<BlogPostBindingModel, BlogPost, int>
     {
         private readonly IBlogService _blogService;
         private readonly IFileService _fileService;
@@ -42,7 +42,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         [NonAction]
         public override Task<IEnumerable<BlogPost>> ListAsync() => throw new NotSupportedException();
 
-        protected override async Task<BlogPost> CreateEntityFromModelAsync(BlogPostViewModel model, DomainUser creator)
+        protected override async Task<BlogPost> CreateEntityFromModelAsync(BlogPostBindingModel model, DomainUser creator)
         {
             var blogPost = new BlogPost(model.Id, creator)
             {

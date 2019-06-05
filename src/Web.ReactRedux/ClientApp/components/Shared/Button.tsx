@@ -38,16 +38,11 @@ export interface ButtonProps {
     type?: "button" | "reset" | "submit"
 }
 
-export class Button extends React.Component<ButtonProps> {
-    constructor(props: ButtonProps) {
-        super(props);
-    }
-
-    render(): JSX.Element {
-        let { className = "", modifiers, type, ...restProps } = this.props;
-        return (
-            <button className={`button ${modifiers ? modifiers.join(" ") : ""} ${className}`}
-                type={type ? type : "button"} {...restProps} />
-        );
-    }
+const Button: React.SFC<ButtonProps> = ({ className = "", modifiers, type, ...restProps }: ButtonProps) => {
+    return (
+        <button className={`button ${modifiers ? modifiers.join(" ") : ""} ${className}`}
+            type={type ? type : "button"} {...restProps} />
+    );
 }
+
+export default Button;

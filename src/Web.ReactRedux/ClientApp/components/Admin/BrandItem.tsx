@@ -1,24 +1,27 @@
 ﻿import * as React from "react";
 import { Brand } from "@store/entities";
 import { ListItem } from "./ListItem";
-import { LinkButton } from "@components/Shared/LinkButton";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import LinkButton from "@components/Shared/LinkButton";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import { getUserInfoString, getDateTimeString, concretizeRoute } from "@scripts/utils";
 import { Routes } from "@scripts/constants";
 import "./BrandItem.scss";
+import { withDeleteHandler } from "@containers/Admin/withDeleteHandler";
+import { deleteBrand } from "@store/actions/brandsActions";
 
-interface BrandItemProps extends Brand {
+interface BrandItemProps {
+    item: Brand;
     onDelete: (id: number) => void;
 }
 
-export class BrandItem extends React.Component<BrandItemProps> {
+class BrandItem extends React.Component<BrandItemProps> {
     constructor(props: BrandItemProps) {
         super(props);
         this.handleClick = this.handleClick.bind(this);
     }
 
     render(): JSX.Element {
-        let { Id, Name, ImagePath, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props;
+        let { Id, Name, ImagePath, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props.item;
         let url: string = concretizeRoute(Routes.EDIT_BRAND, ":id", Id);
         return (
             <div className="brand-item">
@@ -66,7 +69,9 @@ export class BrandItem extends React.Component<BrandItemProps> {
     handleClick(event: React.MouseEvent): void {
         event.preventDefault();
         if (confirm("Are you sure you want to proceed?")) {
-            this.props.onDelete(this.props.Id);
+            this.props.onDelete(this.props.item.Id);
         }
     }
 }
+
+export default withDeleteHandler(deleteBrand)(BrandItem);

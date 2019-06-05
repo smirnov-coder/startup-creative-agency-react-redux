@@ -1,26 +1,29 @@
 ﻿import * as React from "react";
 import { Testimonial as TestimonialEntity } from "@store/entities";
-import { connect } from "react-redux";
 import OwlCarousel from "../../assets/lib/owl.carousel-customized/OwlCarousel";
 import { Options } from "../../assets/lib/owl.carousel-customized/OwlCarousel";
-import { Testimonial } from "@components/Home/Testimonial";
+import Testimonial from "@components/Home/Testimonial";
 import "./TestimonialsSlider.scss";
-import { AppState } from "@store/state";
 import Loader from "@components/Shared/Loader";
+import { compose } from "redux";
+import { withLoader } from "@containers/Admin/withLoader";
+import { withDataFeed } from "@containers/Admin/withDataFeed";
 
-type TestimonialsSliderProps = StateProps;
+interface TestimonialsSliderProps {
+    items: TestimonialEntity[];
+}
 
 class TestimonialsSlider extends React.Component<TestimonialsSliderProps> {
     render(): JSX.Element {
-        let { isLoading, items } = this.props;
+        let { items } = this.props;
         let owlOptions = this.getOwlCarouselOptions();
-        return isLoading
-            ? <Loader />
-            : <OwlCarousel className="testimonials-slider" {...owlOptions}>
-                {items.map(testimonial => (
-                    <Testimonial key={testimonial.Id} {...testimonial} />
+        return (
+            <OwlCarousel className="testimonials-slider" {...owlOptions}>
+                {items.map((testimonial, index) => (
+                    <Testimonial key={index} {...testimonial} />
                 ))}
-              </OwlCarousel>
+            </OwlCarousel>
+        );
     }
 
     getOwlCarouselOptions(): Options {
@@ -34,20 +37,13 @@ class TestimonialsSlider extends React.Component<TestimonialsSliderProps> {
             dots: true,
             dotsClass: "testimonials-slider__dots",
             dotClass: "testimonials-slider__dot"
-        }
+        };
     }
 }
 
-interface StateProps {
-    isLoading: boolean;
-    items: TestimonialEntity[];
-}
+const composed = compose(
+    withLoader(Loader, state => state.testimonials.isLoading),
+    withDataFeed(state => state.testimonials.items, "items")
+);
 
-const mapStateToProps = (state: AppState): StateProps => {
-    return {
-        isLoading: state.testimonials.isLoading,
-        items: state.testimonials.items
-    };
-}
-
-export default connect(mapStateToProps, null)(TestimonialsSlider);
+export default composed(TestimonialsSlider);

@@ -12,9 +12,8 @@ using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
 using StartupCreativeAgency.Web.ReactRedux.Controllers.Api;
 using StartupCreativeAgency.Web.ReactRedux.Infrastructure;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
 {
@@ -24,7 +23,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         private Mock<IUserService> _mockUserService = new Mock<IUserService>();
         private Mock<UserManager<UserIdentity>> _mockUserManager = new Mock<UserManager<UserIdentity>>(
             Mock.Of<IUserStore<UserIdentity>>(), null, null, null, null, null, null, null, null);
-        private Mock<SignInManager<UserIdentity>> _mockSignInManager;
         private Mock<IUrlHelper> _mockUrlHelper = new Mock<IUrlHelper>();
         private Mock<RoleManager<IdentityRole>> _mockRoleManager = new Mock<RoleManager<IdentityRole>>(
             Mock.Of<IRoleStore<IdentityRole>>(), null, null, null, null);
@@ -32,10 +30,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
 
         public AuthControllerTests()
         {
-            _mockSignInManager = new Mock<SignInManager<UserIdentity>>(_mockUserManager.Object,
-                Mock.Of<IHttpContextAccessor>(), 
-                Mock.Of<IUserClaimsPrincipalFactory<UserIdentity>>(), null, null, null);
-            _target = new AuthController(_mockUserService.Object, _mockSignInManager.Object, _mockMessageService.Object,
+            _target = new AuthController(_mockUserService.Object, _mockUserManager.Object, _mockMessageService.Object,
                 _mockRoleManager.Object)
             {
                 Url = _mockUrlHelper.Object
@@ -49,8 +44,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                 new UserProfile(null, null, null, "Test Path"));
 
             _mockUserService.Setup(x => x.GetUserAsync("Test UserName")).ReturnsAsync(testUser);
-            _mockSignInManager.Setup(x => x.CheckPasswordSignInAsync(testUser.Identity as UserIdentity, "Test Password", false))
-                .ReturnsAsync(SignInResult.Success);
+            _mockUserManager.Setup(x => x.CheckPasswordAsync(testUser.Identity as UserIdentity, It.IsAny<string>())).ReturnsAsync(true);
             _mockUserManager.Setup(x => x.GetRolesAsync(It.IsAny<UserIdentity>())).ReturnsAsync(new string[] { "TestRole" });
             _mockUserManager.Setup(x => x.IsInRoleAsync(testUser.Identity as UserIdentity, "Administrator")).ReturnsAsync(false);
             _mockUrlHelper.Setup(x => x.Content("Test Path")).Returns("Test Path");
@@ -82,8 +76,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OperationDetails>(result.Value);
             var details = result.Value as OperationDetails;
             Assert.True(details.IsError);
-            Assert.Equal($"The entity of type '{typeof(DomainUser)}' with value 'Test UserName' " +
-                $"for 'UserName' not found.", details.Message);
+            Assert.Equal("User 'Test UserName' not found.", details.Message);
         }
 
         [Fact]
@@ -91,8 +84,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         {
             var testUser = new DomainUser(new UserIdentity("Test UserName", "Test Email"));
             _mockUserService.Setup(x => x.GetUserAsync("Test UserName")).ReturnsAsync(testUser);
-            _mockSignInManager.Setup(x => x.CheckPasswordSignInAsync(testUser.Identity as UserIdentity, "Test Password", false))
-                .ReturnsAsync(SignInResult.Failed);
 
             var actionResult = await _target.AccessTokenAsync(GetTestUserCredentials());
 
@@ -102,7 +93,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.IsType<OperationDetails>(result.Value);
             var details = result.Value as OperationDetails;
             Assert.True(details.IsError);
-            Assert.Equal("Unable to authenticate user with value 'Test UserName' for 'UserName'.", details.Message);
+            Assert.Equal("Invalid password.", details.Message);
         }
 
         private UserCredentials GetTestUserCredentials() =>

@@ -1,33 +1,31 @@
 ﻿import * as React from "react";
 import { Brand } from "@store/entities";
-import { connect } from "react-redux";
 import OwlCarousel from "../../assets/lib/owl.carousel-customized/OwlCarousel";
 import { Options } from "../../assets/lib/owl.carousel-customized/OwlCarousel";
 import "@bootstrap/css";
 import "./BrandsCarousel.scss";
-import { AppState } from "../../store/state";
 import Loader from "@components/Shared/Loader";
+import { compose } from "redux";
+import { withLoader } from "@containers/Admin/withLoader";
+import { withDataFeed } from "@containers/Admin/withDataFeed";
 
-type BrandsCarouselProps = StateProps;
+interface BrandsCarouselProps {
+    items: Brand[];
+}
 
 class BrandsCarousel extends React.Component<BrandsCarouselProps> {
-    constructor(props: BrandsCarouselProps) {
-        super(props);
-    }
-
     render(): JSX.Element {
-        let { isLoading, items } = this.props;
         let owlOptions: Options = this.getOwlCarouselOptions();
-        return isLoading
-            ? <Loader />
-            : <OwlCarousel className="brands-carousel" {...owlOptions}>
-                {items.map(brand => (
-                    <article key={brand.Id} className="brands-carousel__item">
+        return (
+            <OwlCarousel className="brands-carousel" {...owlOptions}>
+                {this.props.items.map((brand, index) => (
+                    <article key={index} className="brands-carousel__item">
                         <h4 className="sr-only">{brand.Name}</h4>
                         <img src={brand.ImagePath} className="brands-carousel__img" alt={brand.Name} />
                     </article>
                 ))}
-              </OwlCarousel>
+            </OwlCarousel>
+        );
     }
 
     getOwlCarouselOptions(): Options {
@@ -67,16 +65,9 @@ class BrandsCarousel extends React.Component<BrandsCarouselProps> {
     }
 }
 
-interface StateProps {
-    isLoading: boolean;
-    items: Brand[];
-}
+const composed = compose(
+    withLoader(Loader, state => state.brands.isLoading),
+    withDataFeed(state => state.brands.items, "items")
+);
 
-const mapStateToProps = (state: AppState): StateProps => {
-    return {
-        isLoading: state.brands.isLoading,
-        items: state.brands.items
-    };
-}
-
-export default connect(mapStateToProps, null)(BrandsCarousel);
+export default composed(BrandsCarousel);

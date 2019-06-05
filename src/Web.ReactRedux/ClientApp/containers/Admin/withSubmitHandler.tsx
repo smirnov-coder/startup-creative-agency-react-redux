@@ -6,13 +6,14 @@ interface WrappedComponentProps {
     onSubmit: (formData: FormData) => void;
 }
 
-type SubmitHandler = (formData: FormData) => void
-
-export function withSubmitHandler<T extends WrappedComponentProps>(onSubmit: SubmitHandler) {
-    return (WrappedComponent: React.ComponentType<T>) => {
-        class WithSubmitHandler extends React.Component<DispatchProps> {
+export function withSubmitHandler(onSubmit: (formData: FormData) => void) {
+    return <T extends WrappedComponentProps>(WrappedComponent: React.ComponentType<T>) => {
+        class WithSubmitHandler extends React.Component<DispatchProps & T> {
             render(): JSX.Element {
-                return <WrappedComponent {...this.props} onSubmit={this.props.handleSubmit} />;
+                let { handleSubmit, ...restProps } = this.props as any;
+                return (
+                    <WrappedComponent onSubmit={handleSubmit} {...restProps} />
+                );
             }
         }
 
@@ -26,6 +27,7 @@ export function withSubmitHandler<T extends WrappedComponentProps>(onSubmit: Sub
             };
         }
 
+        // @ts-ignore: https://github.com/piotrwitek/react-redux-typescript-guide/issues/100
         return connect(null, mapDispatchToProps)(WithSubmitHandler);
     }
 }

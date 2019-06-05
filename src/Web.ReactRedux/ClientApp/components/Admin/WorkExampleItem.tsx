@@ -1,18 +1,21 @@
 ﻿import * as React from "react";
 import { WorkExample } from "@store/entities";
 import { ListItem } from "./ListItem";
-import { LinkButton } from "@components/Shared/LinkButton";
-import { ButtonModifiers, Button } from "@components/Shared/Button";
+import LinkButton from "@components/Shared/LinkButton";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import { concretizeRoute, getDateTimeString, getUserInfoString } from "@scripts/utils";
 import { Routes } from "@scripts/constants";
 import "./WorkExampleItem.scss";
+import { deleteWorkExample } from "@store/actions/worksActions";
+import { withDeleteHandler } from "@containers/Admin/withDeleteHandler";
 
-interface WorkExampleItemProps extends WorkExample {
+interface WorkExampleItemProps {
+    item: WorkExample;
     onView: (id: number) => void;
     onDelete: (id: number) => void;
 }
 
-export class WorkExampleItem extends React.Component<WorkExampleItemProps> {
+class WorkExampleItem extends React.Component<WorkExampleItemProps> {
     constructor(props: WorkExampleItemProps) {
         super(props);
         this.handleViewClick = this.handleViewClick.bind(this);
@@ -20,7 +23,7 @@ export class WorkExampleItem extends React.Component<WorkExampleItemProps> {
     }
 
     render(): JSX.Element {
-        let { Id, Category, Name, ImagePath, Description, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props;
+        let { Id, Category, Name, ImagePath, Description, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props.item;
         let url: string = concretizeRoute(Routes.EDIT_WORK_EXAMPLE, ":id", Id);
         return (
             <div className="work-example-item">
@@ -78,13 +81,15 @@ export class WorkExampleItem extends React.Component<WorkExampleItemProps> {
 
     handleViewClick(event: React.MouseEvent): void {
         event.preventDefault();
-        this.props.onView(this.props.Id);
+        this.props.onView(this.props.item.Id);
     }
 
     handleDeleteClick(event: React.MouseEvent): void {
         event.preventDefault();
         if (confirm("Are you sure you want to proceed?")) {
-            this.props.onDelete(this.props.Id);
+            this.props.onDelete(this.props.item.Id);
         }
     }
 }
+
+export default withDeleteHandler(deleteWorkExample)(WorkExampleItem);

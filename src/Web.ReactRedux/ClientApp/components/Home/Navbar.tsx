@@ -3,32 +3,25 @@ import { Nav } from "./Nav";
 import "@bootstrap/css";
 import "@bootstrap/js";
 import "./Navbar.scss";
-import { Logo } from "@components/Shared/Logo";
+import * as $ from "jquery";
+import Logo from "@components/Shared/Logo";
 
 interface NavbarProps {
     containerRef: React.RefObject<HTMLElement>;
 }
 
 export class Navbar extends React.Component<NavbarProps> {
-    constructor(props: NavbarProps) {
-        super(props);
-    }
-
     private navbarCollapse = React.createRef<HTMLDivElement>();
 
     componentDidMount(): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
-
         let $navbar = $(this.props.containerRef.current);
         let $navbarCollapse = $(this.navbarCollapse.current);
-        let prevScrollpos = window.pageYOffset; // Предыдущее значение прокрутки.
+        let prevScrollPosition = window.pageYOffset; // Предыдущее значение прокрутки.
 
         window.addEventListener("scroll", () => {
-            let currentScrollPos = window.pageYOffset; // Текущее значение прокрутки.
+            let currentScrollPosition = window.pageYOffset; // Текущее значение прокрутки.
             // Если скролим вверх, то:
-            if (prevScrollpos > currentScrollPos) {
+            if (prevScrollPosition > currentScrollPosition) {
                 // Показать навбар.
                 $navbar.css("top", "0");
             } else {
@@ -37,7 +30,7 @@ export class Navbar extends React.Component<NavbarProps> {
                 // Если панель меню была развёрнута, свернуть её.
                 $navbarCollapse.collapse("hide");
             }
-            prevScrollpos = currentScrollPos;
+            prevScrollPosition = currentScrollPosition;
         });
 
         // Немного подредактируем поведение по умолчанию раскрываемой панели.

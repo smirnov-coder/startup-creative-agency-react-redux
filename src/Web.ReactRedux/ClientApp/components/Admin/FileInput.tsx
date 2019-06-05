@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import "@bootstrap/css";
 import "./FileInput.scss";
 
 interface FileInputProps {
@@ -56,8 +56,9 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
     }
 
     handleChange(event: React.ChangeEvent): void {
+        let file: File = (event.target as HTMLInputElement).files[0];
         this.setState({
-            fileName: (event.target as HTMLInputElement).files[0].name
+            fileName: file ? file.name : ""
         });
     }
 }

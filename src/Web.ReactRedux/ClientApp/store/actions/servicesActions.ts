@@ -1,15 +1,19 @@
 ﻿import { ServiceInfo } from "@store/entities";
 import { ActionTypes } from "./actionTypes";
-import { GLOBALS, Routes } from "@scripts/constants";
+import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
 import { fetchData, setCurrent, deleteEntity, submitFormData, ItemsAction, addItems, CurrentAction } from "./genericActions";
 import { decodeHTML, formatString } from "@scripts/utils";
+import { push } from "connected-react-router";
+import { createNonPayloadAction } from "./appActions";
 
 export function fetchServices() {
+    let url: string = GLOBALS.api.services;
     return fetchData<ServiceInfo[]>({
-        url: GLOBALS.api.services,
-        requestActionType: ActionTypes.REQUEST_SERVICES,
+        url,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_SERVICES)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_SERVICES_COMPLETED)),
         success: addServices,
-        errorTitle: "fetch services error"
+        errorMessage: `Failed to fetch services from ${url}.`
     });
 }
 
@@ -22,9 +26,10 @@ export function fetchService(serviceId: number) {
     let url: string = formatString(uriTemplate, serviceId);
     return fetchData<ServiceInfo>({
         url,
-        requestActionType: ActionTypes.REQUEST_SERVICES,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_SERVICES)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_SERVICES_COMPLETED)),
         success: setCurrentService,
-        errorTitle: "fetch service error"
+        errorMessage: `Failed to fetch srevice with ID = ${serviceId}.`
     });
 }
 
@@ -36,24 +41,29 @@ export function deleteService(serviceId: number) {
     return deleteEntity({
         entityId: serviceId,
         urlTemplate: GLOBALS.api.service,
-        requestActionType: ActionTypes.REQUEST_SERVICES,
-        success: fetchServices,
-        errorTitle: "delete service error"
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_SERVICES)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_SERVICES_COMPLETED)),
+        success: fetchServices(),
+        errorMessage: `Failed to delete service with ID = ${serviceId}.`
     });
 }
 
-export const addService = (serviceData: FormData) => submitServiceData(serviceData, "POST", "add service error");
+export function addService(serviceData: FormData) {
+    return submitServiceData(serviceData, HttpMethod.POST, "Failed to create new service.");
+}
 
-export const updateService = (serviceData: FormData) => submitServiceData(serviceData, "PUT", "update service error");
+export function updateService(serviceData: FormData) {
+    return submitServiceData(serviceData, HttpMethod.PUT, `Failed to update service with ID = ${serviceData.get("Id")}.`);
+}
 
-function submitServiceData(serviceData: FormData, method: "POST" | "PUT", errorTitle: string) {
+function submitServiceData(serviceData: FormData, method: HttpMethod, errorMessage: string) {
     return submitFormData({
         url: GLOBALS.api.services,
         method,
         formData: serviceData,
-        successRedirectUrl: Routes.SERVICES,
-        requestActionType: ActionTypes.REQUEST_SERVICES,
-        completedActionType: ActionTypes.REQUEST_SERVICES_COMPLETED,
-        errorTitle
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_SERVICES)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_SERVICES_COMPLETED)),
+        success: (dispatch) => dispatch(push(Routes.SERVICES)),
+        errorMessage
     });
 }

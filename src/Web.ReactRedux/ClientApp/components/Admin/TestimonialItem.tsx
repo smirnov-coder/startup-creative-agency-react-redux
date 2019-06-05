@@ -3,22 +3,25 @@ import { Testimonial } from "@store/entities";
 import { concretizeRoute, getDateTimeString, getUserInfoString } from "@scripts/utils";
 import { Routes } from "@scripts/constants";
 import { ListItem } from "./ListItem";
-import { ButtonModifiers, Button } from "@components/Shared/Button";
-import { LinkButton } from "@components/Shared/LinkButton";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import LinkButton from "@components/Shared/LinkButton";
 import "./TestimonialItem.scss";
+import { withDeleteHandler } from "@containers/Admin/withDeleteHandler";
+import { deleteTestimonial } from "@store/actions/testimonialsActions";
 
-interface TestimonialItemProps extends Testimonial {
+interface TestimonialItemProps {
+    item: Testimonial;
     onDelete: (id: number) => void;
 }
 
-export class TestimonialItem extends React.Component<TestimonialItemProps> {
+class TestimonialItem extends React.Component<TestimonialItemProps> {
     constructor(props: TestimonialItemProps) {
         super(props);
         this.handleClick = this.handleClick.bind(this);
     }
 
     render(): JSX.Element {
-        let { Id, Author, Company, Text, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props;
+        let { Id, Author, Company, Text, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props.item;
         let url: string = concretizeRoute(Routes.EDIT_TESTIMONIAL, ":id", Id);
         return (
             <div className="testimonial-item">
@@ -73,7 +76,9 @@ export class TestimonialItem extends React.Component<TestimonialItemProps> {
     handleClick(event: React.MouseEvent): void {
         event.preventDefault();
         if (confirm("Are you sure you want to proceed?")) {
-            this.props.onDelete(this.props.Id);
+            this.props.onDelete(this.props.item.Id);
         }
     }
 }
+
+export default withDeleteHandler(deleteTestimonial)(TestimonialItem);

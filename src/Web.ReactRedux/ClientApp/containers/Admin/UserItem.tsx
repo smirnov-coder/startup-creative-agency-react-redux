@@ -3,30 +3,30 @@ import { DomainUser } from "@store/entities";
 import { concretizeRoute, getDateTimeString, getUserInfoString } from "@scripts/utils";
 import { ListItem } from "@components/Admin/ListItem";
 import { Routes } from "@scripts/constants";
-import { LinkButton } from "@components/Shared/LinkButton";
-import { ButtonModifiers, Button } from "@components/Shared/Button";
+import LinkButton from "@components/Shared/LinkButton";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import "./UserItem.scss";
+import { Dispatch, bindActionCreators } from "redux";
+import { updateDisplayStatus, deleteUser } from "@store/actions/usersActions";
+import { connect } from "react-redux";
+import { AppState } from "@store/state";
 
-interface UserItemProps {
+interface ComponentProps {
     item: DomainUser;
     isAdmin: boolean;
     isManagePage: boolean;
-    onUpdateDisplayStatus?: (userName: string, isDisplayed: boolean) => void;
-    onDelete?: (userName: string) => void;
 }
+
+type UserItemProps = ComponentProps & StateProps & DispatchProps;
 
 interface UserItemState {
     userName: string;
     isDisplayed: boolean;
 }
 
-export class UserItem extends React.Component<UserItemProps, UserItemState> {
+class UserItem extends React.Component<UserItemProps, UserItemState> {
     constructor(props: UserItemProps) {
         super(props);
-        let { isManagePage, onUpdateDisplayStatus, onDelete } = this.props;
-        if (isManagePage && (!onUpdateDisplayStatus || !onDelete)) {
-            throw new Error("For managing user 'onUpdateDisplayStatus' and 'onDelete' handlers must be provided.");
-        }
         let { Identity, Profile } = this.props.item;
         this.state = {
             userName: Identity.UserName,
@@ -39,6 +39,7 @@ export class UserItem extends React.Component<UserItemProps, UserItemState> {
 
     render(): JSX.Element {
         let { Identity, Profile, CreatedOn, CreatedBy, LastUpdatedOn, } = this.props.item;
+        let { isAdmin, isManagePage, currentUserName } = this.props;
         let url: string = concretizeRoute(Routes.MANAGE_USER, ":userName", Identity.UserName);
         let photoClass = `user-item__photo ${Profile.PhotoFilePath ? "" : "user-item__photo--hidden"}`;
         return (
@@ -84,9 +85,9 @@ export class UserItem extends React.Component<UserItemProps, UserItemState> {
                             </p>
                         </div>
                     </ListItem.Content>
-                    {!this.props.isAdmin ? null :
+                    {!isAdmin ? null :
                         <ListItem.Footer>
-                            {this.props.isManagePage
+                            {isManagePage
                                 ? <form className="user-item__form">
                                     <div className="form-check user-item__checkbox">
                                         <input id="DisplayAsTeamMember"
@@ -102,10 +103,12 @@ export class UserItem extends React.Component<UserItemProps, UserItemState> {
                                         modifiers={[ButtonModifiers.Size.SMALL]}
                                         onClick={this.handleUpdateClick}
                                         children="Update" />
-                                    <Button className="user-item__delete"
-                                        modifiers={[ButtonModifiers.Size.SMALL]}
-                                        onClick={this.handleDeleteClick}
-                                        children="Delete" />
+                                    {currentUserName === Identity.UserName ? null : 
+                                        <Button className="user-item__delete"
+                                            modifiers={[ButtonModifiers.Size.SMALL]}
+                                            onClick={this.handleDeleteClick}
+                                            children="Delete" />
+                                    }
                                   </form>
                                 : <LinkButton url={url}
                                     className="user-item__edit"
@@ -141,3 +144,27 @@ export class UserItem extends React.Component<UserItemProps, UserItemState> {
         }
     }
 }
+
+interface StateProps {
+    currentUserName: string;
+}
+
+const mapStateToProps = (state: AppState): StateProps => {
+    return {
+        currentUserName: state.auth.userName
+    };
+}
+
+interface DispatchProps {
+    onUpdateDisplayStatus: (userName: string, isDisplayed: boolean) => void;
+    onDelete: (userName: string) => void;
+}
+
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+    return {
+        onUpdateDisplayStatus: bindActionCreators(updateDisplayStatus, dispatch),
+        onDelete: bindActionCreators(deleteUser, dispatch)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserItem);

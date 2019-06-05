@@ -7,8 +7,7 @@ interface ErrorPageProps {
     description: string;
 }
 
-const ErrorPage: React.SFC<ErrorPageProps> = (props: ErrorPageProps) => {
-    let { title, subtitle, description } = props;
+const ErrorPage: React.SFC<ErrorPageProps> = ({ title, subtitle, description }: ErrorPageProps) => {
     return (
         <div className="error-info">
             <h1 className="error-info__title">{title}</h1>

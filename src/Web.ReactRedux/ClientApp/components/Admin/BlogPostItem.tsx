@@ -3,16 +3,19 @@ import { BlogPost } from "@store/entities";
 import { concretizeRoute, getDateTimeString, getUserInfoString } from "@scripts/utils";
 import { Routes } from "@scripts/constants";
 import { ListItem } from "./ListItem";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
-import { LinkButton } from "@components/Shared/LinkButton";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import LinkButton from "@components/Shared/LinkButton";
 import "./BlogPostItem.scss";
+import { deleteBlogPost } from "@store/actions/blogActions";
+import { withDeleteHandler } from "@containers/Admin/withDeleteHandler";
 
-interface BlogPostItemProps extends BlogPost {
+interface BlogPostItemProps {
+    item: BlogPost;
     onView: (id: number) => void;
     onDelete: (id: number) => void;
 }
 
-export class BlogPostItem extends React.Component<BlogPostItemProps> {
+class BlogPostItem extends React.Component<BlogPostItemProps> {
     constructor(props: BlogPostItemProps) {
         super(props);
         this.handleViewClick = this.handleViewClick.bind(this);
@@ -20,7 +23,7 @@ export class BlogPostItem extends React.Component<BlogPostItemProps> {
     }
 
     render(): JSX.Element {
-        let { Id, Category, Title, ImagePath, Content, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props;
+        let { Id, Category, Title, ImagePath, Content, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props.item;
         let url: string = concretizeRoute(Routes.EDIT_BLOG_POST, ":id", Id);
         return (
             <div className="blog-post-item">
@@ -78,13 +81,15 @@ export class BlogPostItem extends React.Component<BlogPostItemProps> {
 
     handleViewClick(event: React.MouseEvent): void {
         event.preventDefault();
-        this.props.onView(this.props.Id);
+        this.props.onView(this.props.item.Id);
     }
 
     handleDeleteClick(event: React.MouseEvent): void {
         event.preventDefault();
         if (confirm("Are you sure you want to proceed?")) {
-            this.props.onDelete(this.props.Id);
+            this.props.onDelete(this.props.item.Id);
         }
     }
 }
+
+export default withDeleteHandler(deleteBlogPost)(BlogPostItem);

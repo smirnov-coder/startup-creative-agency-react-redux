@@ -1,24 +1,27 @@
 ﻿import * as React from "react";
 import { ServiceInfo } from "@store/entities";
 import { ListItem } from "./ListItem";
-import { LinkButton } from "@components/Shared/LinkButton";
-import { ButtonModifiers, Button } from "@components/Shared/Button";
+import LinkButton from "@components/Shared/LinkButton";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import "./ServiceItem.scss";
 import { getDateTimeString, getUserInfoString, concretizeRoute } from "@scripts/utils";
 import { Routes } from "@scripts/constants";
+import { deleteService } from "@store/actions/servicesActions";
+import { withDeleteHandler } from "@containers/Admin/withDeleteHandler";
 
-interface ServiceItemProps extends ServiceInfo {
-    onDelete: (id: number) => void;
+interface ServiceItemProps {
+    item: ServiceInfo;
+    onDelete: (serviceId: number) => void;
 }
 
-export class ServiceItem extends React.Component<ServiceItemProps> {
+class ServiceItem extends React.Component<ServiceItemProps> {
     constructor(props: ServiceItemProps) {
         super(props);
         this.handleClick = this.handleClick.bind(this);
     }
 
     render(): JSX.Element {
-        let { Id, IconClass, Caption, Description, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props;
+        let { Id, IconClass, Caption, Description, CreatedOn, CreatedBy, LastUpdatedOn, LastUpdatedBy } = this.props.item;
         let url: string = concretizeRoute(Routes.EDIT_SERVICE, ":id", Id);
         return (
             <div className="service-item">
@@ -72,7 +75,9 @@ export class ServiceItem extends React.Component<ServiceItemProps> {
     handleClick(event: React.MouseEvent): void {
         event.preventDefault();
         if (confirm("Are you sure you want to proceed?")) {
-            this.props.onDelete(this.props.Id);
+            this.props.onDelete(this.props.item.Id);
         }
     }
 }
+
+export default withDeleteHandler(deleteService)(ServiceItem);

@@ -6,16 +6,16 @@ import { match, RouteComponentProps } from "react-router";
 type ActionCreator = (...args: any[]) => void;
 type Initializer = (routeMatch: match, actionCreator: ActionCreator) => ActionCreator;
 
-export function withInitializer<T extends RouteComponentProps>(init: Initializer, actionCreator: ActionCreator) {
-    return (WrappedComponent: React.ComponentType<T>) => {
-        class WithPageInitializer extends React.Component<DispatchProps & T> {
+export function withInitializer(init: Initializer, actionCreator: ActionCreator) {
+    return <T extends RouteComponentProps>(WrappedComponent: React.ComponentType<T>) => {
+        class WithInitializer extends React.Component<DispatchProps & T> {
             componentDidMount(): void {
                 let { bindedActionCreator, match } = this.props;
                 init(match, bindedActionCreator)();
             }
 
             render(): JSX.Element {
-                let { bindedActionCreator, ...restProps } = this.props;
+                let { bindedActionCreator, ...restProps } = this.props as any;
                 return (
                     <WrappedComponent {...restProps} />
                 );
@@ -32,6 +32,7 @@ export function withInitializer<T extends RouteComponentProps>(init: Initializer
             }
         }
 
-        return connect(null, mapDispatchToProps)(WithPageInitializer);
+        // @ts-ignore: https://github.com/piotrwitek/react-redux-typescript-guide/issues/100
+        return connect(null, mapDispatchToProps)(WithInitializer);
     }
 }

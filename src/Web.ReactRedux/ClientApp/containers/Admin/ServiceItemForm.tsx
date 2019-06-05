@@ -1,16 +1,18 @@
 ﻿import * as React from "react";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import * as $ from "jquery";
-import { AppState } from "@store/state";
 import { ServiceInfo } from "@store/entities";
-import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";
-import { Routes } from "@scripts/constants";
+import { Routes, VALIDATION_OPTIONS } from "@scripts/constants";
 import "./ServiceItemForm.scss";
+import "@bootstrap/css";
 
-interface ServiceItemFormProps extends StateProps, RouteComponentProps {
+interface ComponentProps {
+    item: ServiceInfo;
     onSubmit: (formData: FormData) => void;
 }
+
+type ServiceItemFormProps = ComponentProps & RouteComponentProps;
 
 interface ServiceItemFormState {
     Id: number;
@@ -19,7 +21,7 @@ interface ServiceItemFormState {
     Description: string;
 }
 
-class ServiceItemForm extends React.Component<ServiceItemFormProps, ServiceItemFormState> {
+export class ServiceItemForm extends React.Component<ServiceItemFormProps, ServiceItemFormState> {
     constructor(props: ServiceItemFormProps) {
         super(props);
         let { Id, IconClass, Caption, Description } = this.props.item;
@@ -36,6 +38,7 @@ class ServiceItemForm extends React.Component<ServiceItemFormProps, ServiceItemF
     componentDidMount(): void {
         let $form = $(this.form.current);
         this.validator = $form.validate({
+            ...VALIDATION_OPTIONS,
             rules: {
                 Id: {
                     required: true
@@ -53,17 +56,9 @@ class ServiceItemForm extends React.Component<ServiceItemFormProps, ServiceItemF
                     maxlength: 300
                 }
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
-            },
             submitHandler: (form, event) => {
                 event.preventDefault();
                 this.props.onSubmit(new FormData($form[0] as HTMLFormElement));
-            },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
             }
         });
     }
@@ -132,15 +127,3 @@ class ServiceItemForm extends React.Component<ServiceItemFormProps, ServiceItemF
         });
     }
 }
-
-interface StateProps {
-    item: ServiceInfo;
-}
-
-const mapStateToProps = (state: AppState): StateProps => {//console.log("state", state);//
-    return {
-        item: state.services.current
-    };
-}
-
-export default connect(mapStateToProps, null)(ServiceItemForm);

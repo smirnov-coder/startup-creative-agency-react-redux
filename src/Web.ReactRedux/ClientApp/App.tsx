@@ -15,7 +15,7 @@ import { Routes } from "@scripts/constants";
 type AppProps = DispatchProps;
 
 class App extends React.Component<AppProps> {
-    componentWillMount(): void {
+    componentDidMount(): void {
         this.props.initAppState();
     }
     /// TODO: Вынести ConnectedRouter в index.tsx и обернуть в ХОКи.

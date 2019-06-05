@@ -32,24 +32,11 @@ module.exports = {
         extensions: [".ts", ".tsx", ".js", ".json"],
         alias: {
             "react-dom": "@hot-loader/react-dom",
-            //"components": path.resolve(__dirname, "ClientApp", "components"),
-            //"containers": path.resolve(__dirname, "ClientApp", "containers"),
-            //"store": path.resolve(__dirname, "ClientApp", "store"),
-            //"scripts": path.resolve(__dirname, "ClientApp", "scripts"),
-            //"styles": path.resolve(__dirname, "ClientApp", "styles"),
-            //"bootstrap/css": path.resolve(__dirname, "ClientApp", "assets/lib/bootstrap-customized/css/bootstrap.css"),
-            //"bootstrap/js": path.resolve(__dirname, "ClientApp", "assets/lib/bootstrap-customized/js/bootstrap.js")
         },
         plugins: [
             new TsConfigPathsPlugin()
         ],
     },
-    //resolveLoader: {
-    //    plugins: [
-    //        TsConfigPathsPlugin,
-    //        //PnpWebpackPlugin.moduleLoader(module),
-    //    ],
-    //},
 
     module: {
         rules: [

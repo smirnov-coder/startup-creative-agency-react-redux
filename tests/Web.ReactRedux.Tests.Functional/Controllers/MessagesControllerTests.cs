@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
@@ -105,7 +105,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
             using (var httpClient = factory.CreateClient())
             {
                 int expectedCount = 4;
-                var model = new MessageViewModel
+                var model = new MessageBindingModel
                 {
                     Name = "Test Name",
                     Email = "test@example.com",

@@ -1,15 +1,19 @@
 ﻿import { WorkExample } from "@store/entities";
 import { fetchData, addItems, ItemsAction, deleteEntity, CurrentAction, setCurrent, submitFormData } from "./genericActions";
-import { GLOBALS, Routes } from "@scripts/constants";
+import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
 import { ActionTypes } from "./actionTypes";
 import { decodeHTML, formatString } from "@scripts/utils";
+import { push } from "connected-react-router";
+import { createNonPayloadAction } from "./appActions";
 
 export function fetchWorks() {
+    let url: string = GLOBALS.api.works;
     return fetchData<WorkExample[]>({
-        url: GLOBALS.api.works,
-        requestActionType: ActionTypes.REQUEST_WORKS,
+        url,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_WORKS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_WORKS_COMPLETED)),
         success: addWorks,
-        errorTitle: "fetch works error"
+        errorMessage: `Failed to fetch work examples from ${url}.`
     });
 }
 
@@ -21,9 +25,10 @@ export function deleteWorkExample(workExampleId: number) {
     return deleteEntity({
         entityId: workExampleId,
         urlTemplate: GLOBALS.api.workExample,
-        requestActionType: ActionTypes.REQUEST_WORKS,
-        success: fetchWorks,
-        errorTitle: "delete work example error"
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_WORKS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_WORKS_COMPLETED)),
+        success: fetchWorks(),
+        errorMessage: `Failed to fetch wotk example with ID = ${workExampleId}.`
     });
 }
 
@@ -31,31 +36,35 @@ export function setCurrentWorkExample(workExample: WorkExample): CurrentAction<W
     return setCurrent<WorkExample>(workExample, ActionTypes.CURRENT_WORK_EXAMPLE);
 }
 
-export const addWorkExample = (workExampleData: FormData) =>
-    submitWorkExampleData(workExampleData, "POST", "add work example error");
+export function addWorkExample(workExampleData: FormData) {
+    return submitWorkExampleData(workExampleData, HttpMethod.POST, `Failed to create new work example.`);
+}
 
-export const updateWorkExample = (workExampleData: FormData) =>
-    submitWorkExampleData(workExampleData, "PUT", "update work example error");
+export function updateWorkExample(workExampleData: FormData) {
+    return submitWorkExampleData(workExampleData, HttpMethod.PUT,
+        `Failed to update work example with ID = ${workExampleData.get("Id")}`);
+}
 
-function submitWorkExampleData(workExampleData: FormData, method: "POST" | "PUT", errorTitle: string) {
+function submitWorkExampleData(workExampleData: FormData, method: HttpMethod, errorMessage: string) {
     return submitFormData({
         url: GLOBALS.api.works,
         method,
         formData: workExampleData,
-        successRedirectUrl: Routes.WORKS,
-        requestActionType: ActionTypes.REQUEST_WORKS,
-        completedActionType: ActionTypes.REQUEST_WORKS_COMPLETED,
-        errorTitle
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_WORKS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_WORKS_COMPLETED)),
+        success: dispatch => dispatch(push(Routes.WORKS)),
+        errorMessage
     });
 }
 
 export function fetchWorkExample(workExampleId: number) {
-    let uriTemplate: string = decodeHTML(GLOBALS.api.workExample); //console.log("template", uriTemplate);//
-    let url: string = formatString(uriTemplate, workExampleId); //console.log("url", url);//
+    let uriTemplate: string = decodeHTML(GLOBALS.api.workExample);
+    let url: string = formatString(uriTemplate, workExampleId);
     return fetchData<WorkExample>({
         url,
-        requestActionType: ActionTypes.REQUEST_WORKS,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_WORKS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_WORKS_COMPLETED)),
         success: setCurrentWorkExample,
-        errorTitle: "fetch work example error"
+        errorMessage: `Failed to fetch work example with ID = ${workExampleId}.`
     });
 }

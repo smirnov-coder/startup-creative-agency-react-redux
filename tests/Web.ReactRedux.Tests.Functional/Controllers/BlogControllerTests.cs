@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers

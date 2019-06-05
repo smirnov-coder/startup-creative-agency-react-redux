@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
+namespace StartupCreativeAgency.Web.ReactRedux.Models
 {
-    public class MessageViewModel
+    public class MessageBindingModel
     {
         [Required]
         [StringLength(50)]
@@ -11,7 +11,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 
         [Required]
         [StringLength(50)]
-        [DataType(DataType.EmailAddress)]
         [RegularExpression(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")]
         public string Email { get; set; }
 
@@ -23,7 +22,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
 
         [Required]
         [StringLength(5000)]
-        [DataType(DataType.MultilineText)]
         public string Text { get; set; }
     }
 }

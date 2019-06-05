@@ -1,15 +1,18 @@
 ﻿import * as React from "react";
 import { Message } from "@store/entities";
-import { AppState } from "@store/state";
 import { Dispatch, bindActionCreators } from "redux";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import { connect } from "react-redux";
 import { markAsUnread, deleteMessages } from "@store/actions/messagesActions";
 import { MessageRow } from "@components/Admin/MessageRow";
 import "./MessageTable.scss";
 import "@bootstrap/css";
 
-type MessageTableProps = StateProps & DispatchProps;
+interface ComponentProps {
+    items: Message[];
+}
+
+type MessageTableProps = ComponentProps & DispatchProps;
 
 interface MessageTableState {
     checkedIds: Set<number>;
@@ -80,16 +83,6 @@ class MessageTable extends React.Component<MessageTableProps, MessageTableState>
     }
 }
 
-interface StateProps {
-    items: Message[];
-}
-
-const mapStateToProps = (state: AppState): StateProps => {
-    return {
-        items: state.messages.items
-    };
-}
-
 interface DispatchProps {
     onUnread: (ids: number[]) => void;
     onDelete: (ids: number[]) => void;
@@ -102,4 +95,4 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MessageTable);
+export default connect(null, mapDispatchToProps)(MessageTable);

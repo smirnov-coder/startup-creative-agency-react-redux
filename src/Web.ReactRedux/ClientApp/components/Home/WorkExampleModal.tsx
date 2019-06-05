@@ -3,7 +3,8 @@ import { WorkExample } from "@store/entities";
 import "@bootstrap/css";
 import "@bootstrap/js";
 import "./WorkExampleModal.scss";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import * as $ from "jquery";
 
 interface WorkExampleModalProps {
     workExample: WorkExample;
@@ -18,9 +19,6 @@ export class WorkExampleModal extends React.Component<WorkExampleModalProps> {
     }
 
     componentWillReceiveProps(nextProps: WorkExampleModalProps): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
         nextProps.showModal
             ? $(this.modal.current).modal("show")
             : $(this.modal.current).modal("hide");
@@ -67,4 +65,3 @@ export class WorkExampleModal extends React.Component<WorkExampleModalProps> {
         this.props.onClose();
     }
 }
-

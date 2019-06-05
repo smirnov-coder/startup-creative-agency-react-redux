@@ -63,3 +63,24 @@ export enum Routes {
 }
 
 export const TOKEN_STORAGE_KEY: string = "access_token";
+
+export const VALIDATION_OPTIONS: JQueryValidation.ValidationOptions = {
+    errorElement: "span",
+    errorClass: "field-validation-error",
+    highlight: (element, errorClass, validClass) => {
+        $(element).addClass("input-validation-error");
+    },
+    unhighlight: (element, errorClass, validClass) => {
+        $(element).removeClass("input-validation-error");
+    },
+    invalidHandler: (event, validator) => {
+        console.warn("Invalid form data. Submission canceled.");
+    }
+};
+
+export enum HttpMethod {
+    GET = "GET",
+    POST = "POST",
+    PUT = "PUT",
+    DELETE = "DELETE"
+}

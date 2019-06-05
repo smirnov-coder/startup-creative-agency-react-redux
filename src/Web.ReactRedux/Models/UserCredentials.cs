@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
+namespace StartupCreativeAgency.Web.ReactRedux.Models
 {
-    public class UserDisplayStatusBindingModel
+    public class UserCredentials
     {
         [Required]
         public string UserName { get; set; }
 
         [Required]
-        public bool IsDisplayed { get; set; }
+        public string Password { get; set; }
     }
 }

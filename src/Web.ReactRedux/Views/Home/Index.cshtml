@@ -50,12 +50,12 @@
     </script>
     <div id="root"></div>
 
-    <script asp-src-include="~/lib/js/vendor.bundle.min.js"></script>
+    <script asp-src-include="~/lib/js/vendor.bundle.min.js" defer></script>
     <environment include="Development">
-        <script asp-src-include="~/js/app.bundle.js"></script>
+        <script asp-src-include="~/js/app.bundle.js" defer></script>
     </environment>
     <environment include="Production">
-        <script asp-src-include="~/js/app.bundle.min.js"></script>
+        <script asp-src-include="~/js/app.bundle.min.js" defer></script>
     </environment>
 </body>
 </html>

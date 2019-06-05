@@ -4,15 +4,15 @@ import { AppState } from "@store/state";
 import { connect } from "react-redux";
 import { ContactItem } from "@components/Admin/ContactItem";
 import SocialLinks from "@components/Admin/SocialLinks";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import "@bootstrap/css";
 import "./ContactList.scss";
+import * as $ from "jquery";
+import { Dispatch, bindActionCreators } from "redux";
+import { saveContacts } from "@store/actions/contactsActions";
+import { VALIDATION_OPTIONS } from "@scripts/constants";
 
-interface ComponentProps {
-    onSubmit: (formData: FormData) => void;
-}
-
-type ContactListProps = StateProps & ComponentProps;
+type ContactListProps = StateProps & DispatchProps;
 
 interface ContactListState {
     contacts: ContactInfo[];
@@ -46,14 +46,16 @@ class ContactList extends React.Component<ContactListProps, ContactListState> {
             $(contactItem).find("input[name$='Caption']").each(() => {
                 Object.assign(contactInfosRules, {
                     [`${prefix}.Caption`]: {
-                        required: true
+                        required: true,
+                        maxlength: 30
                     }
                 });
             });
             $(contactItem).find("input[name$='Value']").each(contactValueIndex => {
                 Object.assign(contactInfosRules, {
                     [`${prefix}.Values[${contactValueIndex}].Value`]: {
-                        required: true
+                        required: true,
+                        maxlength: 50
                     }
                 });
             });
@@ -79,24 +81,16 @@ class ContactList extends React.Component<ContactListProps, ContactListState> {
                 }
             });
         });
+
         return $form.validate({
-            /// TODO: validation don't forget to
+            ...VALIDATION_OPTIONS,
             rules: {
                 ...contactInfosRules,
                 ...socialLinksRules
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
-            },
             submitHandler: (form, event) => {
                 event.preventDefault();
-                //alert("submitted");//
-                this.props.onSubmit(new FormData($form[0] as HTMLFormElement));
-            },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
+                this.props.onSave(new FormData($form[0] as HTMLFormElement));
             }
         });
     }
@@ -150,4 +144,14 @@ const mapStateToProps = (state: AppState): StateProps => {
     };
 }
 
-export default connect(mapStateToProps, null)(ContactList);
+interface DispatchProps {
+    onSave: (formData: FormData) => void;
+}
+
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+    return {
+        onSave: bindActionCreators(saveContacts, dispatch)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactList);

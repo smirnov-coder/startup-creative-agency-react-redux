@@ -1,17 +1,19 @@
 ﻿import * as React from "react";
-import { RouteComponentProps } from "react-router";
-import { Routes } from "@scripts/constants";
-import { FileInput } from "@components/Admin/FileInput";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
-import { Brand } from "@store/entities";
-import { AppState } from "@store/state";
-import { connect } from "react-redux";
-import "./BrandItemForm.scss";
 import * as $ from "jquery";
+import { RouteComponentProps } from "react-router";
+import { Routes, VALIDATION_OPTIONS } from "@scripts/constants";
+import { FileInput } from "@components/Admin/FileInput";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import { Brand } from "@store/entities";
+import "./BrandItemForm.scss";
+import { imageValidationOptions } from "@scripts/utils";
 
-interface BrandItemFormProps extends StateProps, RouteComponentProps {
+interface ComponentProps {
+    item: Brand;
     onSubmit: (formData: FormData) => void;
 }
+
+type BrandItemFormProps = ComponentProps & RouteComponentProps;
 
 interface BrandItemFormState {
     Id: number;
@@ -19,7 +21,7 @@ interface BrandItemFormState {
     ImagePath: string;
 }
 
-class BrandItemForm extends React.Component<BrandItemFormProps, BrandItemFormState> {
+export class BrandItemForm extends React.Component<BrandItemFormProps, BrandItemFormState> {
     constructor(props: BrandItemFormProps) {
         super(props);
         let { Id, Name, ImagePath } = this.props.item;
@@ -33,37 +35,26 @@ class BrandItemForm extends React.Component<BrandItemFormProps, BrandItemFormSta
     private validator: JQueryValidation.Validator;
 
     componentDidMount(): void {
+        let imageOptions: JQueryValidation.ValidationOptions = imageValidationOptions("FileName", "ImagePath");
         let $form = $(this.form.current);
         this.validator = $form.validate({
-            /// TODO: validation don't forget to
+            ...VALIDATION_OPTIONS,
             rules: {
                 Id: {
                     required: true
                 },
-                //IconClass: {
-                //    required: true,
-                //    maxlength: 50
-                //},
-                //Caption: {
-                //    required: true,
-                //    maxlength: 50
-                //},
-                //Description: {
-                //    required: true,
-                //    maxlength: 300
-                //}
+                Name: {
+                    required: true,
+                    maxlength: 20
+                },
+                ...imageOptions.rules
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
+            messages: {
+                ...imageOptions.messages
             },
             submitHandler: (form, event) => {
                 event.preventDefault();
                 this.props.onSubmit(new FormData($form[0] as HTMLFormElement));
-            },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
             }
         });
     }
@@ -111,8 +102,8 @@ class BrandItemForm extends React.Component<BrandItemFormProps, BrandItemFormSta
                             fileInputId="Image"
                             fileInputName="Image"
                             buttonPosition="right"
-                            textInputId="img-file-name"
-                            textInputName="img-file-name" />
+                            textInputId="FileName"
+                            textInputName="FileName" />
                     </div>
                     <div className="brand-item-form__line form-group">
                         <label htmlFor="ImagePath">Current Image</label>
@@ -140,15 +131,3 @@ class BrandItemForm extends React.Component<BrandItemFormProps, BrandItemFormSta
         });
     }
 }
-
-interface StateProps {
-    item: Brand;
-}
-
-const mapStateToProps = (state: AppState): StateProps => {//console.log("state", state);//
-    return {
-        item: state.brands.current
-    };
-}
-
-export default connect(mapStateToProps, null)(BrandItemForm);

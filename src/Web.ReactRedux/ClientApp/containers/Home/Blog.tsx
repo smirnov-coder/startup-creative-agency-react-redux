@@ -5,13 +5,18 @@ import { BlogPostPreview } from "@components/Home/BlogPostPreview";
 import "@bootstrap/css";
 import "./Blog.scss";
 import { BlogPostModal } from "@components/Home/BlogPostModal";
-import { Dispatch, bindActionCreators } from "redux";
+import { Dispatch, bindActionCreators, compose } from "redux";
 import { AppState } from "@store/state";
 import Loader from "@components/Shared/Loader";
-import { Button } from "@components/Shared/Button";
+import Button from "@components/Shared/Button";
 import { fetchBlogPosts } from "@store/actions/blogActions";
+import { withDataFeed } from "@containers/Admin/withDataFeed";
 
-type BlogProps = StateProps & DispatchProps;
+interface ComponentProps {
+    items: BlogPost[];
+}
+
+type BlogProps = ComponentProps & StateProps & DispatchProps;
    
 interface BlogState {
     showModal: boolean;
@@ -60,7 +65,7 @@ class Blog extends React.Component<BlogProps, BlogState> {
             }
         }
 
-        let separator: JSX.Element = <hr className="blog-post-list__separator" />;
+        let separator = <hr className="blog-post-list__separator" />;
         return (
             <section className="blog-post-list">
                 <h3 className="sr-only">Blog Post List</h3>
@@ -107,13 +112,11 @@ class Blog extends React.Component<BlogProps, BlogState> {
 
 interface StateProps {
     isLoading: boolean;
-    items: BlogPost[];
 }
 
 const mapStateToProps = (state: AppState): StateProps => {
     return {
         isLoading: state.blog.isLoading,
-        items: state.blog.items
     };
 }
 
@@ -132,4 +135,9 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Blog);
+const composed = compose(
+    withDataFeed(state => state.blog.items, "items"),
+    connect(mapStateToProps, mapDispatchToProps)
+);
+
+export default composed(Blog);

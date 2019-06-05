@@ -3,8 +3,8 @@ import { Section } from "./Section";
 import "@bootstrap/css";
 import "./ParallaxSection.scss";
 import smoothScroll from "@scripts/smoothScroll";
-import { LinkButton } from "@components/Shared/LinkButton";
 import { ButtonModifiers } from "@components/Shared/Button";
+import LinkButton from "@components/Shared/LinkButton";
 
 export class ParallaxSection extends React.Component {
     render(): JSX.Element {

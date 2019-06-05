@@ -1,21 +1,20 @@
 ﻿import { ContactMessage } from "@containers/Home/ContactForm";
 import { Dispatch, Action } from "redux";
-import { createSimpleAction, OperationDetails, ValidationProblemDetails, readAccessToken } from "./appActions";
+import { createNonPayloadAction, OperationDetails, ValidationProblemDetails, readAccessToken } from "./appActions";
 import { ActionTypes } from "./actionTypes";
-import { GLOBALS, Routes } from "@scripts/constants";
-import { fetchData, ItemsAction, addItems, setCurrent } from "./genericActions";
+import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
+import { fetchData, ItemsAction, addItems, setCurrent, handleResponse } from "./genericActions";
 import { Message } from "@store/entities";
 import { push } from "connected-react-router";
 import { history } from "@store/configureStore";
-import { doSignOut } from "./authActions";
 import { Notification } from "@store/state";
 import { encodeHTML, decodeHTML, formatString } from "@scripts/utils";
 import { addNotification } from "./notificationsActions";
 
 export const sendMessage = (message: ContactMessage) => (dispatch: Dispatch) => {
-    dispatch(createSimpleAction(ActionTypes.REQUEST_MESSAGES));
+    dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES));
     let options: RequestInit = {
-        method: "POST",
+        method: HttpMethod.POST,
         headers: {
             "Content-Type": "application/json"
         },
@@ -23,7 +22,8 @@ export const sendMessage = (message: ContactMessage) => (dispatch: Dispatch) => 
     };
     return fetch(GLOBALS.api.messages, options)
         .then((response: Response) => {
-            return response.json();
+            return handleResponse(response, dispatch, dispatch =>
+                dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES_COMPLETED)));
         })
         .then((data: OperationDetails | ValidationProblemDetails) => {
             let details: OperationDetails = null;
@@ -37,8 +37,9 @@ export const sendMessage = (message: ContactMessage) => (dispatch: Dispatch) => 
             }
             dispatch(addSendingResult(details));
         })
-        .catch((error: Error) => {
-            console.error(error, "sendMessage error");//
+        .catch(error => {
+            console.error("Failed to send contact message.");
+            console.error(error);
         });
 }
 
@@ -66,48 +67,60 @@ export const clearSendingResult = (): SendingResultAction => {
 }
 
 export function fetchMessages() {
+    let url: string = GLOBALS.api.messages;
     return fetchData<Message[]>({
-        url: GLOBALS.api.messages,
-        requestActionType: ActionTypes.REQUEST_MESSAGES,
+        url,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES_COMPLETED)),
         success: addMessages,
-        errorTitle: "fetch messages error"
+        errorMessage: `Failed to fetch messages from ${url}.`
     });
 }
 
 const addMessages = (messages: Message[]): ItemsAction<Message> => addItems<Message>(messages, false, ActionTypes.MESSAGES);
 
 export function markAsUnread(messageIds: number[]) {
-    //console.log("ids", messageIds);//
     return submitJsonData({
         jsonData: JSON.stringify({ messageIds, isRead: false }),
         url: GLOBALS.api.messages,
-        method: "PUT",
-        requestActionType: ActionTypes.REQUEST_MESSAGES,
-        success: fetchMessages,
-        errorTitle: "mark as unread error"
+        method: HttpMethod.PUT,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES_COMPLETED)),
+        success: fetchMessages(),
+        errorMessage: `Failed to mark messages with IDs = [${messageIds.join(", ")}] as unread.`
     });
 }
 
 interface SubmitJsonDataRequest {
     jsonData: string;
     url: string;
-    method: "POST" | "PUT" | "DELETE",
-    requestActionType: string;
-    success: () => (dispatch: Dispatch) => void;
-    errorTitle: string;
+    method: HttpMethod,
+    requestInit: (dispatch: Dispatch) => void;
+    requestComplete: (dispatch: Dispatch) => void;
+    success: (dispatch: Dispatch) => void;
+    errorMessage: string;
     notify?: boolean;
 }
 
-function submitJsonData({ jsonData, url, method, requestActionType, success, errorTitle, notify = true }: SubmitJsonDataRequest) {
+function submitJsonData({
+    jsonData,
+    url,
+    method,
+    requestInit,
+    requestComplete,
+    success,
+    errorMessage,
+    notify = true
+}: SubmitJsonDataRequest) {
     return (dispatch: Dispatch) => {
-        dispatch(createSimpleAction(requestActionType));
+        requestInit(dispatch);
         let accessToken: string = readAccessToken();
         if (!accessToken) {
             return dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
         }
         let options: RequestInit = {
             method,
-            headers: !accessToken ? {} : {
+            headers: {
                 Authorization: `Bearer ${accessToken}`,
                 "Content-Type": "application/json"
             },
@@ -115,27 +128,7 @@ function submitJsonData({ jsonData, url, method, requestActionType, success, err
         };
         return fetch(url, options)
             .then(response => {
-                switch (response.status) {
-                    case 200:
-                    case 400:
-                    case 404:
-                        return response.json();
-
-                    case 401:
-                        dispatch(doSignOut());
-                        dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
-                        throw new Error(response.statusText);
-
-                    case 403:
-                        dispatch(push(Routes.ACCESS_DENIED));
-                        throw new Error(response.statusText);
-
-                    case 500:
-                        throw new Error(response.statusText);
-
-                    default:
-                        throw new Error("Unhandled response status code.");
-                }
+                return handleResponse(response, dispatch, dispatch => requestComplete(dispatch));
             })
             .then((data: OperationDetails | ValidationProblemDetails) => {
                 if (notify) {
@@ -155,10 +148,11 @@ function submitJsonData({ jsonData, url, method, requestActionType, success, err
                     };
                     dispatch(addNotification(notification));
                 }
-                success()(dispatch);
+                success(dispatch);
             })
             .catch(error => {
-                console.error(errorTitle, error);
+                console.error(errorMessage);
+                console.error(error);
             });
     }
 }
@@ -167,10 +161,11 @@ export function deleteMessages(messageIds: number[]) {
     return submitJsonData({
         jsonData: JSON.stringify(messageIds),
         url: GLOBALS.api.messages,
-        method: "DELETE",
-        requestActionType: ActionTypes.REQUEST_MESSAGES,
-        success: fetchMessages,
-        errorTitle: "delete messages error"
+        method: HttpMethod.DELETE,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES_COMPLETED)),
+        success: fetchMessages(),
+        errorMessage: `Failed to delete messages with IDs = [${messageIds.join(", ")}].`
     });
 }
 
@@ -180,9 +175,10 @@ export const fetchMessage = (messageId: number) => (dispatch: Dispatch) => {
     // Получаем с сервера сообщение с соответствующим Id.
     fetchData<Message>({
         url,
-        requestActionType: ActionTypes.REQUEST_MESSAGES,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES_COMPLETED)),
         success: setCurrentMessage,
-        errorTitle: "fetch message error"
+        errorMessage: `Failed to fetch message with ID = ${messageId}.`
     })(dispatch);
     // Помечаем полученное сообщение как "прочитанное".
     markAsRead(messageId)(dispatch);
@@ -194,10 +190,11 @@ export function markAsRead(messageId: number) {
     return submitJsonData({
         jsonData: JSON.stringify({ messageIds: [messageId], isRead: true }),
         url: GLOBALS.api.messages,
-        method: "PUT",
-        requestActionType: ActionTypes.REQUEST_MESSAGES,
-        success: () => (dispatch) => dispatch(createSimpleAction(ActionTypes.REQUEST_MESSAGES_COMPLETED)),
-        errorTitle: "mark as read error",
+        method: HttpMethod.PUT,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES_COMPLETED)),
+        success: (dispatch) => dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES_COMPLETED)),
+        errorMessage: `Failed to mark message with ID = ${messageId} as read.`,
         notify: false
     });
 }

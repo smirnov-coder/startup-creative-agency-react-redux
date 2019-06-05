@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
-import findByType from "../../scripts/findComponentsByType";
-import "../../assets/lib/bootstrap-customized/css/bootstrap.css";
+import findByType from "@scripts/findComponentsByType";
+import "@bootstrap/css";
 import "./ListItem.scss";
 
 type SubcomponentProps = React.PropsWithChildren<{}>;

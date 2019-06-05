@@ -2,7 +2,7 @@
 import { Switch, Route, Redirect } from "react-router";
 import { Layout } from "@components/Shared/Layout";
 import AdminHeader from "@components/Shared/AdminHeader";
-import { AdminFooter } from "@components/Shared/AdminFooter";
+import AdminFooter from "@components/Shared/AdminFooter";
 import { withDocumentTitle } from "@components/Admin/withDocumentTitle";
 import LoginForm from "@containers/Auth/LoginForm";
 import { Routes } from "@scripts/constants";

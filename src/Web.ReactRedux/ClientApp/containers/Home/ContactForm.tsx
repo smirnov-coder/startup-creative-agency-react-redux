@@ -2,13 +2,15 @@
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import "./ContactForm.scss";
-import "jquery-validation";
 import { ContactFormModal } from "@components/Home/ContactFormModal";
 import { AppState } from "@store/state";
-import { Button } from "@components/Shared/Button";
+import Button from "@components/Shared/Button";
 import Loader from "@components/Shared/Loader";
 import { OperationDetails } from "@store/actions/appActions";
 import { sendMessage, clearSendingResult } from "@store/actions/messagesActions";
+import * as $ from "jquery";
+import "jquery-validation";
+import { VALIDATION_OPTIONS } from "@scripts/constants";
 
 export interface ContactMessage {
     name: string;
@@ -29,7 +31,13 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
     constructor(props: ContactFormProps) {
         super(props);
         this.state = {
-            message: {} as ContactMessage,
+            message: {
+                text: "",
+                name: "",
+                company: "",
+                subject: "",
+                email: ""
+            },
             showModal: false
         };
         this.handleChange = this.handleChange.bind(this);
@@ -41,6 +49,7 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
 
     componentDidMount(): void {
         this.validator = $(this.form.current).validate({
+            ...VALIDATION_OPTIONS,
             rules: {
                 name: {
                     required: true,
@@ -62,17 +71,20 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
                     maxlength: 5000
                 }
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
+            messages: {
+                name: {
+                    required: "Please enter your name."
+                },
+                email: {
+                    required: "Please enter your e-mail address."
+                },
+                text: {
+                    required: "Please enter your message."
+                }
             },
             submitHandler: (form, event) => {
                 event.preventDefault();
                 this.props.onSendMessage(this.state.message);
-            },
-            invalidHandler: (event, validator) => {
-                console.log("Form data is invalid.");//
             }
         });
     }
@@ -83,7 +95,7 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
 
     componentWillReceiveProps(nextProps: ContactFormProps): void {
         this.setState({
-            showModal: nextProps.sendingResult.message ? true : false
+            showModal: !!nextProps.sendingResult.message
         });
     }
 
@@ -143,7 +155,13 @@ class ContactForm extends React.Component<ContactFormProps, ContactFormState> {
 
     closeModal(): void {
         this.setState({
-            message: {} as ContactMessage,
+            message: {
+                text: "",
+                name: "",
+                company: "",
+                subject: "",
+                email: ""
+            },
             showModal: false
         });
         this.props.onResultModalClose();

@@ -17,15 +17,15 @@ class NotificationBar extends React.Component<NotificationBarProps> {
     render(): JSX.Element {
         return (
             <div className="notification-bar">
-                {this.props.items.map(item => (
-                    <NotificationItem key={item.id} {...item} onDelete={this.handleDelete} />
+                {this.props.items.map((item, index) => (
+                    <NotificationItem key={index} {...item} onDismiss={this.handleDelete} />
                 ))}
             </div>
         );
     }
 
     handleDelete(id: number): void {
-        this.props.deleteNotification(id);
+        this.props.onDelete(id);
     }
 }
 
@@ -40,12 +40,12 @@ const mapStateToProps = (state: AppState): StateProps => {
 }
 
 interface DispatchProps {
-    deleteNotification: (id: number) => void;
+    onDelete: (id: number) => void;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     return {
-        deleteNotification: bindActionCreators(deleteNotification, dispatch)
+        onDelete: bindActionCreators(deleteNotification, dispatch)
     };
 }
 

@@ -1,16 +1,19 @@
 ﻿import * as React from "react";
+import * as $ from "jquery";
 import { RouteComponentProps } from "react-router";
-import { AppState } from "@store/state";
-import { connect } from "react-redux";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
-import { Routes } from "@scripts/constants";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import { Routes, VALIDATION_OPTIONS } from "@scripts/constants";
 import { BlogPost } from "@store/entities";
 import { FileInput } from "@components/Admin/FileInput";
 import "./BlogPostItemForm.scss";
+import { imageValidationOptions } from "@scripts/utils";
 
-interface BlogPostItemFormProps extends StateProps, RouteComponentProps {
+interface ComponentProps {
+    item: BlogPost;
     onSubmit: (formData: FormData) => void;
 }
+
+type BlogPostItemFormProps = ComponentProps & RouteComponentProps;
 
 interface BlogPostItemFormState {
     Id: number;
@@ -20,7 +23,7 @@ interface BlogPostItemFormState {
     Content: string;
 }
 
-class BlogPostItemForm extends React.Component<BlogPostItemFormProps, BlogPostItemFormState> {
+export class BlogPostItemForm extends React.Component<BlogPostItemFormProps, BlogPostItemFormState> {
     constructor(props: BlogPostItemFormProps) {
         super(props);
         let { Id, Title, Category, ImagePath, Content } = this.props.item;
@@ -36,38 +39,35 @@ class BlogPostItemForm extends React.Component<BlogPostItemFormProps, BlogPostIt
     private validator: JQueryValidation.Validator;
 
     componentDidMount(): void {
+        let imageOptions: JQueryValidation.ValidationOptions = imageValidationOptions("FileName", "ImagePath");
         let $form = $(this.form.current);
         this.validator = $form.validate({
-            /// TODO: validation don't forget to
+            ...VALIDATION_OPTIONS,
             rules: {
                 Id: {
                     required: true
                 },
-                //IconClass: {
-                //    required: true,
-                //    maxlength: 50
-                //},
-                //Caption: {
-                //    required: true,
-                //    maxlength: 50
-                //},
-                //Description: {
-                //    required: true,
-                //    maxlength: 300
-                //}
+                Title: {
+                    required: true,
+                    maxlength: 100
+                },
+                Category: {
+                    required: true,
+                    maxlength: 50
+                },
+                Content: {
+                    required: true,
+                    maxlength: 5000
+                },
+                ...imageOptions.rules
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
+            messages: {
+                ...imageOptions.messages
             },
             submitHandler: (form, event) => {
                 event.preventDefault();
                 this.props.onSubmit(new FormData($form[0] as HTMLFormElement));
             },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
-            }
         });
     }
 
@@ -128,8 +128,8 @@ class BlogPostItemForm extends React.Component<BlogPostItemFormProps, BlogPostIt
                             fileInputId="Image"
                             fileInputName="Image"
                             buttonPosition="right"
-                            textInputId="img-file-name"
-                            textInputName="img-file-name" />
+                            textInputId="FileName"
+                            textInputName="FileName" />
                     </div>
                     <div className="blog-post-item-form__line form-group">
                         <label htmlFor="ImagePath">Current Image</label>
@@ -157,15 +157,3 @@ class BlogPostItemForm extends React.Component<BlogPostItemFormProps, BlogPostIt
         });
     }
 }
-
-interface StateProps {
-    item: BlogPost;
-}
-
-const mapStateToProps = (state: AppState): StateProps => {//console.log("state", state);//
-    return {
-        item: state.blog.current
-    };
-}
-
-export default connect(mapStateToProps, null)(BlogPostItemForm);

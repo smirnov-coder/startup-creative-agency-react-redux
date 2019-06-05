@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
@@ -44,7 +44,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         // POST api/messages
         //
         [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> SaveAsync(MessageViewModel message)
+        public async Task<IActionResult> SaveAsync(MessageBindingModel message)
         {
             try
             {

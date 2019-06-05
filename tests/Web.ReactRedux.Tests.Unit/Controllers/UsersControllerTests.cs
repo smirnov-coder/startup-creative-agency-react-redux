@@ -9,7 +9,7 @@ using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
 using StartupCreativeAgency.Web.ReactRedux.Controllers.Api;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using Xunit;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
@@ -161,7 +161,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         private MyProfileBindingModel GetTestProfileModel() =>
             new MyProfileBindingModel
             {
-                PersonalInfo = new PersonalInfoViewModel
+                PersonalInfo = new PersonalInfoBindingModel
                 {
                     FirstName = "Test FirstName",
                     LastName = "Test LastName",

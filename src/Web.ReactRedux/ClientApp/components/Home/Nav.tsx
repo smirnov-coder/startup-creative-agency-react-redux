@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 import "./Nav.scss";
 import smoothScroll from "@scripts/smoothScroll";
-
+/// TODO: Menu?
 export class Nav extends React.Component {
     render(): JSX.Element {
         return (

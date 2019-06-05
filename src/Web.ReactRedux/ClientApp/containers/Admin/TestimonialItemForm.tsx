@@ -1,15 +1,17 @@
 ﻿import * as React from "react";
+import * as $ from "jquery";
 import { RouteComponentProps } from "react-router";
 import { Testimonial } from "@store/entities";
-import { AppState } from "@store/state";
-import { connect } from "react-redux";
-import { Routes } from "@scripts/constants";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import { Routes, VALIDATION_OPTIONS } from "@scripts/constants";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import "./TestimonialItemForm.scss";
 
-interface TestimonialItemFormProps extends StateProps, RouteComponentProps {
+interface ComponentProps {
+    item: Testimonial;
     onSubmit: (formData: FormData) => void;
 }
+
+type TestimonialItemFormProps = ComponentProps & RouteComponentProps;
 
 interface TestimonialItemFormState {
     Id: number;
@@ -18,7 +20,7 @@ interface TestimonialItemFormState {
     Text: string;
 }
 
-class TestimonialItemForm extends React.Component<TestimonialItemFormProps, TestimonialItemFormState> {
+export class TestimonialItemForm extends React.Component<TestimonialItemFormProps, TestimonialItemFormState> {
     constructor(props: TestimonialItemFormProps) {
         super(props);
         let { Id, Author, Company, Text } = this.props.item;
@@ -35,35 +37,27 @@ class TestimonialItemForm extends React.Component<TestimonialItemFormProps, Test
     componentDidMount(): void {
         let $form = $(this.form.current);
         this.validator = $form.validate({
-            /// TODO: validation
+            ...VALIDATION_OPTIONS,
             rules: {
                 Id: {
                     required: true
                 },
-                //IconClass: {
-                //    required: true,
-                //    maxlength: 50
-                //},
-                //Caption: {
-                //    required: true,
-                //    maxlength: 50
-                //},
-                //Description: {
-                //    required: true,
-                //    maxlength: 300
-                //}
-            },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
+                Author: {
+                    required: true,
+                    maxlength: 30
+                },
+                Company: {
+                    required: true,
+                    maxlength: 50
+                },
+                Text: {
+                    required: true,
+                    maxlength: 300
+                }
             },
             submitHandler: (form, event) => {
                 event.preventDefault();
                 this.props.onSubmit(new FormData($form[0] as HTMLFormElement));
-            },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
             }
         });
     }
@@ -132,15 +126,3 @@ class TestimonialItemForm extends React.Component<TestimonialItemFormProps, Test
         });
     }
 }
-
-interface StateProps {
-    item: Testimonial;
-}
-
-const mapStateToProps = (state: AppState): StateProps => {//console.log("state", state);//
-    return {
-        item: state.testimonials.current
-    };
-}
-
-export default connect(mapStateToProps, null)(TestimonialItemForm);

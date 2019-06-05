@@ -1,7 +1,7 @@
 ﻿import { Action, Dispatch } from "redux";
-import { createSimpleAction, readAccessToken, OperationDetails, ValidationProblemDetails } from "./appActions";
+import { createNonPayloadAction, readAccessToken, OperationDetails, ValidationProblemDetails } from "./appActions";
 import { doSignOut } from "./authActions";
-import { Routes } from "@scripts/constants";
+import { Routes, HttpMethod } from "@scripts/constants";
 import { push } from "connected-react-router";
 import { decodeHTML, formatString, encodeHTML } from "@scripts/utils";
 import { Notification } from "@store/state";
@@ -10,14 +10,15 @@ import { history } from "@store/configureStore";
 
 interface FetchDataRequest<T> {
     url: string;
-    requestActionType: string;
+    requestInit: (dispatch: Dispatch) => void;
+    requestComplete: (dispatch: Dispatch) => void;
     success: (data: T) => Action;
-    errorTitle: string;
+    errorMessage: string;
 }
 
-export function fetchData<T>({ url, requestActionType, success, errorTitle }: FetchDataRequest<T>) {
+export function fetchData<T>({ url, requestInit, requestComplete, success, errorMessage }: FetchDataRequest<T>) {
     return (dispatch: Dispatch) => {
-        dispatch(createSimpleAction(requestActionType));
+        requestInit(dispatch);
         let accessToken: string = readAccessToken();
         let options: RequestInit = {
             headers: !accessToken ? {} : {
@@ -26,35 +27,40 @@ export function fetchData<T>({ url, requestActionType, success, errorTitle }: Fe
         };
         return fetch(url, options)
             .then(response => {
-                switch (response.status) {
-                    case 200:
-                    case 400:
-                    case 404:
-                        return response.json();
-
-                    case 401:
-                        dispatch(doSignOut());
-                        dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
-                        throw new Error(response.statusText);
-
-                    case 403:
-                        dispatch(push(Routes.ACCESS_DENIED));
-                        throw new Error(response.statusText);
-
-                    case 500:
-                        throw new Error(response.statusText);
-
-                    default:
-                        throw new Error("Unhandled response status code.");
-                }
+                return handleResponse(response, dispatch, requestComplete);
             })
             .then((data: T) => {
-                //console.log("data", data);//
                 dispatch(success(data));
             })
             .catch(error => {
-                console.error(errorTitle, error);
+                console.error(errorMessage);
+                console.error(error);
             });
+    }
+}
+
+export function handleResponse(response: Response, dispatch: Dispatch, badResponse: (dispatch: Dispatch) => void) {
+    switch (response.status) {
+        case 200:
+        case 400:
+        case 404:
+            return response.json();
+
+        case 401:
+            dispatch(doSignOut());
+            dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
+            badResponse(dispatch);
+            throw new Error(response.statusText);
+
+        case 403:
+            dispatch(push(Routes.ACCESS_DENIED));
+
+        case 500:
+            badResponse(dispatch);
+            throw new Error(response.statusText);
+
+        default:
+            throw new Error(`Unhandled response status code: ${response.status}.`);
     }
 }
 
@@ -93,21 +99,21 @@ export function setCurrent<T>(item: T, actionType: string): CurrentAction<T> {
 interface DeleteEntityRequest {
     entityId: number | string;
     urlTemplate: string;
-    requestActionType: string;
-    success: () => (dispatch: Dispatch) => void;
-    errorTitle: string;
+    requestInit: (dispatch: Dispatch) => void;
+    requestComplete: (dispatch: Dispatch) => void;
+    success: (dispatch: Dispatch) => void;
+    errorMessage: string;
 }
 
-export function deleteEntity({ entityId, urlTemplate, requestActionType, success, errorTitle }: DeleteEntityRequest) {
+export function deleteEntity({ entityId, urlTemplate, requestInit, requestComplete, success, errorMessage }: DeleteEntityRequest) {
     return (dispatch: Dispatch) => {
-        dispatch(createSimpleAction(requestActionType));
+        requestInit(dispatch);
         let accessToken: string = readAccessToken();
         if (!accessToken) {
-            //console.log("form page url", history.location.pathname);//
             return dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }))
         }
         let options: RequestInit = {
-            method: "DELETE",
+            method: HttpMethod.DELETE,
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
@@ -116,27 +122,7 @@ export function deleteEntity({ entityId, urlTemplate, requestActionType, success
         let url: string = formatString(template, entityId);
         return fetch(url, options)
             .then(response => {
-                switch (response.status) {
-                    case 200:
-                    case 400:
-                    case 404:
-                        return response.json();
-
-                    case 401:
-                        dispatch(doSignOut());
-                        dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
-                        throw new Error(response.statusText);
-
-                    case 403:
-                        dispatch(push(Routes.ACCESS_DENIED));
-                        throw new Error(response.statusText);
-
-                    case 500:
-                        throw new Error(response.statusText);
-
-                    default:
-                        throw new Error("Unhandled response status code.");
-                }
+                return handleResponse(response, dispatch, requestComplete);
             })
             .then((data: OperationDetails | ValidationProblemDetails) => {
                 let details: OperationDetails = null;
@@ -153,11 +139,12 @@ export function deleteEntity({ entityId, urlTemplate, requestActionType, success
                     type: details.isError ? "error" : "success",
                     text: encodeHTML(details.message)
                 };
-                dispatch(addNotification(notification))
-                success()(dispatch);
+                dispatch(addNotification(notification));
+                success(dispatch);
             })
             .catch(error => {
-                console.error(errorTitle, error);//
+                console.error(errorMessage);
+                console.error(error);
             });
     }
 }
@@ -165,20 +152,18 @@ export function deleteEntity({ entityId, urlTemplate, requestActionType, success
 interface SubmitFormDataRequest {
     formData: FormData;
     url: string;
-    method: "POST" | "PUT";
-    requestActionType: string;
-    successRedirectUrl: string;
-    completedActionType: string;
-    errorTitle: string;
+    method: HttpMethod;
+    requestInit: (dispatch: Dispatch) => void;
+    requestComplete: (dispatch: Dispatch) => void;
+    success: (dispatch: Dispatch) => void;
+    errorMessage: string;
 }
 
-export function submitFormData({ formData, url, method, requestActionType, successRedirectUrl, completedActionType,
-    errorTitle }: SubmitFormDataRequest) {
+export function submitFormData({ formData, url, method, requestInit, success, requestComplete, errorMessage }: SubmitFormDataRequest) {
     return (dispatch: Dispatch) => {
-        dispatch(createSimpleAction(requestActionType));
+        requestInit(dispatch);
         let accessToken: string = readAccessToken();
         if (!accessToken) {
-            //console.log("form page url", history.location.pathname);//
             return dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }))
         }
         let options: RequestInit = {
@@ -190,27 +175,7 @@ export function submitFormData({ formData, url, method, requestActionType, succe
         };
         return fetch(url, options)
             .then((response: Response) => {
-                switch (response.status) {
-                    case 200:
-                    case 400:
-                    case 404:
-                        return response.json();
-
-                    case 401:
-                        dispatch(doSignOut());
-                        dispatch(push(Routes.LOGIN, { returnUrl: history.location.pathname }));
-                        throw new Error(response.statusText);
-
-                    case 403:
-                        dispatch(push(Routes.ACCESS_DENIED));
-                        throw new Error(response.statusText);
-
-                    case 500:
-                        throw new Error(response.statusText);
-
-                    default:
-                        throw new Error("Unhandled response status code.");
-                }
+                return handleResponse(response, dispatch, requestComplete);
             })
             .then((data: OperationDetails | ValidationProblemDetails) => {
                 let isValidationError: boolean = "title" in data;
@@ -222,20 +187,20 @@ export function submitFormData({ formData, url, method, requestActionType, succe
                     }
                 } else {
                     details = <OperationDetails>data;
-                } //console.log("data", data);//
+                }
                 let notification: Notification = {
                     id: Date.now(),
                     type: details.isError ? "error" : "success",
                     text: encodeHTML(details.message)
                 };
                 dispatch(addNotification(notification))
-                dispatch(createSimpleAction(completedActionType));
-                if (!details.isError) {
-                    dispatch(push(successRedirectUrl));
-                }
+                !details.isError
+                    ? success(dispatch)
+                    : requestComplete(dispatch);
             })
-            .catch((error: Error) => {
-                console.error(errorTitle, error);//
+            .catch(error => {
+                console.error(errorMessage);
+                console.error(error);
             });
     }
 }

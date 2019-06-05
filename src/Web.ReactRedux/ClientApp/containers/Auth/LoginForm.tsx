@@ -3,11 +3,13 @@ import * as $ from "jquery";
 import { connect } from "react-redux";
 import { Dispatch, bindActionCreators } from "redux";
 import "./LoginForm.scss";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import { signIn } from "@store/actions/authActions";
 import { RouteComponentProps } from "react-router";
+import { VALIDATION_OPTIONS } from "@scripts/constants";
+import { AppState } from "@store/state";
 
-type LoginFormProps = DispatchProps & RouteComponentProps;
+type LoginFormProps = StateProps & DispatchProps & RouteComponentProps;
 
 interface LoginFormState {
     userName: string;
@@ -29,7 +31,7 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
 
     componentDidMount(): void {
         this.validator = $(this.form.current).validate({
-            /// TODO: не забыть про валидацию формы
+            ...VALIDATION_OPTIONS,
             rules: {
                 "user-name": {
                     required: true,
@@ -38,20 +40,11 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
                     required: true
                 }
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
-            },
             submitHandler: (form, event) => {
                 event.preventDefault();
-                // dispatch sign in here
                 let { state } = this.props.location;
                 let returnUrl: string = state ? state.returnUrl : null;
-                this.props.signIn({ ...this.state, returnUrl }); //console.log("login form submitted");//
-            },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
+                this.props.onSubmit({ ...this.state, returnUrl });
             }
         });
     }
@@ -64,12 +57,13 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
 
     render(): JSX.Element {
         let { userName, password, rememberMe } = this.state;
+        let { errorMessage } = this.props;
         return (
             <div className="login-form panel panel-default center-block">
                 <h3>Log in to Admin area.</h3>
                 <hr />
                 <form ref={this.form}>
-                    {/*<div asp-validation-summary="ModelOnly"></div>*/}
+                    {errorMessage ? <div className="login-form__error">{errorMessage}</div> : null}
                     <div className="form-group">
                         <label htmlFor="user-name" className="control-label">User Name</label>
                         <input id="user-name" name="user-name" className="login-form__user-name form-control"
@@ -107,6 +101,16 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
     }
 }
 
+interface StateProps {
+    errorMessage: string;
+}
+
+const mapStateToProps = (state: AppState): StateProps => {
+    return {
+        errorMessage: state.auth.errorMessage
+    };
+}
+
 interface SignInInfo {
     userName: string;
     password: string;
@@ -115,13 +119,13 @@ interface SignInInfo {
 }
 
 interface DispatchProps {
-    signIn: ({ userName, password, rememberMe, returnUrl }: SignInInfo) => void;
+    onSubmit: ({ userName, password, rememberMe, returnUrl }: SignInInfo) => void;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
     return {
-        signIn: bindActionCreators(signIn, dispatch),
+        onSubmit: bindActionCreators(signIn, dispatch),
     };
 }
 
-export default connect(null, mapDispatchToProps)(LoginForm);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

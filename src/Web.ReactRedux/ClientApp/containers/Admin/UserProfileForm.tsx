@@ -1,18 +1,23 @@
 ﻿import * as React from "react";
-import { AppState } from "@store/state";
+import * as $ from "jquery";
+import "jquery-validation/dist/additional-methods";
 import { DomainUser } from "@store/entities";
-import { Dispatch, bindActionCreators } from "redux";
-import { connect } from "react-redux";
 import PersonalInfo, { PersonalInfoProps } from "@components/Admin/PersonalInfo";
 import SocialLinks from "@components/Admin/SocialLinks";
-import "jquery-validation/dist/additional-methods";
 import "./UserProfileForm.scss";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
-import { updateProfile } from "@store/actions/usersActions";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
+import "@bootstrap/css";
+import { VALIDATION_OPTIONS } from "@scripts/constants";
 
-type UserProfileFormProps = StateProps & DispatchProps;
+interface UserProfileFormProps {
+    user: DomainUser;
+    onSubmit: (formData: FormData) => void;
+}
 
-class UserProfileForm extends React.Component<UserProfileFormProps> {
+export class UserProfileForm extends React.Component<UserProfileFormProps> {
+    private validator: JQueryValidation.Validator;
+    private form = React.createRef<HTMLFormElement>();
+
     componentDidMount(): void {
         let $form = $(this.form.current);
         let socialLinksRules = {};
@@ -34,7 +39,8 @@ class UserProfileForm extends React.Component<UserProfileFormProps> {
                 }
             });
         });
-        $form.validate({
+        this.validator = $form.validate({
+            ...VALIDATION_OPTIONS,
             rules: {
                 "PersonalInfo.FirstName": {
                     maxlength: 30
@@ -49,28 +55,25 @@ class UserProfileForm extends React.Component<UserProfileFormProps> {
                     url: true
                 },
                 "img-file-name": {
-                    accept: "image/*",
                     extension: "jpe?g|png|gif"
                 },
                 ...socialLinksRules
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
+            messages: {
+                "img-file-name": {
+                    extension: "Only '.jpeg', '.jpg', '.png', '.gif' files are acceptable."
+                }
             },
             submitHandler: (form, event) => {
                 event.preventDefault();
-                // dispatch sign in here
                 this.props.onSubmit(new FormData($form[0] as HTMLFormElement));
-            },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
             }
         });
     }
 
-    private form = React.createRef<HTMLFormElement>();
+    componentWillUnmount(): void {
+        this.validator.destroy()
+    }
 
     render(): JSX.Element {
         return (
@@ -99,25 +102,3 @@ class UserProfileForm extends React.Component<UserProfileFormProps> {
         };
     }
 }
-
-interface StateProps {
-    user: DomainUser;
-}
-
-const mapStateToProps = (state: AppState): StateProps => {
-    return {
-        user: state.users.current
-    };
-}
-
-interface DispatchProps {
-    onSubmit: (formData: FormData) => void;
-}
-
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
-    return {
-        onSubmit: bindActionCreators(updateProfile, dispatch)
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserProfileForm);

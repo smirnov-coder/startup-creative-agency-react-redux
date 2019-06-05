@@ -1,15 +1,19 @@
 ﻿import { Testimonial } from "@store/entities";
 import { fetchData, ItemsAction, addItems, setCurrent, CurrentAction, deleteEntity, submitFormData } from "./genericActions";
-import { GLOBALS, Routes } from "@scripts/constants";
+import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
 import { ActionTypes } from "./actionTypes";
 import { decodeHTML, formatString } from "@scripts/utils";
+import { push } from "connected-react-router";
+import { createNonPayloadAction } from "./appActions";
 
 export function fetchTestimonials() {
+    let url: string = GLOBALS.api.testimonials;
     return fetchData<Testimonial[]>({
         url: GLOBALS.api.testimonials,
-        requestActionType: ActionTypes.REQUEST_TESTIMONIALS,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_TESTIMONIALS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_TESTIMONIALS_COMPLETED)),
         success: addTestimonials,
-        errorTitle: "fetch testimonials error"
+        errorMessage: `Failed to fetch testimonials from ${url}.`
     });
 }
 
@@ -22,9 +26,10 @@ export function fetchTestimonial(testimonialId: number) {
     let url: string = formatString(template, testimonialId);
     return fetchData<Testimonial>({
         url,
-        requestActionType: ActionTypes.REQUEST_TESTIMONIALS,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_TESTIMONIALS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_TESTIMONIALS_COMPLETED)),
         success: setCurrentTestimonial,
-        errorTitle: "fetch testimonial error"
+        errorMessage: `Failed to fetch testimonial with ID = ${testimonialId} from ${url}.`
     });
 }
 
@@ -36,26 +41,30 @@ export function deleteTestimonial(testimonialId: number) {
     return deleteEntity({
         entityId: testimonialId,
         urlTemplate: GLOBALS.api.testimonial,
-        requestActionType: ActionTypes.REQUEST_TESTIMONIALS,
-        success: fetchTestimonials,
-        errorTitle: "delete testimonial error"
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_TESTIMONIALS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_TESTIMONIALS_COMPLETED)),
+        success: fetchTestimonials(),
+        errorMessage: `Failed to delete testimonial with ID = ${testimonialId}.`
     });
 }
 
-export const addTestimonial = (testimonialData: FormData) =>
-    submitTestimonialData(testimonialData, "POST", "add testimonial error");
+export function addTestimonial(testimonialData: FormData) {
+    return submitTestimonialData(testimonialData, HttpMethod.POST, "Failed to create new testimonial.");
+}
 
-export const updateTestimonial = (testimonialData: FormData) =>
-    submitTestimonialData(testimonialData, "PUT", "update testimonial error");
+export function updateTestimonial(testimonialData: FormData) {
+    return submitTestimonialData(testimonialData, HttpMethod.PUT,
+        `Failed to update testimonial with ID = ${testimonialData.get("Id")}.`)
+}
 
-function submitTestimonialData(testimonialData: FormData, method: "POST" | "PUT", errorTitle: string) {
+function submitTestimonialData(testimonialData: FormData, method: HttpMethod, errorMessage: string) {
     return submitFormData({
         url: GLOBALS.api.testimonials,
         method,
         formData: testimonialData,
-        successRedirectUrl: Routes.TESTIMONIALS,
-        requestActionType: ActionTypes.REQUEST_TESTIMONIALS,
-        completedActionType: ActionTypes.REQUEST_TESTIMONIALS_COMPLETED,
-        errorTitle
+        success: (dispatch) => dispatch(push(Routes.TESTIMONIALS)),
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_TESTIMONIALS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_TESTIMONIALS_COMPLETED)),
+        errorMessage
     });
 }

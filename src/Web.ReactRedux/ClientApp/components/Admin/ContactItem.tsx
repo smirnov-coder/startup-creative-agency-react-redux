@@ -2,7 +2,7 @@
 import { ListItem } from "./ListItem";
 import "@bootstrap/css";
 import "./ContactItem.scss";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import { ContactInfo } from "@store/entities";
 
 interface ContactItemProps {
@@ -92,7 +92,6 @@ export class ContactItem extends React.Component<ContactItemProps, ContactItemSt
     }
 
     componentDidUpdate(): void {
-        //console.log("content item did update");//
         this.props.onValuesCountChange();
     }
 

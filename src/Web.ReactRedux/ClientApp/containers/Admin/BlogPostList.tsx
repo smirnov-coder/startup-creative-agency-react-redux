@@ -1,24 +1,22 @@
 ﻿import * as React from "react";
 import { BlogPost } from "@store/entities";
-import { AppState } from "@store/state";
-import { Dispatch, bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { deleteBlogPost } from "@store/actions/blogActions";
-import { LinkButton } from "@components/Shared/LinkButton";
+import LinkButton from "@components/Shared/LinkButton";
 import { Routes } from "@scripts/constants";
 import { ButtonModifiers } from "@components/Shared/Button";
 import { BlogPostModal } from "@components/Home/BlogPostModal";
-import { BlogPostItem } from "@components/Admin/BlogPostItem";
 import "./BlogPostList.scss";
+import BlogPostItem from "@components/Admin/BlogPostItem";
 
-type BlogPostListProps = StateProps & DispatchProps;
+interface BlogPostListProps {
+    items: BlogPost[];
+}
 
 interface BlogPostListState {
     showModal: boolean;
     blogPost: BlogPost;
 }
 
-class BlogPostList extends React.Component<BlogPostListProps, BlogPostListState> {
+export class BlogPostList extends React.Component<BlogPostListProps, BlogPostListState> {
     constructor(props: BlogPostListProps) {
         super(props);
         this.state = {
@@ -30,13 +28,12 @@ class BlogPostList extends React.Component<BlogPostListProps, BlogPostListState>
     }
 
     render(): JSX.Element {
-        let { items, deleteBlogPost } = this.props;
         return (
             <div className="blog-post-list">
                 <div className="blog-post-list__items">
-                    {items.map(item => (
-                        <div key={item.Id} className="blog-post-list__item">
-                            <BlogPostItem {...item} onDelete={deleteBlogPost} onView={this.viewBlogPost} />
+                    {this.props.items.map((item, index) => (
+                        <div key={index} className="blog-post-list__item">
+                            <BlogPostItem item={item} onView={this.viewBlogPost} />
                         </div>
                     ))}
                 </div>
@@ -62,25 +59,3 @@ class BlogPostList extends React.Component<BlogPostListProps, BlogPostListState>
         });
     }
 }
-
-interface StateProps {
-    items: BlogPost[];
-}
-
-const mapStateToProps = (state: AppState): StateProps => {
-    return {
-        items: state.blog.items
-    };
-}
-
-interface DispatchProps {
-    deleteBlogPost: (blogPostId: number) => void;
-}
-
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
-    return {
-        deleteBlogPost: bindActionCreators(deleteBlogPost, dispatch)
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(BlogPostList);

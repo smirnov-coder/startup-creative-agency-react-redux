@@ -3,7 +3,7 @@ import UserWidget from "@containers/Shared/UserWidget";
 import "./AdminHeader.scss";
 import { AppState } from "@store/state";
 import { connect } from "react-redux";
-import { Logo } from "./Logo";
+import Logo from "./Logo";
 
 type AdminHeaderProps = StateProps;
 

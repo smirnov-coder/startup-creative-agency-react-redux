@@ -1,15 +1,19 @@
 ﻿import * as React from "react";
 import { WorkExample } from "@store/entities";
-import { connect } from "react-redux";
 import { GalleryFilter } from "@components/Home/GalleryFilter";
 import { WorkExamplePreview } from "@components/Home/WorkExamplePreview";
 import { WorkExampleModal } from "@components/Home/WorkExampleModal";
 import "@bootstrap/css";
 import "./Gallery.scss";
-import { AppState } from "@store/state";
 import Loader from "@components/Shared/Loader";
+import * as $ from "jquery";
+import { compose } from "redux";
+import { withLoader } from "@containers/Admin/withLoader";
+import { withDataFeed } from "@containers/Admin/withDataFeed";
 
-type GalleryProps = StateProps;
+interface GalleryProps {
+    items: WorkExample[];
+}
 
 interface GalleryState {
     activeFilter: string;
@@ -34,7 +38,7 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
 
     render(): JSX.Element {
         let categories: string[] = this.props.items.map(workExample => workExample.Category);
-        let { isLoading, items } = this.props;
+        let { items } = this.props;
         let { activeFilter, ...restState } = this.state;
         let elements: JSX.Element[] = [];
         for (let index = 0; index < items.length; index++) {
@@ -52,16 +56,12 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
             <section className="gallery">
                 <h3 className="sr-only">Work Example Gallery</h3>
                 <div className="gallery__filter">
-                    {isLoading
-                        ? <Loader />
-                        : <GalleryFilter categories={categories} activeFilter={activeFilter}
-                                onChangeFilter={this.changeFilter} />
-                    }
+                    <GalleryFilter categories={categories} activeFilter={activeFilter} onChangeFilter={this.changeFilter} />
                 </div>
                 <div className="gallery__items row">
-                    {isLoading ? <Loader /> : elements.map(element => element)}
+                    {elements.map(element => element)}
                 </div>
-                <WorkExampleModal {...restState} onClose={this.closeModal} />
+                <WorkExampleModal onClose={this.closeModal} {...restState} />
             </section>
         );
     }
@@ -81,9 +81,6 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
     }
 
     changeFilter(activeFilter: string): void {
-        if (!$) {
-            throw new Error("jQuery '$' is required.");
-        }
         this.setState({
             activeFilter
         });
@@ -99,16 +96,9 @@ class Gallery extends React.Component<GalleryProps, GalleryState> {
     }
 }
 
-interface StateProps {
-    isLoading: boolean;
-    items: WorkExample[];
-}
+const composed = compose(
+    withLoader(Loader, state => state.works.isLoading),
+    withDataFeed(state => state.works.items, "items")
+);
 
-const mapStateToProps = (state: AppState): StateProps => {
-    return {
-        isLoading: state.works.isLoading, 
-        items: state.works.items
-    };
-}
-
-export default connect(mapStateToProps, null)(Gallery);
+export default composed(Gallery);

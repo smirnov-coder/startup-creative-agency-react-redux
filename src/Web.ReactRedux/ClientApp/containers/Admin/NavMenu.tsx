@@ -8,7 +8,7 @@ import { Routes } from "@scripts/constants";
 
 type NavMenuProps = StateProps;
 
-const NavMenu: React.SFC<NavMenuProps> = (props: NavMenuProps) => {
+const NavMenu: React.SFC<NavMenuProps> = ({ isAdmin, newMessagesCount }: NavMenuProps) => {
     let links: any = {
         "My Profile": Routes.MY_PROFILE,
         "Services": Routes.SERVICES,
@@ -18,15 +18,14 @@ const NavMenu: React.SFC<NavMenuProps> = (props: NavMenuProps) => {
         "Brands": Routes.BRANDS,
         "Testimonials": Routes.TESTIMONIALS
     };
-    let { isAdmin, newMessagesCount } = props;
     if (isAdmin) {
         links["Contacts"] = Routes.CONTACTS;
         links["Messages"] = Routes.MESSAGES;
     }
     return (
         <Menu className="nav-menu">
-            {Object.keys(links).map(pageName => (
-                <Menu.Item key={pageName} className="nav-menu__item">
+            {Object.keys(links).map((pageName, index) => (
+                <Menu.Item key={index} className="nav-menu__item">
                     <NavLink to={links[pageName]} className="nav-menu__link custom-link">
                         {pageName}
                         {pageName === "Messages" && newMessagesCount > 0

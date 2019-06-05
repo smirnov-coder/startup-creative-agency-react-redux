@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
-using StartupCreativeAgency.Web.ReactRedux.ViewModels;
+using StartupCreativeAgency.Web.ReactRedux.Models;
 using StartupCreativeAgency.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

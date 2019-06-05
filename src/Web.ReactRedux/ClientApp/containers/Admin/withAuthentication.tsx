@@ -5,11 +5,11 @@ import { Redirect, RouteComponentProps } from "react-router";
 import { Routes } from "@scripts/constants";
 import Loader from "@components/Shared/Loader";
 
-export function withAuthentication<T extends RouteComponentProps>(adminCheck: boolean = false) {
-    return (WrappedComponent: React.ComponentType<T>) => {
+export function withAuthentication(adminCheck: boolean = false) {
+    return <T extends RouteComponentProps>(WrappedComponent: React.ComponentType<T>) => {
         class WithAuthentication extends React.Component<StateProps & T> {
             render(): JSX.Element {
-                let { isLoading, isAuthenticated, isAdmin, ...restProps } = this.props;
+                let { isLoading, isAuthenticated, isAdmin, ...restProps } = this.props as any;
                 return (
                     isLoading
                         ? <Loader modifiers={["loader--behavior-fill"]} />
@@ -36,6 +36,7 @@ export function withAuthentication<T extends RouteComponentProps>(adminCheck: bo
             };
         }
 
+        // @ts-ignore: https://github.com/piotrwitek/react-redux-typescript-guide/issues/100
         return connect(mapStateToProps, null)(WithAuthentication);
     }
 }

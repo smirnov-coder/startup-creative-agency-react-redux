@@ -2,11 +2,11 @@
 import { AppState } from "@store/state";
 import { connect } from "react-redux";
 
-export function withLoader<T extends object>(LoaderComponent: React.ComponentType, isLoading: (state: AppState) => boolean) {
-    return (WrappedComponent: React.ComponentType<T>) => {
-        class WithLoader extends React.Component<StateProps> {
+export function withLoader(LoaderComponent: React.ComponentType, isLoading: (state: AppState) => boolean) {
+    return <T extends object>(WrappedComponent: React.ComponentType<T>) => {
+        class WithLoader extends React.Component<StateProps & T> {
             render(): JSX.Element {
-                let { isLoading, ...restProps } = this.props;
+                let { isLoading, ...restProps } = this.props as any;
                 return (this.props.isLoading
                     ? <LoaderComponent />
                     : <WrappedComponent {...restProps} />
@@ -23,7 +23,8 @@ export function withLoader<T extends object>(LoaderComponent: React.ComponentTyp
                 isLoading: isLoading(state)
             };
         }
-
+        
+        // @ts-ignore: https://github.com/piotrwitek/react-redux-typescript-guide/issues/100
         return connect(mapStateToProps, null)(WithLoader);
     }
 }

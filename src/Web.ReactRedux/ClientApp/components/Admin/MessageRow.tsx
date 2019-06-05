@@ -26,6 +26,7 @@ export class MessageRow extends React.Component<MessageRowProps, MessageRowState
 
     render(): JSX.Element {
         let { message, messageNo } = this.props;
+        let url: string = concretizeRoute(Routes.MESSAGE, ":id", message.Id);
         return (
             <tr className={`message-row ${message.IsRead ? "" : "message-row--unread"}`}>
                 <td>{messageNo}</td>
@@ -38,7 +39,7 @@ export class MessageRow extends React.Component<MessageRowProps, MessageRowState
                 <td className="message-row__text">{message.Text}</td>
                 <td className="text-nowrap">{getDateTimeString(message.CreatedOn)}</td>
                 <td>
-                    <Link to={concretizeRoute(Routes.MESSAGE, ":id", message.Id)} className="custom-link">Read</Link>
+                    <Link to={url} className="custom-link">Read</Link>
                 </td>
             </tr>
         );

@@ -39,14 +39,15 @@ export default function authReducer(state: AuthState = initialState.auth, action
         }
 
         case ActionTypes.SIGN_IN: {
-            let { userName, photo, isAdmin, isAuthenticated } = (action as SignInAction).payload.appState
+            let { userName, photo, isAdmin, isAuthenticated, roles } = (action as SignInAction).payload.appState
             return {
                 isLoading: false,
                 errorMessage: "",
                 userName,
                 photo,
                 isAuthenticated,
-                isAdmin
+                isAdmin,
+                roles
             };
         }
 
@@ -57,7 +58,8 @@ export default function authReducer(state: AuthState = initialState.auth, action
                 isAuthenticated: false,
                 isAdmin: false,
                 isLoading: false,
-                errorMessage: ""
+                errorMessage: "",
+                roles: []
             };
         }
 

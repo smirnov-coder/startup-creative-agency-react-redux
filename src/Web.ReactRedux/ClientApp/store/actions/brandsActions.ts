@@ -1,15 +1,19 @@
 ﻿import { Brand } from "@store/entities";
 import { ActionTypes } from "./actionTypes";
-import { GLOBALS, Routes } from "@scripts/constants";
+import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
 import { fetchData, ItemsAction, addItems, setCurrent, CurrentAction, deleteEntity, submitFormData } from "./genericActions";
 import { decodeHTML, formatString } from "@scripts/utils";
+import { push } from "connected-react-router";
+import { createNonPayloadAction } from "./appActions";
 
 export function fetchBrands() {
+    let url: string = GLOBALS.api.brands;
     return fetchData<Brand[]>({
-        url: GLOBALS.api.brands,
-        requestActionType: ActionTypes.REQUEST_BRANDS,
+        url,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_BRANDS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_BRANDS_COMPLETED)),
         success: addBrands,
-        errorTitle: "fetch brands error"
+        errorMessage: `Failed to fetch brands from ${url}.`
     });
 }
 
@@ -22,9 +26,10 @@ export function fetchBrand(brandId: number) {
     let url: string = formatString(template, brandId);
     return fetchData<Brand>({
         url,
-        requestActionType: ActionTypes.REQUEST_BRANDS,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_BRANDS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_BRANDS_COMPLETED)),
         success: setCurrentBrand,
-        errorTitle: "fetch brand error"
+        errorMessage: `Failed to fetch brand with ID = ${brandId} from ${url}.`
     });
 }
 
@@ -36,24 +41,27 @@ export function deleteBrand(brandId: number) {
     return deleteEntity({
         entityId: brandId,
         urlTemplate: GLOBALS.api.brand,
-        requestActionType: ActionTypes.REQUEST_BRANDS,
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_BRANDS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_BRANDS_COMPLETED)),
         success: fetchBrands,
-        errorTitle: "delete brand error"
+        errorMessage: `Failed to delete brand with ID = ${brandId}.`
     });
 }
 
-export const addBrand = (brandData: FormData) => submitBrandData(brandData, "POST", "add brand error");
+export const addBrand = (brandData: FormData) => submitBrandData(brandData, HttpMethod.POST, "Failed to create new brand.");
 
-export const updateBrand = (brandData: FormData) => submitBrandData(brandData, "PUT", "update brand error");
+export function updateBrand(brandData: FormData) {
+    return submitBrandData(brandData, HttpMethod.PUT, `Failed to update brand with ID = ${brandData.get("Id")}.`);
+}
 
-function submitBrandData(brandData: FormData, method: "POST" | "PUT", errorTitle: string) {
+function submitBrandData(brandData: FormData, method: HttpMethod, errorMessage: string) {
     return submitFormData({
         url: GLOBALS.api.brands,
         method,
         formData: brandData,
-        successRedirectUrl: Routes.BRANDS,
-        requestActionType: ActionTypes.REQUEST_BRANDS,
-        completedActionType: ActionTypes.REQUEST_BRANDS_COMPLETED,
-        errorTitle
+        success: dispatch => dispatch(push(Routes.BRANDS)),
+        requestInit: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_BRANDS)),
+        requestComplete: dispatch => dispatch(createNonPayloadAction(ActionTypes.REQUEST_BRANDS_COMPLETED)),
+        errorMessage
     });
 }

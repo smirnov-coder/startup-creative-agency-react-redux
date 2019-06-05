@@ -14,11 +14,24 @@ export function getUserInfoString(user: DomainUser): string {
             ? `${profile.FirstName} ${profile.LastName}`
             : profile.FirstName
                 ? profile.FirstName
-                : null;
+                : "";
         return `@${user.Identity.UserName}${fullName ? ` (${fullName})` : ""}`;
     } else {
         return "--NotSet--";
     }
+}
+
+export function getUserFullName(user: DomainUser): string {
+    if (!user) {
+        return null;
+    }
+    let profile: UserProfile = user.Profile;
+    let fullName: string = profile.FirstName && profile.LastName
+        ? `${profile.FirstName} ${profile.LastName}`
+        : profile.FirstName
+            ? profile.FirstName
+            : "--NotSet--";
+    return fullName;
 }
 
 export const encodeHTML = (source: string): string => $("<div />").text(source).html();
@@ -30,3 +43,28 @@ export function concretizeRoute(routeTemplate: Routes, routeParam: string | RegE
 }
 
 export const formatString = (template: string, ...args: any[]): string => $.validator.format(template, args);
+
+export function imageValidationOptions(fileInputId: string, pathInputId: string): JQueryValidation.ValidationOptions {
+    const METHOD_NAME = "atLeastOneOfTwo";
+    if (!$.validator.methods[METHOD_NAME]) {
+        $.validator.addMethod(METHOD_NAME, function (value: string, element: HTMLElement, params: string) {
+            let result: boolean = this.optional(element) == true || !!value || !!$(`#${params}`).val();
+            return result;
+        }, "No value was provided.");
+    }
+    let result: JQueryValidation.ValidationOptions = {
+        rules: {
+            [fileInputId]: {
+                [METHOD_NAME]: pathInputId,
+                extension: "jpe?g|png|gif"
+            }
+        },
+        messages: {
+            [fileInputId]: {
+                [METHOD_NAME]: "Image must be provided.",
+                extension: "Only '.jpeg', '.jpg', '.png', '.gif' files are acceptable."
+            }
+        },
+    }
+    return result;
+}

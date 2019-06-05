@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using StartupCreativeAgency.Web.ReactRedux.Attributes;
 
-namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
+namespace StartupCreativeAgency.Web.ReactRedux.Models
 {
     public class MyProfileBindingModel
     {
-        public PersonalInfoViewModel PersonalInfo { get; set; }
+        public PersonalInfoBindingModel PersonalInfo { get; set; }
 
         public IList<SocialLinkViewModel> SocialLinks { get; set; }
     }
 
-    public class PersonalInfoViewModel
+    public class PersonalInfoBindingModel
     {
         [StringLength(30)]
         public string FirstName { get; set; }
@@ -27,10 +27,8 @@ namespace StartupCreativeAgency.Web.ReactRedux.ViewModels
         [StringLength(100)]
         public string JobPosition { get; set; }
 
-        [DataType(DataType.ImageUrl)]
         public string PhotoFilePath { get; set; }
 
-        [DataType(DataType.Upload)]
         [ImageFileExtensions]
         public IFormFile Image { get; set; }
     }

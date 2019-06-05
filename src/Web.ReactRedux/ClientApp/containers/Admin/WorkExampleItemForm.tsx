@@ -1,16 +1,18 @@
 ﻿import * as React from "react";
 import { RouteComponentProps } from "react-router";
 import { WorkExample } from "@store/entities";
-import { AppState } from "@store/state";
-import { connect } from "react-redux";
-import { Routes } from "@scripts/constants";
+import { Routes, VALIDATION_OPTIONS, IMAGE_VALIDATION_OPTIONS } from "@scripts/constants";
 import { FileInput } from "@components/Admin/FileInput";
-import { Button, ButtonModifiers } from "@components/Shared/Button";
+import Button, { ButtonModifiers } from "@components/Shared/Button";
 import "./WorkExampleItemForm.scss";
+import { imageValidationOptions } from "@scripts/utils";
 
-interface WorkExampleItemFormProps extends StateProps, RouteComponentProps {
+interface ComponentProps {
+    item: WorkExample;
     onSubmit: (formData: FormData) => void;
 }
+
+type WorkExampleItemFormProps = ComponentProps & RouteComponentProps;
 
 interface WorkExampleItemFormState {
     Id: number;
@@ -20,7 +22,7 @@ interface WorkExampleItemFormState {
     Description: string;
 }
 
-class WorkExampleItemForm extends React.Component<WorkExampleItemFormProps, WorkExampleItemFormState> {
+export class WorkExampleItemForm extends React.Component<WorkExampleItemFormProps, WorkExampleItemFormState> {
     constructor(props: WorkExampleItemFormProps) {
         super(props);
         let { Id, Name, Category, ImagePath, Description } = this.props.item;
@@ -36,37 +38,34 @@ class WorkExampleItemForm extends React.Component<WorkExampleItemFormProps, Work
     private validator: JQueryValidation.Validator;
 
     componentDidMount(): void {
+        let imageOptions: JQueryValidation.ValidationOptions = imageValidationOptions("FileName", "ImagePath");
         let $form = $(this.form.current);
         this.validator = $form.validate({
-            /// TODO: validation don't forget to
+            ...VALIDATION_OPTIONS,
             rules: {
                 Id: {
                     required: true
                 },
-                //IconClass: {
-                //    required: true,
-                //    maxlength: 50
-                //},
-                //Caption: {
-                //    required: true,
-                //    maxlength: 50
-                //},
-                //Description: {
-                //    required: true,
-                //    maxlength: 300
-                //}
+                Name: {
+                    required: true,
+                    maxlength: 20
+                },
+                Category: {
+                    required: true,
+                    maxlength: 20
+                },
+                Description: {
+                    required: true,
+                    maxlength: 500
+                },
+                ...imageOptions.rules
             },
-            errorElement: "span",
-            errorClass: "field-validation-error",
-            highlight: (element, errorClass, validClass) => {
-                $(element).addClass("input-validation-error");
+            messages: {
+                ...imageOptions.messages
             },
             submitHandler: (form, event) => {
                 event.preventDefault();
                 this.props.onSubmit(new FormData($form[0] as HTMLFormElement));
-            },
-            invalidHandler: (event, validator) => {
-                console.error("Form data is invalid.");//
             }
         });
     }
@@ -127,8 +126,8 @@ class WorkExampleItemForm extends React.Component<WorkExampleItemFormProps, Work
                             fileInputId="Image"
                             fileInputName="Image"
                             buttonPosition="right"
-                            textInputId="img-file-name"
-                            textInputName="img-file-name" />
+                            textInputId="FileName"
+                            textInputName="FileName" />
                     </div>
                     <div className="work-example-item-form__line form-group">
                         <label htmlFor="ImagePath">Current Image</label>
@@ -156,15 +155,3 @@ class WorkExampleItemForm extends React.Component<WorkExampleItemFormProps, Work
         });
     }
 }
-
-interface StateProps {
-    item: WorkExample;
-}
-
-const mapStateToProps = (state: AppState): StateProps => {//console.log("state", state);//
-    return {
-        item: state.works.current
-    };
-}
-
-export default connect(mapStateToProps, null)(WorkExampleItemForm);

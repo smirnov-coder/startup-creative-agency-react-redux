@@ -2,8 +2,8 @@
 import PageContent from "./PageContent";
 import { RouteComponentProps, match } from "react-router";
 
-export function withPageContentWrapper<T extends RouteComponentProps>(caption: string | ((routeMatch: match) => string)) {
-    return (WrappedComponent: React.ComponentType<T>) => {
+export function withPageContentWrapper(caption: string | ((routeMatch: match) => string)) {
+    return <T extends RouteComponentProps>(WrappedComponent: React.ComponentType<T>) => {
         return class WithPageContentWrapper extends React.Component<T> {
             render(): JSX.Element {
                 return (
