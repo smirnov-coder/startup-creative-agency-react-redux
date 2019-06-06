@@ -1,8 +1,6 @@
-﻿import { TestimonialsState, initialState as appState } from "@store/state";
-import { HomePageModelAction } from "@store/actions/appActions";
-import { ActionTypes } from "@store/actions/actionTypes";
-import { Testimonial } from "@store/entities";
-import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
+﻿import { Testimonial } from "@store/entities";
+import { TestimonialsState, initialState as appState } from "@store/state";
+import { ItemsAction, CurrentAction, ActionTypes, HomePageModelAction } from "@store/actions";
 
 type TestimonialsActions =
     | ItemsAction<Testimonial>
@@ -32,7 +30,6 @@ function testimonialsReducer(state: TestimonialsState = initialState, action: Te
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as HomePageModelAction).payload.model.testimonials
             };
         }
@@ -41,7 +38,6 @@ function testimonialsReducer(state: TestimonialsState = initialState, action: Te
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as ItemsAction<Testimonial>).payload.items
             };
         }
@@ -50,7 +46,6 @@ function testimonialsReducer(state: TestimonialsState = initialState, action: Te
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 current: (action as CurrentAction<Testimonial>).payload.item
             };
         }

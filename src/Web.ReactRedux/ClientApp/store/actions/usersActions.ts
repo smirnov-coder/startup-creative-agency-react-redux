@@ -1,13 +1,25 @@
-﻿import { DomainUser } from "@store/entities";
-import { Dispatch } from "redux";
-import { createNonPayloadAction, readAccessToken, OperationDetails, ValidationProblemDetails } from "./appActions";
-import { ActionTypes } from "./actionTypes";
-import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
+﻿import { Dispatch } from "redux";
 import { push } from "connected-react-router";
-import { decodeHTML, encodeHTML, formatString } from "@scripts/utils";
-import { addNotification } from "./notificationsActions";
 import { Notification } from "@store/state";
-import { fetchData, ItemsAction, addItems, CurrentAction, setCurrent, deleteEntity, submitFormData, handleResponse } from "./genericActions";
+import { DomainUser } from "@store/entities";
+import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
+import { decodeHTML, encodeHTML, formatString } from "@scripts/utils";
+import {
+    createNonPayloadAction,
+    readAccessToken,
+    OperationDetails,
+    ValidationProblemDetails,
+    ActionTypes,
+    addNotification,
+    fetchData,
+    ItemsAction,
+    addItems,
+    CurrentAction,
+    setCurrent,
+    deleteEntity,
+    submitFormData,
+    handleResponse
+} from "@store/actions";
 
 export function fetchMe() {
     let url: string = GLOBALS.api.self;

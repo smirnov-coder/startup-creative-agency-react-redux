@@ -1,10 +1,18 @@
-﻿import { Brand } from "@store/entities";
-import { ActionTypes } from "./actionTypes";
+﻿import { push } from "connected-react-router";
+import { Brand } from "@store/entities";
 import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
-import { fetchData, ItemsAction, addItems, setCurrent, CurrentAction, deleteEntity, submitFormData } from "./genericActions";
 import { decodeHTML, formatString } from "@scripts/utils";
-import { push } from "connected-react-router";
-import { createNonPayloadAction } from "./appActions";
+import {
+    fetchData,
+    ItemsAction,
+    addItems,
+    setCurrent,
+    CurrentAction,
+    deleteEntity,
+    submitFormData,
+    ActionTypes,
+    createNonPayloadAction
+} from "@store/actions";
 
 export function fetchBrands() {
     let url: string = GLOBALS.api.brands;

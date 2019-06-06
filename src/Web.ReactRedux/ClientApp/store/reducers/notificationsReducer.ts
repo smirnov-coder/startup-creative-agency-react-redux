@@ -1,6 +1,5 @@
 ﻿import { NotificationsState, initialState as appState } from "@store/state";
-import { AddedNotificationAction, DeletedNotificationAction } from "@store/actions/notificationsActions";
-import { ActionTypes } from "@store/actions/actionTypes";
+import { AddedNotificationAction, DeletedNotificationAction, ActionTypes } from "@store/actions";
 
 type NotificationsActions =
     | AddedNotificationAction

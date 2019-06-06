@@ -1,6 +1,6 @@
-﻿import { Notification } from "@store/state";
-import { Action } from "redux";
-import { ActionTypes } from "./actionTypes";
+﻿import { Action } from "redux";
+import { Notification } from "@store/state";
+import { ActionTypes } from "@store/actions";
 
 export interface AddedNotificationAction extends Action {
     payload: {

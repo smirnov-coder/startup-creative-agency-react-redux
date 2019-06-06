@@ -1,9 +1,7 @@
-﻿import { SocialLink, ContactInfo } from "@store/entities";
-import { Action } from "redux";
-import { fetchData, submitFormData } from "./genericActions";
+﻿import { Action } from "redux";
+import { SocialLink, ContactInfo } from "@store/entities";
 import { GLOBALS, HttpMethod } from "@scripts/constants";
-import { ActionTypes } from "./actionTypes";
-import { createNonPayloadAction } from "./appActions";
+import { fetchData, submitFormData, ActionTypes, createNonPayloadAction } from "@store/actions";
 
 interface ContactsPageModel {
     ContactInfos: ContactInfo[];

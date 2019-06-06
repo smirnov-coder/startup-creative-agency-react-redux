@@ -1,10 +1,17 @@
-﻿import { BlogPost } from "@store/entities";
-import { ActionTypes } from "./actionTypes";
-import { decodeHTML, formatString } from "@scripts/utils";
+﻿import { push } from "connected-react-router";
+import { BlogPost } from "@store/entities";
 import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
-import { fetchData, ItemsAction, deleteEntity, CurrentAction, setCurrent, submitFormData } from "./genericActions";
-import { push } from "connected-react-router";
-import { createNonPayloadAction } from "./appActions";
+import { decodeHTML, formatString } from "@scripts/utils";
+import {
+    fetchData,
+    ItemsAction,
+    deleteEntity,
+    CurrentAction,
+    setCurrent,
+    submitFormData,
+    ActionTypes,
+    createNonPayloadAction
+} from "@store/actions";
 
 interface FetchBlogPostsRequest {
     skip?: number;

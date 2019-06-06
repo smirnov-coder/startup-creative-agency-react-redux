@@ -1,8 +1,7 @@
 ﻿import { Action } from "redux";
 import * as Entities from "@store/entities";
-import { ActionTypes } from "./actionTypes";
 import { GLOBALS, TOKEN_STORAGE_KEY } from "@scripts/constants";
-import { fetchData } from "./genericActions";
+import { ActionTypes, fetchData } from "@store/actions";
 
 export interface InitialAppState {
     userName: string;

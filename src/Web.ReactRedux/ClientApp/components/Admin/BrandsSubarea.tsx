@@ -1,17 +1,17 @@
 ﻿import * as React from "react";
-import { Routes } from "@scripts/constants";
-import { Switch, Route, Redirect, match } from "react-router";
 import { compose } from "redux";
+import { Switch, Route, Redirect, match } from "react-router";
+import { Brand } from "@store/entities";
+import { Routes } from "@scripts/constants";
+import { fetchBrands, addBrand, fetchBrand, updateBrand } from "@store/actions";
+import Loader from "@components/Shared/Loader";
+import BrandList from "@containers/Admin/BrandList";
+import { BrandItemForm } from "@containers/Admin/BrandItemForm";
 import { withInitializer } from "@containers/Admin/withInitializer";
 import { withLoader } from "@containers/Admin/withLoader";
-import Loader from "@components/Shared/Loader";
-import { withPageContentWrapper } from "./withPageContentWrapper";
-import { fetchBrands, addBrand, fetchBrand, updateBrand } from "@store/actions/brandsActions";
-import { Brand } from "@store/entities";
+import { withPageContentWrapper } from "@components/Admin/withPageContentWrapper";
 import { withSubmitHandler } from "@containers/Admin/withSubmitHandler";
-import { withDocumentTitle } from "./withDocumentTitle";
-import { BrandList } from "@containers/Admin/BrandList";
-import { BrandItemForm } from "@containers/Admin/BrandItemForm";
+import { withDocumentTitle } from "@components/Admin/withDocumentTitle";
 import { withDataFeed } from "@containers/Admin/withDataFeed";
 
 const BrandsSubarea: React.SFC = () => {

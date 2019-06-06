@@ -1,12 +1,10 @@
 ﻿import { Action, Dispatch } from "redux";
-import { createNonPayloadAction, readAccessToken, OperationDetails, ValidationProblemDetails } from "./appActions";
-import { doSignOut } from "./authActions";
-import { Routes, HttpMethod } from "@scripts/constants";
 import { push } from "connected-react-router";
-import { decodeHTML, formatString, encodeHTML } from "@scripts/utils";
-import { Notification } from "@store/state";
-import { addNotification } from "./notificationsActions";
 import { history } from "@store/configureStore";
+import { Notification } from "@store/state";
+import { Routes, HttpMethod } from "@scripts/constants";
+import { decodeHTML, formatString, encodeHTML } from "@scripts/utils";
+import { readAccessToken, OperationDetails, ValidationProblemDetails, doSignOut, addNotification } from "@store/actions";
 
 interface FetchDataRequest<T> {
     url: string;

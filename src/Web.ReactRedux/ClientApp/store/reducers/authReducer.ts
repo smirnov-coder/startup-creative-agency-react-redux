@@ -1,15 +1,15 @@
-﻿import { AuthState, initialState } from "@store/state";
-import { InitialAppStateAction } from "@store/actions/appActions";
-import { ActionTypes } from "@store/actions/actionTypes";
-import { SignOutAction, SignInAction, ErrorAction } from "@store/actions/authActions";
+﻿import { AuthState, initialState as appState } from "@store/state";
+import { SignOutAction, SignInAction, ErrorAction, ActionTypes, InitialAppStateAction } from "@store/actions";
 
 type AuthActions =
     | InitialAppStateAction
     | SignInAction
     | SignOutAction
-    | ErrorAction
+    | ErrorAction;
 
-export default function authReducer(state: AuthState = initialState.auth, action: AuthActions): AuthState {
+const initialState = appState.auth;
+
+export default function authReducer(state: AuthState = initialState, action: AuthActions): AuthState {
     switch (action.type) {
         case ActionTypes.REQUEST_AUTH: {
             return {

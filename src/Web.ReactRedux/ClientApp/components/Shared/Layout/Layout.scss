@@ -1,0 +1,41 @@
+﻿@import "../../../styles/_include.scss";
+
+#root {
+    height: 100%;
+}
+
+.layout {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &__header {
+        margin: 0;
+        padding: 0;
+    }
+
+    &__body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex: 1 0 auto;
+    }
+
+    &__sidebar {
+        margin: 0;
+        padding: 15px 0;
+        border-right: 1px solid $primary-color;
+    }
+
+    &__content {
+        margin: 0;
+        padding: ($gutter-width / 2);
+        overflow: hidden;
+        flex: 1;
+    }
+
+    &__footer {
+        margin: 0;
+        padding: 0;
+    }
+}

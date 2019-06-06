@@ -1,10 +1,18 @@
-﻿import { Testimonial } from "@store/entities";
-import { fetchData, ItemsAction, addItems, setCurrent, CurrentAction, deleteEntity, submitFormData } from "./genericActions";
+﻿import { push } from "connected-react-router";
+import { Testimonial } from "@store/entities";
 import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
-import { ActionTypes } from "./actionTypes";
 import { decodeHTML, formatString } from "@scripts/utils";
-import { push } from "connected-react-router";
-import { createNonPayloadAction } from "./appActions";
+import {
+    fetchData,
+    ItemsAction,
+    addItems,
+    setCurrent,
+    CurrentAction,
+    deleteEntity,
+    submitFormData,
+    ActionTypes,
+    createNonPayloadAction
+} from "@store/actions";
 
 export function fetchTestimonials() {
     let url: string = GLOBALS.api.testimonials;

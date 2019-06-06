@@ -1,17 +1,17 @@
 ﻿import * as React from "react";
-import { Switch, Route, Redirect, match } from "react-router";
-import { Routes } from "@scripts/constants";
-import { withInitializer } from "@containers/Admin/withInitializer";
-import { withLoader } from "@containers/Admin/withLoader";
-import Loader from "@components/Shared/Loader";
-import { withPageContentWrapper } from "./withPageContentWrapper";
 import { compose } from "redux";
+import { Switch, Route, Redirect, match } from "react-router";
 import { Testimonial } from "@store/entities";
-import { withSubmitHandler } from "@containers/Admin/withSubmitHandler";
-import { withDocumentTitle } from "./withDocumentTitle";
-import { fetchTestimonials, addTestimonial, fetchTestimonial, updateTestimonial } from "@store/actions/testimonialsActions";
+import { Routes } from "@scripts/constants";
+import { fetchTestimonials, addTestimonial, fetchTestimonial, updateTestimonial } from "@store/actions";
+import Loader from "@components/Shared/Loader";
 import TestimonialList from "@containers/Admin/TestimonialList";
 import { TestimonialItemForm } from "@containers/Admin/TestimonialItemForm";
+import { withInitializer } from "@containers/Admin/withInitializer";
+import { withLoader } from "@containers/Admin/withLoader";
+import { withPageContentWrapper } from "@components/Admin/withPageContentWrapper";
+import { withSubmitHandler } from "@containers/Admin/withSubmitHandler";
+import { withDocumentTitle } from "@components/Admin/withDocumentTitle";
 import { withDataFeed } from "@containers/Admin/withDataFeed";
 
 const TestimonialsSubarea: React.SFC = () => {

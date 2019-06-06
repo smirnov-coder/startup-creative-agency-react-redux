@@ -1,10 +1,18 @@
-﻿import { ServiceInfo } from "@store/entities";
-import { ActionTypes } from "./actionTypes";
+﻿import { push } from "connected-react-router";
+import { ServiceInfo } from "@store/entities";
 import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
-import { fetchData, setCurrent, deleteEntity, submitFormData, ItemsAction, addItems, CurrentAction } from "./genericActions";
 import { decodeHTML, formatString } from "@scripts/utils";
-import { push } from "connected-react-router";
-import { createNonPayloadAction } from "./appActions";
+import {
+    ActionTypes,
+    fetchData,
+    setCurrent,
+    deleteEntity,
+    submitFormData,
+    ItemsAction,
+    addItems,
+    CurrentAction,
+    createNonPayloadAction
+} from "@store/actions";
 
 export function fetchServices() {
     let url: string = GLOBALS.api.services;

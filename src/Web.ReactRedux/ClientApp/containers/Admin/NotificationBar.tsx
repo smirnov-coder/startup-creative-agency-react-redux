@@ -1,10 +1,9 @@
 ﻿import * as React from "react";
-import { AppState } from "@store/state";
 import { connect } from "react-redux";
 import { Dispatch, bindActionCreators } from "redux";
+import { AppState, Notification } from "@store/state";
+import { deleteNotification } from "@store/actions";
 import NotificationItem from "@components/Admin/NotificationItem";
-import { deleteNotification } from "@store/actions/notificationsActions";
-import { Notification } from "@store/state";
 
 type NotificationBarProps = StateProps & DispatchProps;
 

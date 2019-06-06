@@ -1,13 +1,10 @@
 ﻿import * as React from "react";
-//import { Section } from "./Section";
-//import { SectionHeader } from "./SectionHeader";
+import { Section } from "@components/Home/Section";
+import { SectionHeader } from "@components/Home/SectionHeader";
+import Dash, { DashModifiers } from "@components/Home/Dash";
 import ServiceList from "@containers/Home/ServiceList";
 import "@bootstrap/css";
 import "./ServicesSection.scss";
-import { SectionHeader } from "../SectionHeader";
-import { Section } from "../Section";
-import Dash, { DashModifiers } from "../Dash";
-//import Dash, { DashModifiers } from "./Dash";
 
 const ServicesSection: React.SFC = () => {
     return (

@@ -1,8 +1,6 @@
 ﻿import { WorksState, initialState as appState } from "@store/state";
-import { HomePageModelAction } from "@store/actions/appActions";
-import { ActionTypes } from "@store/actions/actionTypes";
 import { WorkExample } from "@store/entities";
-import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
+import { ItemsAction, CurrentAction, ActionTypes, HomePageModelAction } from "@store/actions";
 
 type WorksActions =
     | ItemsAction<WorkExample>
@@ -32,7 +30,6 @@ function worksReducer(state: WorksState = initialState, action: WorksActions): W
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as HomePageModelAction).payload.model.works
             };
         }
@@ -41,7 +38,6 @@ function worksReducer(state: WorksState = initialState, action: WorksActions): W
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as ItemsAction<WorkExample>).payload.items
             };
         }
@@ -50,7 +46,6 @@ function worksReducer(state: WorksState = initialState, action: WorksActions): W
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 current: (action as CurrentAction<WorkExample>).payload.item
             };
         }

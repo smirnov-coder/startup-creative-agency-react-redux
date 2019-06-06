@@ -1,8 +1,8 @@
 ﻿import * as React from "react";
 import { SocialLink } from "@store/entities";
-import { ListItem } from "./ListItem";
+import { ListItem } from "@components/Admin/ListItem";
 import "@bootstrap/css";
-import "./ContactItem.scss";
+import "@components/Admin/ContactItem/ContactItem.scss";
 
 interface SocialLinksProps {
     items: SocialLink[];

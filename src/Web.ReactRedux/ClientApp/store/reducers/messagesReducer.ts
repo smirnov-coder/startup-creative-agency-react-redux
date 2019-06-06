@@ -1,10 +1,13 @@
-﻿import { MessagesState, initialState } from "@store/state";
-import { ActionTypes } from "@store/actions/actionTypes";
-import { InitialAppStateAction } from "@store/actions/appActions";
-import { SendingResultAction } from "@store/actions/messagesActions";
-import { SignInAction } from "@store/actions/authActions";
-import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
-import { Message } from "@store/entities";
+﻿import { Message } from "@store/entities";
+import { MessagesState, initialState as appState } from "@store/state";
+import {
+    ItemsAction,
+    CurrentAction,
+    SignInAction,
+    SendingResultAction,
+    InitialAppStateAction,
+    ActionTypes
+} from "@store/actions";
 
 type MessagesActions =
     | InitialAppStateAction
@@ -13,7 +16,9 @@ type MessagesActions =
     | ItemsAction<Message>
     | CurrentAction<Message>
 
-export default function messagesReducer(state: MessagesState = initialState.messages, action: MessagesActions): MessagesState {
+const initialState = appState.messages;
+
+export default function messagesReducer(state: MessagesState = initialState, action: MessagesActions): MessagesState {
     switch (action.type) {
         case ActionTypes.REQUEST_MESSAGES: {
             return {
@@ -59,7 +64,6 @@ export default function messagesReducer(state: MessagesState = initialState.mess
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items,
                 newMessagesCount: items.filter(message => !message.IsRead).length
             };
@@ -74,7 +78,6 @@ export default function messagesReducer(state: MessagesState = initialState.mess
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 current,
                 newMessagesCount
             };

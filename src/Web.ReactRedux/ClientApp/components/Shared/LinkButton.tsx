@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
-import "./Button.scss";
-import { ButtonProps } from "./Button";
 import { Link } from "react-router-dom";
+import { ButtonProps } from "@components/Shared/Button";
+import "@components/Shared/Button/Button.scss";
 
 interface LinkButtonProps extends ButtonProps {
     url: string;

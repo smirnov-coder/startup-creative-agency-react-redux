@@ -1,13 +1,13 @@
-﻿import { ContactsState, initialState } from "@store/state";
-import { HomePageModelAction } from "@store/actions/appActions";
-import { ActionTypes } from "@store/actions/actionTypes";
-import { ContactsAction } from "@store/actions/contactsActions";
+﻿import { ContactsState, initialState as appState } from "@store/state";
+import { ContactsAction, ActionTypes, HomePageModelAction } from "@store/actions";
 
-type ContactsActions = 
+type ContactsActions =
     | HomePageModelAction
-    | ContactsAction
+    | ContactsAction;
 
-export default function contactsReducer(state: ContactsState = initialState.contacts, action: ContactsActions): ContactsState {
+const initialState = appState.contacts;
+
+export default function contactsReducer(state: ContactsState = initialState, action: ContactsActions): ContactsState {
     switch (action.type) {
         case ActionTypes.REQUEST_HOME_PAGE_MODEL:
         case ActionTypes.REQUEST_CONTACTS: {
@@ -28,7 +28,6 @@ export default function contactsReducer(state: ContactsState = initialState.cont
             let { contacts, socialLinks } = (action as HomePageModelAction).payload.model
             return {
                 isLoading: false,
-                error: null,
                 contactInfos: contacts,
                 socialLinks: socialLinks
             };
@@ -38,7 +37,6 @@ export default function contactsReducer(state: ContactsState = initialState.cont
             let { contactInfos, socialLinks } = (action as ContactsAction).payload;
             return {
                 isLoading: false,
-                error: null,
                 contactInfos,
                 socialLinks
             };

@@ -1,27 +1,28 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import { history } from "./store/configureStore";
-import { ConnectedRouter } from "connected-react-router";
+import { Dispatch, bindActionCreators, compose } from "redux";
+import { connect } from "react-redux";
 import { Switch, Route, Redirect } from "react-router";
+import { ConnectedRouter } from "connected-react-router";
+import { history } from "@store/configureStore";
+import { Routes } from "@scripts/constants";
+import { fetchInitialAppState } from "@store/actions";
 import HomePage from "@containers/Home/HomePage";
 import AuthArea from "@components/Auth/AuthArea";
 import NotFoundPage from "@containers/Shared/NotFoundPage";
 import AdminArea from "@components/Admin/AdminArea";
-import { Dispatch, bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { fetchInitialAppState } from "@store/actions/appActions";
-import { Routes } from "@scripts/constants";
+import { withInitializer } from "@containers/Admin/withInitializer";
 
-type AppProps = DispatchProps;
+//type AppProps = DispatchProps;
 
-class App extends React.Component<AppProps> {
-    componentDidMount(): void {
-        this.props.initAppState();
-    }
+class App extends React.Component/*<AppProps>*/ {
+    //componentDidMount(): void {
+    //    this.props.initAppState();
+    //}
     /// TODO: Вынести ConnectedRouter в index.tsx и обернуть в ХОКи.
     render(): JSX.Element {
         return (
-            <ConnectedRouter history={history}>
+            /*<ConnectedRouter history={history}>*/
                 <Switch>
                     <Route exact path={Routes.HOME} component={HomePage} />
                     <Route path={Routes.AUTH_AREA} component={AuthArea} />
@@ -29,24 +30,31 @@ class App extends React.Component<AppProps> {
                     <Route path={Routes.NOT_FOUND} component={NotFoundPage} />
                     <Redirect to={Routes.NOT_FOUND} />
                 </Switch>
-            </ConnectedRouter>
+            /*</ConnectedRouter>*/
         );
     }
 }
 
-interface DispatchProps {
-    initAppState: () => void;
-}
+//interface DispatchProps {
+//    initAppState: () => void;
+//}
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
-    return {
-        initAppState: bindActionCreators(fetchInitialAppState, dispatch)
-    };
-}
+//const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+//    return {
+//        initAppState: bindActionCreators(fetchInitialAppState, dispatch)
+//    };
+//}
 
-const ConnectedApp = connect(null, mapDispatchToProps)(App);
+//const ConnectedApp = connect(null, mapDispatchToProps)(App);
 
-export default hot(module)(ConnectedApp);
+const composed = compose(
+    hot(module),
+    withInitializer((routeMatch, actionCreator) => actionCreator, fetchInitialAppState),
+);
+
+export default composed(App);
+
+//export default hot(module)(ConnectedApp);
 
 
 //////////////////////////////////////// #3

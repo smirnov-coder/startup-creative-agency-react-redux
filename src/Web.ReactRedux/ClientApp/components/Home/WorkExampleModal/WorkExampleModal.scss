@@ -1,0 +1,42 @@
+﻿@import "../../../styles/_include.scss";
+@import "../../../styles/blocks/_custom-modal.scss";
+
+.work-example {
+
+    &__title {
+        margin: 0;
+        padding: 0;
+        @include font(
+            $family: $heading-font-family,
+            $size: px-to-rem(20px),
+            $weight: map-get($font-weights, 'semi-bold'),
+            $color: $primary-color
+        );
+        text-align: left;
+    }
+
+    &__subtitle {
+        margin: 10px 0 0 0;
+        padding: 0;
+        @include font(
+            $family: $text-font-family,
+            $size: px-to-rem(14px),
+            $weight: map-get($font-weights, 'normal'),
+            $color: $primary-color
+        );
+        text-align: left;
+    }
+
+    &__description {
+        margin: 15px 0 0 0;
+        padding: 0;
+        @include font(
+            $family: $text-font-family,
+            $size: px-to-rem(16px),
+            $weight: map-get($font-weights, 'normal'),
+            $line-height: $large-line-height,
+            $color: $primary-color
+        );
+        text-align: left;
+    }
+}

@@ -1,9 +1,14 @@
 ﻿import { Dispatch, Action } from "redux";
 import { push } from "connected-react-router";
-import { createNonPayloadAction, OperationDetails, ValidationProblemDetails, InitialAppState } from "./appActions";
 import { GLOBALS, Routes, TOKEN_STORAGE_KEY, HttpMethod } from "@scripts/constants";
-import { handleResponse } from "./genericActions";
-import { ActionTypes } from "./actionTypes";
+import {
+    createNonPayloadAction,
+    OperationDetails,
+    ValidationProblemDetails,
+    InitialAppState,
+    handleResponse,
+    ActionTypes
+} from "@store/actions";
 
 interface SignInInfo {
     userName: string;

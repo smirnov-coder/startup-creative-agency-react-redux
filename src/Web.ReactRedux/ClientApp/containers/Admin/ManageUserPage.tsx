@@ -1,15 +1,15 @@
 ﻿import * as React from "react";
-import { DomainUser } from "@store/entities";
 import { compose } from "redux";
-import { fetchUser } from "@store/actions/usersActions";
-import UserItem from "./UserItem";
-import { withAuthentication } from "./withAuthentication";
-import { withInitializer } from "./withInitializer";
-import { withLoader } from "./withLoader";
-import Loader from "@components/Shared/Loader";
-import { withPageContentWrapper } from "@components/Admin/withPageContentWrapper";
 import { match } from "react-router";
-import { withDataFeed } from "./withDataFeed";
+import { DomainUser } from "@store/entities";
+import { fetchUser } from "@store/actions";
+import Loader from "@components/Shared/Loader";
+import UserItem from "@containers/Admin/UserItem";
+import { withAuthentication } from "@containers/Admin/withAuthentication";
+import { withInitializer } from "@containers/Admin/withInitializer";
+import { withLoader } from "@containers/Admin/withLoader";
+import { withPageContentWrapper } from "@components/Admin/withPageContentWrapper";
+import { withDataFeed } from "@containers/Admin/withDataFeed";
 
 interface ManageUserPageProps {
     user: DomainUser;

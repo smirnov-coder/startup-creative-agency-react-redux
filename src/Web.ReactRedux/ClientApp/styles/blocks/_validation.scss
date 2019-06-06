@@ -1,8 +1,8 @@
-﻿/// <reference path="../_include.scss" />
+﻿@import "../_include.scss";
 
-// Стили для ошибок jquery-validation-unobtrusive.
+// Стили для ошибок jquery-validation.
 .input-validation-error {
-    border-color: $accent-color;
+    border-color: $accent-color !important;
 }
 
 .field-validation-error {

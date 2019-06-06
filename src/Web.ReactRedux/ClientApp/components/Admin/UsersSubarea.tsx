@@ -1,18 +1,18 @@
 ﻿import * as React from "react";
-import { withDocumentTitle } from "./withDocumentTitle";
+import { compose } from "redux";
 import { Switch, Route, Redirect } from "react-router";
 import { Routes } from "@scripts/constants";
-import { compose } from "redux";
-import { withInitializer } from "@containers/Admin/withInitializer";
-import { withLoader } from "@containers/Admin/withLoader";
-import { withPageContentWrapper } from "./withPageContentWrapper";
+import { fetchUsers, registerUser } from "@store/actions";
 import Loader from "@components/Shared/Loader";
-import { fetchUsers, registerUser } from "@store/actions/usersActions";
 import UserList from "@containers/Admin/UserList";
 import { RegisterUserForm } from "@containers/Admin/RegisterUserForm";
+import ManageUserPage from "@containers/Admin/ManageUserPage";
+import { withDocumentTitle } from "@components/Admin/withDocumentTitle";
+import { withInitializer } from "@containers/Admin/withInitializer";
+import { withLoader } from "@containers/Admin/withLoader";
+import { withPageContentWrapper } from "@components/Admin/withPageContentWrapper";
 import { withDataFeed } from "@containers/Admin/withDataFeed";
 import { withSubmitHandler } from "@containers/Admin/withSubmitHandler";
-import ManageUserPage from "@containers/Admin/ManageUserPage";
 
 const UsersSubarea: React.SFC = () => {
     return (

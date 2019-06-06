@@ -1,15 +1,15 @@
-﻿import { BrandsState, initialState } from "@store/state";
-import { HomePageModelAction } from "@store/actions/appActions";
-import { ActionTypes } from "@store/actions/actionTypes";
+﻿import { BrandsState, initialState as appState } from "@store/state";
 import { Brand } from "@store/entities";
-import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
+import { ItemsAction, CurrentAction, ActionTypes, HomePageModelAction } from "@store/actions";
 
-type BrandsActions = 
+type BrandsActions =
     | ItemsAction<Brand>
     | HomePageModelAction
-    | CurrentAction<Brand>
+    | CurrentAction<Brand>;
 
-export default function brandsReducer(state: BrandsState = initialState.brands, action: BrandsActions): BrandsState {
+const initialState = appState.brands;
+
+export default function brandsReducer(state: BrandsState = initialState, action: BrandsActions): BrandsState {
     switch (action.type) {
         case ActionTypes.REQUEST_HOME_PAGE_MODEL:
         case ActionTypes.REQUEST_BRANDS: {
@@ -30,7 +30,6 @@ export default function brandsReducer(state: BrandsState = initialState.brands, 
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as HomePageModelAction).payload.model.brands
             };
         }
@@ -40,7 +39,6 @@ export default function brandsReducer(state: BrandsState = initialState.brands, 
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: append ? state.items.concat(items) : items
             };
         }
@@ -49,7 +47,6 @@ export default function brandsReducer(state: BrandsState = initialState.brands, 
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 current: (action as CurrentAction<Brand>).payload.item
             };
         }

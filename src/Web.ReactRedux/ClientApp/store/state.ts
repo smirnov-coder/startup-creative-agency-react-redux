@@ -1,11 +1,10 @@
-﻿import * as Entities from "./entities";
-import { RouterState } from "connected-react-router";
+﻿import { RouterState } from "connected-react-router";
+import * as Entities from "@store/entities";
 
 interface PartialState<T = Entities.BaseEntity> {
     isLoading: boolean;
     items: T[];
     current: T;
-    error: Error;
 }
 
 export type ServicesState = PartialState<Entities.ServiceInfo>;
@@ -18,7 +17,6 @@ export interface ContactsState {
     isLoading: boolean;
     contactInfos: Entities.ContactInfo[];
     socialLinks: Entities.SocialLink[];
-    error: Error
 }
 
 export interface MessagesState extends PartialState<Entities.Message> {
@@ -71,43 +69,36 @@ export const initialState: AppState = {
     services: {
         isLoading: false,
         items: [],
-        error: null,
         current: null
     },
     works: {
         isLoading: false,
         items: [],
-        error: null,
         current: null
     },
     blog: {
         isLoading: false,
         items: [],
-        error: null,
         current: null
     },
     brands: {
         isLoading: false,
         items: [],
-        error: null,
         current: null
     },
     testimonials: {
         isLoading: false,
         items: [],
-        error: null,
         current: null
     },
     contacts: {
         isLoading: false,
         contactInfos: [],
         socialLinks: [],
-        error: null
     },
     messages: {
         isLoading: false,
         items: [],
-        error: null,
         current: null,
         newMessagesCount: 0,
         sendingResult: {
@@ -128,7 +119,6 @@ export const initialState: AppState = {
         isLoading: false,
         items: [],
         current: null,
-        error: null
     },
     notifications: {
         items: []

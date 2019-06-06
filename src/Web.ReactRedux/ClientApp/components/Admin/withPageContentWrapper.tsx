@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import PageContent from "./PageContent";
+import PageContent from "@components/Admin/PageContent";
 import { RouteComponentProps, match } from "react-router";
 
 export function withPageContentWrapper(caption: string | ((routeMatch: match) => string)) {

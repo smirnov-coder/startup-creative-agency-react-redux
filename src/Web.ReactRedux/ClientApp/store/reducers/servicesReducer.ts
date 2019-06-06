@@ -1,8 +1,6 @@
 ﻿import { ServicesState, initialState as appState } from "@store/state"
-import { HomePageModelAction } from "@store/actions/appActions";
-import { ActionTypes } from "@store/actions/actionTypes";
-import { CurrentAction, ItemsAction } from "@store/actions/genericActions";
 import { ServiceInfo } from "@store/entities";
+import { CurrentAction, ItemsAction, ActionTypes, HomePageModelAction } from "@store/actions";
 
 type ServicesActions =
     | ItemsAction<ServiceInfo>
@@ -32,7 +30,6 @@ function servicesReducer(state: ServicesState = initialState, action: ServicesAc
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as HomePageModelAction).payload.model.services
             };
         }
@@ -41,7 +38,6 @@ function servicesReducer(state: ServicesState = initialState, action: ServicesAc
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as ItemsAction<ServiceInfo>).payload.items
             };
         }
@@ -50,7 +46,6 @@ function servicesReducer(state: ServicesState = initialState, action: ServicesAc
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 current: (action as CurrentAction<ServiceInfo>).payload.item
             };
         }

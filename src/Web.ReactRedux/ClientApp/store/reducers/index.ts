@@ -1,0 +1,10 @@
+﻿export { default as auth } from "./authReducer";
+export { default as blog  } from "./blogReducer";
+export { default as brands } from "./brandsReducer";
+export { default as contacts } from "./contactsReducer";
+export { default as messages } from "./messagesReducer";
+export { default as notifications } from "./notificationsReducer";
+export { default as services } from "./servicesReducer";
+export { default as testimonials } from "./testimonialsReducer";
+export { default as users } from "./usersReducer";
+export { default as works } from "./worksReducer";

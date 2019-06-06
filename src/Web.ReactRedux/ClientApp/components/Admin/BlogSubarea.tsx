@@ -1,17 +1,17 @@
 ﻿import * as React from "react";
-import { Switch, Route, Redirect, match } from "react-router";
-import { Routes } from "@scripts/constants";
 import { compose } from "redux";
+import { Switch, Route, Redirect, match } from "react-router";
+import { BlogPost } from "@store/entities";
+import { Routes } from "@scripts/constants";
+import { fetchBlogPosts, addBlogPost, fetchBlogPost, updateBlogPost } from "@store/actions";
+import Loader from "@components/Shared/Loader";
+import { BlogPostList } from "@containers/Admin/BlogPostList";
+import { BlogPostItemForm } from "@containers/Admin/BlogPostItemForm";
 import { withInitializer } from "@containers/Admin/withInitializer";
 import { withLoader } from "@containers/Admin/withLoader";
-import { withPageContentWrapper } from "./withPageContentWrapper";
-import Loader from "@components/Shared/Loader";
-import { withDocumentTitle } from "./withDocumentTitle";
-import { fetchBlogPosts, addBlogPost, fetchBlogPost, updateBlogPost } from "@store/actions/blogActions";
-import { BlogPostList } from "@containers/Admin/BlogPostList";
-import { BlogPost } from "@store/entities";
+import { withPageContentWrapper } from "@components/Admin/withPageContentWrapper";
+import { withDocumentTitle } from "@components/Admin/withDocumentTitle";
 import { withSubmitHandler } from "@containers/Admin/withSubmitHandler";
-import { BlogPostItemForm } from "@containers/Admin/BlogPostItemForm";
 import { withDataFeed } from "@containers/Admin/withDataFeed";
 
 const BlogSubarea: React.SFC = () => {

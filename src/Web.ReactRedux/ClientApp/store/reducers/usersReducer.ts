@@ -1,8 +1,6 @@
 ﻿import { UsersState, initialState as appState } from "@store/state";
-import { HomePageModelAction } from "@store/actions/appActions";
-import { ActionTypes } from "@store/actions/actionTypes";
 import { DomainUser } from "@store/entities";
-import { CurrentAction, ItemsAction } from "@store/actions/genericActions";
+import { CurrentAction, ItemsAction, ActionTypes, HomePageModelAction } from "@store/actions";
 
 type UsersActions = 
     | HomePageModelAction
@@ -32,7 +30,6 @@ function usersReducer(state: UsersState = initialState, action: UsersActions): U
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as HomePageModelAction).payload.model.teamMembers
             };
         }
@@ -41,7 +38,6 @@ function usersReducer(state: UsersState = initialState, action: UsersActions): U
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 current: (action as CurrentAction<DomainUser>).payload.item,
             };
         }
@@ -50,7 +46,6 @@ function usersReducer(state: UsersState = initialState, action: UsersActions): U
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as ItemsAction<DomainUser>).payload.items
             };
         }

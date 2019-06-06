@@ -1,15 +1,24 @@
-﻿import { ContactMessage } from "@containers/Home/ContactForm";
-import { Dispatch, Action } from "redux";
-import { createNonPayloadAction, OperationDetails, ValidationProblemDetails, readAccessToken } from "./appActions";
-import { ActionTypes } from "./actionTypes";
-import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
-import { fetchData, ItemsAction, addItems, setCurrent, handleResponse } from "./genericActions";
-import { Message } from "@store/entities";
+﻿import { Dispatch, Action } from "redux";
 import { push } from "connected-react-router";
 import { history } from "@store/configureStore";
 import { Notification } from "@store/state";
+import { Message } from "@store/entities";
+import { GLOBALS, Routes, HttpMethod } from "@scripts/constants";
 import { encodeHTML, decodeHTML, formatString } from "@scripts/utils";
-import { addNotification } from "./notificationsActions";
+import { ContactMessage } from "@containers/Home/ContactForm";
+import {
+    createNonPayloadAction,
+    OperationDetails,
+    ValidationProblemDetails,
+    readAccessToken,
+    ActionTypes,
+    fetchData,
+    ItemsAction,
+    addItems,
+    setCurrent,
+    handleResponse,
+    addNotification
+} from "@store/actions";
 
 export const sendMessage = (message: ContactMessage) => (dispatch: Dispatch) => {
     dispatch(createNonPayloadAction(ActionTypes.REQUEST_MESSAGES));

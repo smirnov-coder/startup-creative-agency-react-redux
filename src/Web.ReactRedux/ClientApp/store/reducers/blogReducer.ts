@@ -1,15 +1,15 @@
-﻿import { BlogState, initialState } from "@store/state";
-import { HomePageModelAction } from "@store/actions/appActions";
-import { ActionTypes } from "@store/actions/actionTypes";
-import { BlogPost } from "@store/entities";
-import { ItemsAction, CurrentAction } from "@store/actions/genericActions";
+﻿import { BlogPost } from "@store/entities";
+import { BlogState, initialState as appState } from "@store/state";
+import { ItemsAction, CurrentAction, ActionTypes, HomePageModelAction } from "@store/actions";
 
-type BlogActions = 
+type BlogActions =
     | ItemsAction<BlogPost>
     | HomePageModelAction
-    | CurrentAction<BlogPost>
+    | CurrentAction<BlogPost>;
 
-export default function blogReducer(state: BlogState = initialState.blog, action: BlogActions): BlogState {
+const initialState = appState.blog;
+
+export default function blogReducer(state: BlogState = initialState, action: BlogActions): BlogState {
     switch (action.type) {
         case ActionTypes.REQUEST_HOME_PAGE_MODEL:
         case ActionTypes.REQUEST_BLOG_POSTS: {
@@ -30,7 +30,6 @@ export default function blogReducer(state: BlogState = initialState.blog, action
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: (action as HomePageModelAction).payload.model.blogPosts
             };
         }
@@ -40,7 +39,6 @@ export default function blogReducer(state: BlogState = initialState.blog, action
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 items: append ? state.items.concat(items) : items
             };
         }
@@ -49,7 +47,6 @@ export default function blogReducer(state: BlogState = initialState.blog, action
             return {
                 ...state,
                 isLoading: false,
-                error: null,
                 current: (action as CurrentAction<BlogPost>).payload.item
             };
         }

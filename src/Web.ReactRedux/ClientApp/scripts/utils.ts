@@ -1,6 +1,6 @@
 ﻿import * as $ from "jquery";
 import { DomainUser, UserProfile } from "@store/entities";
-import { Routes } from "./constants";
+import { Routes } from "@scripts/constants";
 
 export function getDateTimeString(date: Date): string {
     let obj: Date = new Date(date);
