@@ -35,12 +35,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                     Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
                     var resultJson = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<ContactsViewModel>(resultJson);
-                    Assert.Equal(3, result.ContactInfos.Count);
+                    Assert.Equal(3, result.ContactInfos.Count());
                     Assert.Equal("Address", result.ContactInfos.First().Name);
                     Assert.Equal(3, result.ContactInfos.First().Values.Count);
                     Assert.Equal("Email", result.ContactInfos.Last().Name);
                     Assert.Equal(2, result.ContactInfos.Last().Values.Count);
-                    Assert.Equal(4, result.SocialLinks.Count);
+                    Assert.Equal(4, result.SocialLinks.Count());
                     Assert.Equal("Facebook", result.SocialLinks.First().NetworkName);
                     Assert.Equal("Link #1", result.SocialLinks.First().Url);
                     Assert.Equal("Linkedin", result.SocialLinks.Last().NetworkName);

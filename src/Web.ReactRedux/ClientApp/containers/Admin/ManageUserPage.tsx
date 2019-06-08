@@ -20,6 +20,7 @@ const ManageUserPage: React.SFC<ManageUserPageProps> = ({ user }: ManageUserPage
         <UserItem item={user} isAdmin={true} isManagePage={true} />
     );
 }
+
 const composed = compose(
     withAuthentication(true),
     withInitializer(

@@ -27,10 +27,16 @@
     };
 }
 
+/**
+ * Глобальные константы.
+ */
 export const GLOBALS: Globals = {
     api: (window as any).customGlobals.uriTemplates,
 }
 
+/**
+ * Маршруты SPA-страниц.
+ */
 export enum Routes {
     HOME = "/",
     AUTH_AREA = "/auth",
@@ -62,8 +68,14 @@ export enum Routes {
     REGISTER_USER = "/admin/users/register"
 }
 
-export const TOKEN_STORAGE_KEY: string = "access_token";
+/**
+ * Значения ключа для хранения маркера доступа (access token) в хранилище браузера.
+ */
+export const TOKEN_STORAGE_KEY = "access_token";
 
+/**
+ * Общие настройки валидации 'jquery-validation'.
+ */
 export const VALIDATION_OPTIONS: JQueryValidation.ValidationOptions = {
     errorElement: "span",
     errorClass: "field-validation-error",
@@ -78,6 +90,9 @@ export const VALIDATION_OPTIONS: JQueryValidation.ValidationOptions = {
     }
 };
 
+/**
+ * HTTP-методы.
+ */
 export enum HttpMethod {
     GET = "GET",
     POST = "POST",

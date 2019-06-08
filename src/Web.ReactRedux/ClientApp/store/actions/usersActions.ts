@@ -90,7 +90,7 @@ export function updateDisplayStatus(userName: string, isDisplayed: boolean) {
             return dispatch(push(Routes.LOGIN));
         }
         let options: RequestInit = {
-            method: "PUT",
+            method: HttpMethod.PUT,
             headers: {
                 Authorization: `Bearer ${accessToken}`,
                 "Content-Type": "application/json"

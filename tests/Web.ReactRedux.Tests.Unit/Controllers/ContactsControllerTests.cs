@@ -33,19 +33,19 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
 
             Assert.IsType<ContactsViewModel>(result);
             var contacts = result.ContactInfos;
-            Assert.Equal(3, contacts.Count);
+            Assert.Equal(3, contacts.Count());
             Assert.Equal("Name #1", contacts.First().Name);
             Assert.Equal("Caption #1", contacts.First().Caption);
             Assert.Equal(3, contacts.First().Values.Count);
-            Assert.Equal("Value #1", contacts.First().Values.First().Value);
-            Assert.Equal("Value #3", contacts.First().Values.Last().Value);
+            Assert.Equal("Value #1", contacts.First().Values.First());
+            Assert.Equal("Value #3", contacts.First().Values.Last());
             Assert.Equal("Name #3", contacts.Last().Name);
             Assert.Equal("Caption #3", contacts.Last().Caption);
             Assert.Equal(2, contacts.Last().Values.Count);
-            Assert.Equal("Value #1", contacts.Last().Values.First().Value);
-            Assert.Equal("Value #2", contacts.Last().Values.Last().Value);
+            Assert.Equal("Value #1", contacts.Last().Values.First());
+            Assert.Equal("Value #2", contacts.Last().Values.Last());
             var socialLinks = result.SocialLinks;
-            Assert.Equal(3, socialLinks.Count);
+            Assert.Equal(3, socialLinks.Count());
             Assert.Equal("Name #1", socialLinks.First().NetworkName);
             Assert.Equal("Url #1", socialLinks.First().Url);
             Assert.Equal("Name #3", socialLinks.Last().NetworkName);
@@ -55,7 +55,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
         [Fact]
         public async Task SaveAsync_Good()
         {
-            var actionResult = await _target.SaveAsync(GetTestContactsViewModel());
+            var actionResult = await _target.SaveAsync(GetTestContactsModel());
 
             _mockContactsService.Verify(service => service.SaveContactsAsync(It.Is<IEnumerable<ContactInfo>>(x => 
                 x.Count() == 3 &&
@@ -76,13 +76,13 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
             Assert.Equal("Company contacts saved successfully.", details.Message);
         }
 
-        private ContactsViewModel GetTestContactsViewModel()
+        private ContactsBindingModel GetTestContactsModel()
         {
-            return new ContactsViewModel
+            return new ContactsBindingModel
             {
-                ContactInfos = new List<ContactInfoViewModel>
+                ContactInfos = new List<ContactInfoBindingModel>
                 {
-                    new ContactInfoViewModel
+                    new ContactInfoBindingModel
                     {
                         Name = "Name #1",
                         Caption = "Caption #1",
@@ -93,7 +93,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                             new ContactValue { Value = "Value #3" }
                         }
                     },
-                    new ContactInfoViewModel
+                    new ContactInfoBindingModel
                     {
                         Name = "Name #2",
                         Caption = "Caption #2",
@@ -104,7 +104,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                             new ContactValue { Value = "Value #3" }
                         }
                     },
-                    new ContactInfoViewModel
+                    new ContactInfoBindingModel
                     {
                         Name = "Name #3",
                         Caption = "Caption #3",
@@ -115,11 +115,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                         }
                     }
                 },
-                SocialLinks = new List<SocialLinkViewModel>
+                SocialLinks = new List<SocialLinkBindingModel>
                 {
-                    new SocialLinkViewModel { NetworkName = "Name #1", Url = "Url #1" },
-                    new SocialLinkViewModel { NetworkName = "Name #2", Url = "Url #2" },
-                    new SocialLinkViewModel { NetworkName = "Name #3", Url = "Url #3" }
+                    new SocialLinkBindingModel { NetworkName = "Name #1", Url = "Url #1" },
+                    new SocialLinkBindingModel { NetworkName = "Name #2", Url = "Url #2" },
+                    new SocialLinkBindingModel { NetworkName = "Name #3", Url = "Url #3" }
                 }
             };
         }

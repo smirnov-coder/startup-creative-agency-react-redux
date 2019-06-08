@@ -23,7 +23,6 @@ const MessagesSubarea: React.SFC = () => {
     );
 }
 
-// Messages page
 const MessagesPage = compose(
     withInitializer((routeMatch, actionCreator) => actionCreator, fetchMessages),
     withLoader(Loader, state => state.messages.isLoading),
@@ -31,7 +30,6 @@ const MessagesPage = compose(
     withDataFeed(state => state.messages.items, "items")
 )(MessageTable);
 
-// Message page
 const MessagePage = compose(
     withInitializer(
         (routeMatch, actionCreator) => {

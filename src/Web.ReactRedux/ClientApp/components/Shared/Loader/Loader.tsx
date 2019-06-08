@@ -6,8 +6,7 @@ interface LoaderProps {
     modifiers?: string[];
 }
 
-const Loader: React.SFC<LoaderProps> = (props: LoaderProps) => {
-    let { className = "", modifiers } = props;
+const Loader: React.SFC<LoaderProps> = ({ className = "", modifiers }: LoaderProps) => {
     return (
         <div className={`loader ${modifiers ? modifiers.join(" ") : ""} ${className}`}>
             <i className="fa fa-spinner fa-pulse fa-3x"></i>

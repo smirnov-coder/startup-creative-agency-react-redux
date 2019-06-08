@@ -7,15 +7,30 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Infrastructure
 {
+    /// <summary>
+    /// Содержит различные параметры для создания и валидации JSOn Web Token (JWT).
+    /// </summary>
     public class JwtOptions
     {
-        public const string ISSUER = "StartupCreativeAgency"; // издатель токена
+        /// <summary>
+        /// Издатель JWT.
+        /// </summary>
+        public const string ISSUER = "StartupCreativeAgency";
 
-        public const string AUDIENCE = "StartupCreativeAgency"; // потребитель токена
+        /// <summary>
+        /// Потребитель JWT.
+        /// </summary>
+        public const string AUDIENCE = "StartupCreativeAgency";
 
-        const string KEY = "mysupersecret_secretkey!123";   // ключ для шифрации
+        /// <summary>
+        /// Ключ, используемый для подписи JWT.
+        /// </summary>
+        const string KEY = "mysupersecret_secretkey!123";
 
-        public const int LIFETIME = 10; // время жизни токена - 10 дней
+        /// <summary>
+        /// Время жизни JWT в условных единицах (минутч, часы, дния и т.д.).
+        /// </summary>
+        public const int LIFETIME = 10;
 
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {

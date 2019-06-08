@@ -11,6 +11,9 @@ using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    /// <summary>
+    /// Контроллер для работы с корпоративными клиентами компании.
+    /// </summary>
     public class BrandsController : ApiControllerBase<BrandBindingModel, Brand, int>
     {
         private readonly IBrandService _brandService;

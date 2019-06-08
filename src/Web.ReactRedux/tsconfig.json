@@ -18,7 +18,8 @@
       "@scripts/*": [ "scripts/*" ],
       "@styles/*": [ "styles/*" ],
       "@bootstrap/css": [ "assets/lib/bootstrap-customized/css/bootstrap.css" ],
-      "@bootstrap/js": [ "assets/lib/bootstrap-customized/js/bootstrap.js" ]
+      "@bootstrap/js": [ "assets/lib/bootstrap-customized/js/bootstrap.js" ],
+      "@owl.carousel/*": [ "assets/lib/owl.carousel-customized/*" ]
     }
   },
   "exclude": [

@@ -11,6 +11,9 @@ using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    /// <summary>
+    /// Контроллер для ведения корпоратичного блога.
+    /// </summary>
     public class BlogController : ApiControllerBase<BlogPostBindingModel, BlogPost, int>
     {
         private readonly IBlogService _blogService;

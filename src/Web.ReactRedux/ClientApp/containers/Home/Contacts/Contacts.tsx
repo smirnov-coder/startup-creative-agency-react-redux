@@ -22,7 +22,7 @@ const Contacts: React.SFC<ContactsProps> = ({ items }: ContactsProps) => {
             <h3 className="sr-only">Contacts</h3>
             {items.map((contactInfo, index) => (
                 <div key={index} className="contacts__line">
-                    <ContactLine icon={icons[contactInfo.Name]} {...contactInfo} />
+                    <ContactLine icon={icons[contactInfo.Name]} item={contactInfo} />
                 </div>
             ))}
         </section>

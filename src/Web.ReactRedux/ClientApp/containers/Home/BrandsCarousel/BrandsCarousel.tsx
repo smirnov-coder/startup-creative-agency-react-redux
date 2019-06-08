@@ -4,9 +4,10 @@ import { Brand } from "@store/entities";
 import Loader from "@components/Shared/Loader";
 import { withLoader } from "@containers/Admin/withLoader";
 import { withDataFeed } from "@containers/Admin/withDataFeed";
-import OwlCarousel from "../../../assets/lib/owl.carousel-customized/OwlCarousel";
-import { Options } from "../../../assets/lib/owl.carousel-customized/OwlCarousel";
+import OwlCarousel from "@owl.carousel/OwlCarousel";
+import { Options } from "@owl.carousel/options";
 import "@bootstrap/css";
+import "owl.carousel/dist/assets/owl.carousel.css";
 import "./BrandsCarousel.scss";
 
 interface BrandsCarouselProps {

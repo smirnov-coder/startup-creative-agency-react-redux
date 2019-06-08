@@ -29,16 +29,31 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // GET api/[controller]
         //
+        /// <summary>
+        /// Асинхронно извлекает коллекцию всех экземпляров сущности типа <typeparamref name="TEntity"/>.
+        /// </summary>
         public virtual async Task<IEnumerable<TEntity>> ListAsync()
         {
             return (await PerformGetManyAsync()).Select(entity => PrepareEntityForReturn(entity));
         }
 
+        /// <summary>
+        /// Выполняет операцию извлечения коллекции всех экземпляров сущности типа <typeparamref name="TEntity"/>. 
+        /// Абстрактный метод. Должен быть переопределён в каждом производном классе.
+        /// </summary>
+        /// </param>
         protected abstract Task<IEnumerable<TEntity>> PerformGetManyAsync();
 
         //
         // GET api/[controller]/5
         //
+        /// <summary>
+        /// Асинхронно извлекает из коллекции сущностей типа <typeparamref name="TEntity"/> сущность со значением идентификатора 
+        /// сущности типа <typeparamref name="TKey"/>.
+        /// </summary>
+        /// <param name="id">Значение идентификатора типа <typeparamref name="TKey"/> сущности типа <typeparamref name="TEntity"/>.
+        /// </param>
+        /// <returns>Объект сущности типа <typeparamref name="TEntity"/>.</returns>
         [HttpGet("{id}")]
         public virtual async Task<ActionResult<TEntity>> GetAsync(TKey id)
         {
@@ -70,6 +85,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // POST api/[controller]
         //
+        /// <summary>
+        /// Асинхронно создаёт сущность типа <typeparamref name="TEntity"/> на основании данных модели привязки типа 
+        /// <typeparamref name="TModel"/> и добавляет её в коллекцию сущностей доменной модели.
+        /// </summary>
+        /// <param name="model">Данные модели привязки типа <typeparamref name="TModel"/>.</param>
         [HttpPost]
         public virtual async Task<IActionResult> AddAsync([FromForm]TModel model)
         {
@@ -81,10 +101,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         }
 
         /// <summary>
-        /// Асинхронно создаёт новый экземпляр сущности типа <typeparamref name="TEntity"/> на основании данных модели представления 
+        /// Асинхронно создаёт новый экземпляр сущности типа <typeparamref name="TEntity"/> на основании данных модели привязки 
         /// типа <typeparamref name="TModel"/>. Абстрактный метод. Должен быть переопределён в каждом производном классе.
         /// </summary>
-        /// <param name="model">Данные модели представления типа <typeparamref name="TModel"/>.</param>
+        /// <param name="model">Данные модели привязки типа <typeparamref name="TModel"/>.</param>
         /// <param name="creator">Пользователь доменной модели, создающий новую сущность типа <typeparamref name="TEntity"/>.</param>
         /// <returns>Объект созданной сущности типа <typeparamref name="TEntity"/>.</returns>
         protected abstract Task<TEntity> CreateEntityFromModelAsync(TModel model, DomainUser creator);
@@ -100,6 +120,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // PUT api/[controller]
         //
+        /// <summary>
+        /// Асинхронно обновляет данные сущности типа <typeparamref name="TEntity"/> на основании данных модели привязки 
+        /// типа <typeparamref name="TModel"/>.
+        /// </summary>
+        /// <param name="model">Данные модели привязки типа <typeparamref name="TModel"/>.</param>
         [HttpPut]
         public virtual async Task<IActionResult> UpdateAsync([FromForm]TModel model)
         {
@@ -120,6 +145,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // DELETE api/[controller]/5
         //
+        /// <summary>
+        /// Асинхронно удаляет из коллекции сущностей типа <typeparamref name="TEntity"/> сущность с заданным значением
+        /// идентификатора типа <typeparamref name="TKey"/>.
+        /// </summary>
+        /// <param name="id">Значение идентификатора типа <typeparamref name="TKey"/> сущности типа 
+        /// <typeparamref name="TEntity"/>.</param>
         [HttpDelete("{id}")]
         public virtual async Task<IActionResult> DeleteAsync([FromRoute]TKey id)
         {

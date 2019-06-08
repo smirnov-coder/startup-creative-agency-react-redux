@@ -5,13 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    /// <summary>
+    /// Контроллер для работы с пользователями доменной модели.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -29,6 +31,9 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // GET api/users
         //
+        /// <summary>
+        /// Асинхронно извлекает из коллекции пользователей доменной модели всех пользователей.
+        /// </summary>
         [HttpGet]
         public async Task<IEnumerable<DomainUser>> GetUsersAsync()
         {
@@ -38,6 +43,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // GET api/users/user1
         //
+        /// <summary>
+        /// Асинхронно извлекает из коллекции пользователей доменной модели пользователя с заданным идентификационным
+        /// именем пользователя.
+        /// </summary>
+        /// <param name="userName">Идентификационное имя пользователя.</param>
         [HttpGet("{userName}")]
         public async Task<ActionResult<DomainUser>> GetUserAsync([FromRoute]string userName)
         {
@@ -53,6 +63,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // GET api/users/me
         //
+        /// <summary>
+        /// Асинхронно извлекает из коллекции пользователей доменной модели пользователя, выполняющего текущий аутентифицированный
+        /// запрос.
+        /// </summary>
         [HttpGet("me")]
         public async Task<ActionResult<DomainUser>> GetMeAsync() => await GetUserAsync(User?.Identity?.Name);
         
@@ -62,7 +76,9 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var profile = user.Profile;
             profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition,
                 Url.Content(profile.PhotoFilePath));
-            /// TODO: Абсолютно непонятная ошибка с проксями.
+
+            /// TODO: Абсолютно непонятная ошибка с проксями. Если не пощупать вложенные сущности, они не будут включены в 
+            /// результат выборки.
             profile.SocialLinks.First();
 
             return user;
@@ -71,6 +87,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // POST api/users/register
         //
+        /// <summary>
+        /// Асинхронно регистрирует нового пользователя доменной модели.
+        /// </summary>
+        /// <param name="model">Данные модели привязки для регистрации нового пользователя.</param>
         [HttpPost("register")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> RegisterAsync([FromForm]RegisterUserBindingModel model)
@@ -91,6 +111,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // PUT api/users/profile
         //
+        /// <summary>
+        /// Асинхронно обновляет данные профайла пользователя доменной модели.
+        /// </summary>
+        /// <param name="model">Данные модели привязки для обновления профайла пользователя.</param>
         [HttpPut("profile")]
         public async Task<IActionResult> UpdateProfileAsync([FromForm]MyProfileBindingModel model)
         {
@@ -118,6 +142,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // PUT api/users/display-status
         //
+        /// <summary>
+        /// Асинхронно обновляет статус отображения пользователя доменной модели на главной странице сайта в качестве члена
+        /// команды компании.
+        /// </summary>
+        /// <param name="model">Данные модели привязки, содержащие идентификационное имя пользователя и новый статус отображения.</param>
         [HttpPut("display-status")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> UpdateDisplayStatusAsync(UserDisplayStatusBindingModel model)
@@ -129,6 +158,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // DELETE api/users/user1
         //
+        /// <summary>
+        /// Асинхронно удаляет из коллекции пользователей доменной модели пользователя с заданным идентификационным именем.
+        /// </summary>
+        /// <param name="userName">Идентификационное имя пользователя доменной модели.</param>
         [HttpDelete("{userName}")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> DeleteAsync([FromRoute]string userName)

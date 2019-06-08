@@ -1,11 +1,13 @@
 ﻿import { AuthState, initialState as appState } from "@store/state";
-import { SignOutAction, SignInAction, ErrorAction, ActionTypes, InitialAppStateAction } from "@store/actions";
+import { SignOutAction, SignInAction, ErrorAction, ActionTypes, InitialAppStateAction, CurrentAction } from "@store/actions";
+import { DomainUser } from "@store/entities";
 
 type AuthActions =
     | InitialAppStateAction
     | SignInAction
     | SignOutAction
-    | ErrorAction;
+    | ErrorAction
+    | CurrentAction<DomainUser>;
 
 const initialState = appState.auth;
 
@@ -69,6 +71,14 @@ export default function authReducer(state: AuthState = initialState, action: Aut
                 isLoading: false,
                 errorMessage: (action as ErrorAction).payload.message
             };
+        }
+
+        case ActionTypes.CURRENT_USER: {
+            let { Identity, Profile } = (action as CurrentAction<DomainUser>).payload.item;
+            return {
+                ...state,
+                photo: state.userName === Identity.UserName ? Profile.PhotoFilePath : state.photo
+            }
         }
 
         default:

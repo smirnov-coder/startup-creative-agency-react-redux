@@ -9,6 +9,9 @@ using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    /// <summary>
+    /// Контроллер для работы с примерами выполненных работ компании.
+    /// </summary>
     public class WorksController : ApiControllerBase<WorkExampleBindingModel, WorkExample, int>
     {
         private readonly IWorkExampleService _workExampleService;

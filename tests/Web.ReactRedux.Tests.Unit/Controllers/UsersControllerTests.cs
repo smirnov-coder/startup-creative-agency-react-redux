@@ -168,11 +168,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Unit.Controllers
                     JobPosition = "Test Job",
                     PhotoFilePath = "Test Path"
                 },
-                SocialLinks = new List<SocialLinkViewModel>
+                SocialLinks = new List<SocialLinkBindingModel>
                 {
-                    new SocialLinkViewModel { NetworkName = "Name #1", Url = "Url #1" },
-                    new SocialLinkViewModel { NetworkName = "Name #2", Url = "Url #2" },
-                    new SocialLinkViewModel { NetworkName = "Name #3", Url = "Url #3" }
+                    new SocialLinkBindingModel { NetworkName = "Name #1", Url = "Url #1" },
+                    new SocialLinkBindingModel { NetworkName = "Name #2", Url = "Url #2" },
+                    new SocialLinkBindingModel { NetworkName = "Name #3", Url = "Url #3" }
                 }
             };
 

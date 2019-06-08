@@ -8,6 +8,9 @@ using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    /// <summary>
+    /// Контроллер для работы с услугами, предоставляемыми компанией.
+    /// </summary>
     public class ServicesController : ApiControllerBase<ServiceInfoBindingModel, ServiceInfo, int>
     {
         private readonly IServiceInfoService _serviceInfoService;

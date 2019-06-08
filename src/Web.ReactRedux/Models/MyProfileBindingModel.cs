@@ -13,7 +13,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Models
     {
         public PersonalInfoBindingModel PersonalInfo { get; set; }
 
-        public IList<SocialLinkViewModel> SocialLinks { get; set; }
+        public IList<SocialLinkBindingModel> SocialLinks { get; set; }
     }
 
     public class PersonalInfoBindingModel

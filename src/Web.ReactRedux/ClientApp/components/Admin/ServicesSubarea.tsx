@@ -25,7 +25,6 @@ const ServicesSubarea: React.SFC = () => {
     );
 }
 
-// Services page
 const ServicesPage = compose(
     withInitializer((routeMatch, actionCreator) => actionCreator, fetchServices),
     withLoader(Loader, state => state.services.isLoading),
@@ -33,14 +32,12 @@ const ServicesPage = compose(
     withDataFeed(state => state.services.items, "items")
 )(ServiceList);
 
-// AddService page
 const AddServicePage = compose(
     withPageContentWrapper("Add Service"),
     withSubmitHandler(addService),
     withDataFeed(state => { return { Id: 0, IconClass: "", Caption: "", Description: "" } as ServiceInfo }, "item")
 )(ServiceItemForm);
 
-// EditService page
 const EditServicePage = compose(
     withInitializer(
         (routeMatch, actionCreator) => {

@@ -16,7 +16,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using StartupCreativeAgency.Domain.Abstractions.Repositories;
 using StartupCreativeAgency.Domain.Abstractions.Services;
 using StartupCreativeAgency.Domain.Entities;
@@ -121,15 +120,15 @@ namespace StartupCreativeAgency.Web.ReactRedux
                 });
             });
 
-            services.AddMvc(options => options.Filters.Add(new CustomExceptionFilterAttribute()))
-                .AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    //options.SerializerSettings.MaxDepth = 100;////////////////////////
-                    //options.UseMemberCasing();
-                    //options.UseCamelCasing(false);
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(new CustomExceptionFilterAttribute());
+            })
+            .AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -143,12 +142,12 @@ namespace StartupCreativeAgency.Web.ReactRedux
                     HotModuleReplacement = true,
                     HotModuleReplacementClientOptions = new Dictionary<string, string>
                     {
-                        ["timeout"] = "30000", // my computer is too slow :(
+                        ["timeout"] = "60000", // my computer is too slow :(
                         ["reload"] = "true"
                     }
                 });
             }
-            else
+            if (env.IsProduction())
             {
                 app.UseHsts();
                 app.UseResponseCompression();
@@ -166,10 +165,6 @@ namespace StartupCreativeAgency.Web.ReactRedux
             app.UseAuthentication();
             app.UseMvc(routes =>
             {
-                //routes.MapRoute(
-                //    name: "api",
-                //    template: "api/{controller}");
-
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");

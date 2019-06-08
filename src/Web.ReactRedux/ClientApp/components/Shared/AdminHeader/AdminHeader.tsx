@@ -7,13 +7,13 @@ import "./AdminHeader.scss";
 
 type AdminHeaderProps = StateProps;
 
-const AdminHeader: React.SFC<AdminHeaderProps> = (props: AdminHeaderProps) =>
+const AdminHeader: React.SFC<AdminHeaderProps> = ({ isAuthenticated }: AdminHeaderProps) =>
     <header className="admin-header">
         <div className="admin-header__left-content">
             <Logo />
         </div>
         <div className="admin-header__right-content">
-            {props.isAuthenticated ? <UserWidget /> : null}
+            {isAuthenticated ? <UserWidget /> : null}
         </div>
     </header>;
 

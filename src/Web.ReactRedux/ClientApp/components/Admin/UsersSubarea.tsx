@@ -25,7 +25,6 @@ const UsersSubarea: React.SFC = () => {
     );
 }
 
-// Users page
 const UsersPage = compose(
     withInitializer((routeMatch, actionCreator) => actionCreator, fetchUsers),
     withLoader(Loader, state => state.users.isLoading),
@@ -33,7 +32,6 @@ const UsersPage = compose(
     withDataFeed(state => state.users.items, "items")
 )(UserList);
 
-// RegisterUser page
 const RegisterUserPage = compose(
     withLoader(Loader, state => state.users.isLoading),
     withPageContentWrapper("Register New User"),

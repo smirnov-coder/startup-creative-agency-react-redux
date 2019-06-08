@@ -6,6 +6,7 @@
         padding: 0;
         margin: 0;
         width: $work-example-item-width;
+        min-width: $work-example-item-width;
         height: $work-example-item-height;
         object-fit: cover;
         object-position: center;

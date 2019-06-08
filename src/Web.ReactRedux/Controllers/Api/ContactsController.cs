@@ -10,6 +10,9 @@ using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    /// <summary>
+    /// Контроллер для работы с контактными данными компании.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Policy = "AdminPolicy")]
@@ -22,23 +25,16 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // GET api/contacts
         //
+        /// <summary>
+        /// Асинхронно извлекает из хранилища контактные данные компании.
+        /// </summary>
         [HttpGet, AllowAnonymous]
         public async Task<ContactsViewModel> GetAsync()
         {
             var result = new ContactsViewModel
             {
-                ContactInfos = (await _contactsService.GetContactsAsync()).Select(contact => new ContactInfoViewModel
-                {
-                    Caption = contact.Caption,
-                    Name = contact.Name,
-                    Values = contact.Values.Select(x => new ContactValue { Value = x }).ToList()
-                }).ToList(),
-
-                SocialLinks = (await _contactsService.GetSocialLinksAsync()).Select(socialLink => new SocialLinkViewModel
-                {
-                    NetworkName = socialLink.Key,
-                    Url = socialLink.Value
-                }).ToList()
+                ContactInfos = await _contactsService.GetContactsAsync(),
+                SocialLinks = (await _contactsService.GetSocialLinksAsync()).Select(x => new SocialLink(x.Key, x.Value))
             };
             return result;
         }
@@ -46,8 +42,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // POST api/contacts
         //
+        /// <summary>
+        /// Асинхронно создаёт контактные данные компании на основании данных модели привязки и сохраняет их в хранилище.
+        /// </summary>
+        /// <param name="model">Данные модели привязки контактных данных компании.</param>
         [HttpPost]
-        public async Task<IActionResult> SaveAsync([FromForm]ContactsViewModel model)
+        public async Task<IActionResult> SaveAsync([FromForm]ContactsBindingModel model)
         {
             var contacts = model.ContactInfos.Select(contact => new ContactInfo(contact.Name)
             {

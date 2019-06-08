@@ -25,7 +25,6 @@ const TestimonialsSubarea: React.SFC = () => {
     );
 }
 
-// Testimonials page
 const TestimonialsPage = compose(
     withInitializer((routeMatch, actionCreator) => actionCreator, fetchTestimonials),
     withLoader(Loader, state => state.testimonials.isLoading),
@@ -33,14 +32,12 @@ const TestimonialsPage = compose(
     withDataFeed(state => state.testimonials.items, "items")
 )(TestimonialList);
 
-// AddTestimonial page
 const AddTestimonialPage = compose(
     withPageContentWrapper("Add Testimonial"),
     withSubmitHandler(addTestimonial),
     withDataFeed(state => { return { Id: 0, Author: "", Company: "", Text: "" } as Testimonial }, "item")
 )(TestimonialItemForm);
 
-// EditTestimonial page
 const EditTestimonialPage = compose(
     withInitializer(
         (routeMatch, actionCreator) => {

@@ -8,6 +8,9 @@ using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    /// <summary>
+    /// Контроллер для работы с отзывами индивидуальных клиентов компании.
+    /// </summary>
     public class TestimonialsController : ApiControllerBase<TestimonialBindingModel, Testimonial, int>
     {
         private readonly ITestimonialService _testimonialService;

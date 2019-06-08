@@ -5,50 +5,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using StartupCreativeAgency.Domain.Entities;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Models
 {
     public class ContactsViewModel
     {
         [JsonProperty(nameof(ContactInfos))]
-        public IList<ContactInfoViewModel> ContactInfos { get; set; }
+        public IEnumerable<ContactInfo> ContactInfos { get; set; }
 
         [JsonProperty(nameof(SocialLinks))]
-        public IList<SocialLinkViewModel> SocialLinks { get; set; }
-    }
-
-    public class ContactInfoViewModel
-    {
-        [Required]
-        [JsonProperty(nameof(Name))]
-        public string Name { get; set; }
-
-        [Required]
-        [StringLength(30)]
-        [JsonProperty(nameof(Caption))]
-        public string Caption { get; set; }
-
-        [JsonProperty(nameof(Values))]
-        public IList<ContactValue> Values { get; set; }
-    }
-
-    public class ContactValue
-    {
-        [Required]
-        [StringLength(50)]
-        [JsonProperty(nameof(Value))]
-        public string Value { get; set; }
-    }
-
-    public class SocialLinkViewModel
-    {
-        [Required]
-        [StringLength(50)]
-        [JsonProperty(nameof(NetworkName))]
-        public string NetworkName { get; set; }
-
-        [StringLength(100)]
-        [JsonProperty(nameof(Url))]
-        public string Url { get; set; }
+        public IEnumerable<SocialLink> SocialLinks { get; set; }
     }
 }

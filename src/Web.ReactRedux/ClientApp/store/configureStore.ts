@@ -4,9 +4,7 @@ import { routerMiddleware } from "connected-react-router";
 import thunk from "redux-thunk";
 import createRootReducer from "@store/reducers/rootReducer";
 
-export const history = createBrowserHistory({
-    //forceRefresh: true // Полная перезагрузка страницы с отправкой запроса на сервер.
-});
+export const history = createBrowserHistory();
 
 export default function configureStore(preloadedState?: any) {
     const composeEnhancer: typeof compose = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose

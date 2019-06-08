@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers
 {
+    /// <summary>
+    /// Котнроллер по умолчанию. Обслуживает главную страницу сайта.
+    /// </summary>
     public class HomeController : Controller
     {
         private IServiceInfoService _serviceInfoService;
@@ -45,6 +48,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
 
         public IActionResult Index() => View();
         
+        // Возвращает начальное состояние SPA.
         [HttpGet("/api/home/initial-state")]
         public async Task<InitialAppState> AppStateAsync()
         {
@@ -62,6 +66,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
             return model;
         }
 
+        // Возвращает модель представления главной страницы сайта.
         [HttpGet("/api/home/model")]
         public async Task<HomePageModel> ModelAsync()
         {

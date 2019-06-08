@@ -134,7 +134,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional.Controllers
                             Assert.Equal("Test Company", addedMessage.Company);
                             Assert.Equal("Test Subject", addedMessage.Subject);
                             Assert.Equal("Test Text", addedMessage.Text);
-                            //Assert.False(string.IsNullOrWhiteSpace(addedMessage.IPAddress));
                             Assert.False(addedMessage.IsRead);
                         }
                     }

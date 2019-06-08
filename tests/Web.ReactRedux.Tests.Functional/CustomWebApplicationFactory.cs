@@ -95,7 +95,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.UseEnvironment("Production");
+            builder.UseEnvironment("Test");
             // Метод будет вызван до вызова ConfigureServices класса Startup.
             builder.ConfigureServices(services =>
             {
@@ -320,7 +320,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Tests.Functional
                     Subject = $"Subject #{index}",
                     Text = $"Text #{index}",
                     IPAddress = "127.0.0.1",
-                    IsRead = index != 3 ? true : false
+                    IsRead = index != 3
                 });
             }
             await db.SaveChangesAsync();

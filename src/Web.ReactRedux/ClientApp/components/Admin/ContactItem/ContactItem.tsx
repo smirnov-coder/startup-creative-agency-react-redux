@@ -12,9 +12,7 @@ interface ContactItemProps {
 }
 
 interface ContactItemState {
-    values: {
-        Value: string
-    }[];
+    values: string[];
 }
 
 export class ContactItem extends React.Component<ContactItemProps, ContactItemState> {
@@ -53,7 +51,7 @@ export class ContactItem extends React.Component<ContactItemProps, ContactItemSt
                                         defaultValue={item.Caption} />
                                 </div>
                             </div>
-                            {this.state.values.map((contact, contactValueIndex, array) => {
+                            {this.state.values.map((contactValue, contactValueIndex, array) => {
                                 let valueAttribute = `${prefix}.Values[${contactValueIndex}].Value`;
                                 return (
                                     <div key={contactValueIndex} className="contact-item__line form-group">
@@ -65,7 +63,7 @@ export class ContactItem extends React.Component<ContactItemProps, ContactItemSt
                                             <input id={valueAttribute}
                                                 name={valueAttribute}
                                                 className="contact-item__text-input form-control"
-                                                defaultValue={contact.Value} />
+                                                defaultValue={contactValue} />
                                         </div>
                                         {contactValueIndex === 0 || contactValueIndex !== array.length - 1 ? null :
                                             <div className="contact-item__line-delete col-sm-1">
@@ -107,9 +105,9 @@ export class ContactItem extends React.Component<ContactItemProps, ContactItemSt
     handleAddClick(event: React.MouseEvent): void {
         event.preventDefault();
         let { values } = this.state;
-        if (values[values.length - 1].Value !== "") {
+        if (values[values.length - 1] !== "") {
             this.setState({
-                values: this.state.values.concat({ Value: "" })
+                values: this.state.values.concat("")
             });
         }
     }

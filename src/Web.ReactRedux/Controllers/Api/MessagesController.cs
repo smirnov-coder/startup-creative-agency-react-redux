@@ -10,6 +10,9 @@ using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    /// <summary>
+    /// Контроллер для работы с сообщениями от пользователей.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Policy = "AdminPolicy")]
@@ -22,12 +25,19 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // GET api/messages
         //
+        /// <summary>
+        /// Асинхронно извлекает из коллекции сообщений пользователей все сообщения.
+        /// </summary>
         [HttpGet]
         public async Task<IEnumerable<Message>> GetMessagesAsync() => await _messageService.GetMessagesAsync();
 
         //
         // GET api/messages/5
         //
+        /// <summary>
+        /// Асинхронно извлекает из коллекции сообщений пользователей сообщение с заданным значением идентификатора.
+        /// </summary>
+        /// <param name="id">Значение идентификатора сообщения от пользователя.</param>
         [HttpGet("{id}")]
         public async Task<ActionResult<Message>> GetMessageAsync(int id)
         {
@@ -43,6 +53,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // POST api/messages
         //
+        /// <summary>
+        /// Асинхронно создаёт новое сообщения от пользователя на основании данных модели привязки и сохраняёт его 
+        /// в коллекции сообщений.
+        /// </summary>
+        /// <param name="message">Данные модели привязки сообщения от пользователя.</param>
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> SaveAsync(MessageBindingModel message)
         {
@@ -69,6 +84,11 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // PUT api/messages
         //
+        /// <summary>
+        /// Асинхронно обновляет статус (прочтено, непрочтено) группы сообщений на основании данных модели привязки.
+        /// </summary>
+        /// <param name="model">Данные модели привязки, содержащие значения идентификаторов обновляемых сообщений и новое
+        /// значение статуса.</param>
         [HttpPut]
         public async Task<IActionResult> UpdateReadStatusAsync(MessageReadStatusBindingModel model)
         {
@@ -79,6 +99,10 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // DELETE api/messages
         //
+        /// <summary>
+        /// Асинхронно удаляет из коллекции сообщениё от пользователей сообщения с заданными значениями идентификаторов.
+        /// </summary>
+        /// <param name="ids">Коллекция значений идентификаторов удаляемых сообщений.</param>
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(int[] ids)
         {

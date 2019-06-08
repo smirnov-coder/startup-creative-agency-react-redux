@@ -2,17 +2,18 @@
 import { ContactInfo } from "@store/entities";
 import "./ContactLine.scss";
 
-interface ContactInfoProps extends ContactInfo {
+interface ContactLineProps {
+    item: ContactInfo;
     icon: string
 }
 
-const ContactLine: React.SFC<ContactInfoProps> = ({ icon, Caption, Values }: ContactInfoProps) => {
+const ContactLine: React.SFC<ContactLineProps> = ({ icon, item }: ContactLineProps) => {
     return (
         <article className="contact-info">
             <i className={`${icon} contact-info__icon`}></i>
-            <h4 className="contact-info__caption">{Caption}</h4>
+            <h4 className="contact-info__caption">{item.Caption}</h4>
             <address className="contact-info__text">
-                {Values.map((value, index) => value === Values[Values.length - 1]
+                {item.Values.map((value, index) => value === item.Values[item.Values.length - 1]
                     ? <span key={index}>{value}</span>
                     : <span key={index}>{value}<br /></span>
                 )}

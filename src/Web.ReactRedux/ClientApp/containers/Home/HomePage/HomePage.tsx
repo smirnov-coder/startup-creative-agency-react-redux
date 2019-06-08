@@ -1,6 +1,5 @@
 ﻿import * as React from "react";
 import { compose } from "redux";
-import { RouteComponentProps } from "react-router";
 import { fetchHomePageModel } from "@store/actions";
 import { Header } from "@components/Home/Header";
 import ServicesSection from "@components/Home/ServicesSection";
@@ -51,7 +50,7 @@ const HomePage: React.SFC = () => {
 }
 
 const composed = compose(
-    withDocumentTitle("Startup ReactRedux Home!!"),
+    withDocumentTitle("Startup ReactRedux Home"),
     withInitializer((routeMatch, actionCreator) => actionCreator, fetchHomePageModel)
 );
 

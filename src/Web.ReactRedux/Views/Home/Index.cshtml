@@ -5,17 +5,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>@*Startup ReactRedux Index*@</title>
+    <title></title>
     <link rel="apple-touch-icon" sizes="180x180" asp-href-include="~/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" asp-href-include="~/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" asp-href-include="~/favicon-16x16.png" />
     <link rel="manifest" asp-href-include="~/site.webmanifest" />
-    <link asp-href-include="~/lib/css/vendor.bundle.min.css" rel="stylesheet" />
-    @*<environment include="Production">
+    <environment include="Production">
+        <link asp-href-include="~/css/vendor.bundle.min.css" rel="stylesheet" />
         <link asp-href-include="~/css/app.bundle.min.css" rel="stylesheet" />
-    </environment>*@
+    </environment>
 </head>
 <body>
+    @* Глобальный JavaScript-объект, содержащий маршруты и шаблоны маршрутов для API. *@
     <script type="text/javascript">
         if (window && !window.customGlobals) {
             window.customGlobals = {
@@ -48,13 +49,15 @@
             };
         }
     </script>
+
     <div id="root"></div>
 
-    <script asp-src-include="~/lib/js/vendor.bundle.min.js" defer></script>
     <environment include="Development">
-        <script asp-src-include="~/js/app.bundle.js" defer></script>
+        <script asp-src-include="~/js/vendor.bundle.js" asp-append-version="true" defer></script>
+        <script asp-src-include="~/js/app.bundle.js" asp-append-version="true" defer></script>
     </environment>
     <environment include="Production">
+        <script asp-src-include="~/js/vendor.bundle.min.js" defer></script>
         <script asp-src-include="~/js/app.bundle.min.js" defer></script>
     </environment>
 </body>

@@ -57,7 +57,6 @@ const AdminArea: React.SFC = () => {
     );
 }
 
-// MyProfile page
 const MyProfilePage = compose(
     withDocumentTitle("Startup ReactRedux Admin My Profile"),
     withInitializer((routeMatch, actionCreator) => actionCreator, fetchMe),
@@ -67,7 +66,6 @@ const MyProfilePage = compose(
     withDataFeed(state => state.users.current, "user")
 )(UserProfileForm);
 
-// Contacts page
 const ContactsPage = compose(
     withAuthentication(true),
     withDocumentTitle("Startup ReactRedux Admin Contacts"),

@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
-import { AppState } from "@store/state";
 import { connect } from "react-redux";
+import { AppState } from "@store/state";
 
 export function withLoader(LoaderComponent: React.ComponentType, isLoading: (state: AppState) => boolean) {
     return <T extends object>(WrappedComponent: React.ComponentType<T>) => {

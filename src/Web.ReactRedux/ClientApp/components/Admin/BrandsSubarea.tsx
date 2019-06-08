@@ -25,7 +25,6 @@ const BrandsSubarea: React.SFC = () => {
     );
 }
 
-// Brands page
 const BrandsPage = compose(
     withInitializer((routeMatch, actionCreator) => actionCreator, fetchBrands),
     withLoader(Loader, state => state.brands.isLoading),
@@ -33,14 +32,12 @@ const BrandsPage = compose(
     withDataFeed(state => state.brands.items, "items")
 )(BrandList);
 
-// AddBrand page
 const AddBrandPage = compose(
     withPageContentWrapper("Add Brand"),
     withSubmitHandler(addBrand),
     withDataFeed(state => { return { Id: 0, Name: "", ImagePath: "" } as Brand }, "item")
 )(BrandItemForm);
 
-// EditBlogPost page
 const EditBlogPostPage = compose(
     withInitializer(
         (routeMatch, actionCreator) => {

@@ -334,7 +334,9 @@ ASALocalRun/
 # My ignores
 publish/
 *.db
+*.db-journal
 tools/
 yarn.lock
 yarn-error.log
 .awcache/
+bundle-report.html

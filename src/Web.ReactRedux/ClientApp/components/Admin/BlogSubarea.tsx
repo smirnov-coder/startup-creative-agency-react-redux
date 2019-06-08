@@ -25,7 +25,6 @@ const BlogSubarea: React.SFC = () => {
     );
 }
 
-// BlogPosts page
 const BlogPostsPage = compose(
     withInitializer((routeMatch, actionCreator) => () => actionCreator({ privateArea: true }), fetchBlogPosts),
     withLoader(Loader, state => state.blog.isLoading),
@@ -33,14 +32,12 @@ const BlogPostsPage = compose(
     withDataFeed(state => state.blog.items, "items")
 )(BlogPostList);
 
-// AddBlogPost page
 const AddBlogPostPage = compose(
     withPageContentWrapper("Add Blog Post"),
     withSubmitHandler(addBlogPost),
     withDataFeed(state => { return { Id: 0, Title: "", Category: "", ImagePath: "", Content: "" } as BlogPost }, "item")
 )(BlogPostItemForm);
 
-// EditBlogPost page
 const EditBlogPostPage = compose(
     withInitializer(
         (routeMatch, actionCreator) => {

@@ -2,14 +2,13 @@
 
 const webpack = require("webpack");
 const path = require("path");
-const CheckerPlugin = require("awesome-typescript-loader").CheckerPlugin;
-const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
+const TsConfigPathsPlugin = require("awesome-typescript-loader").TsConfigPathsPlugin;
 const CleanPlugin = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     mode: "development",
-    devtool: "eval-source-map",
+    devtool: "eval", // https://webpack.js.org/configuration/devtool/
     entry: {
         app: "./ClientApp/index.tsx",
     },
@@ -18,16 +17,6 @@ module.exports = {
         path: path.join(__dirname, "wwwroot"),
         publicPath: "/"
     },
-
-    // Под вопросом
-    //stats: { modules: false },
-    //watchOptions: {
-    //    ignored: /node_modules/
-    //},
-    //devServer: {
-    //    hot: true
-    //},
-
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],
         alias: {
@@ -37,30 +26,23 @@ module.exports = {
             new TsConfigPathsPlugin()
         ],
     },
-
     module: {
         rules: [
-            //{
-            //    test: /\.tsx?/,
-            //    loader: "ts-loader"
-            //},
             {
                 test: /\.tsx?$/,
                 include: /ClientApp/,
                 exclude: /node_modules/,
-                loader: [
-                    {
-                        loader: "awesome-typescript-loader",
-                        options: {
-                            useCache: true,
-                            useBabel: true,
-                            babelOptions: {
-                                babelrc: false,
-                                plugins: ["react-hot-loader/babel"],
-                            }
+                loader: [{
+                    loader: "awesome-typescript-loader",
+                    options: {
+                        useCache: true,
+                        useBabel: true,
+                        babelOptions: {
+                            babelrc: false,
+                            plugins: ["react-hot-loader/babel"],
                         }
                     }
-                ]
+                }]
             },
             {
                 test: /\.css$/,
@@ -72,7 +54,7 @@ module.exports = {
                 use: ["style-loader", "css-loader", "sass-loader"]
             },
             {
-                test: /\.(jpe?g|png|gif|svg)$/,
+                test: /\.(jpe?g|png|gif)$/,
                 use: {
                     loader: "url-loader",
                     options: {
@@ -82,7 +64,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(woff2?|ttf|otf|eot)$/,
+                test: /\.(woff2?|ttf|otf|eot|svg)$/,
                 use: {
                     loader: "file-loader",
                     options: { name: "fonts/[name].[ext]" }
@@ -90,19 +72,12 @@ module.exports = {
             }
         ]
     },
-
     plugins: [
-        // Повторно объявляем jQuery глобальной функцией, чтобы не приходилось
-        // импортировать её в каждый пользовательский js-файл.
+        // Twitter Bootstrap и различные плагины jQuery требуют, чтобы функция jQuery была глобальной.
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",
             "window.jQuery": "jquery"
-        }),
-        new webpack.DllReferencePlugin({
-            context: ".",
-            manifest: require("./wwwroot/lib/vendor-manifest.json"),
-            name: "vendor_lib"
         }),
         new CleanPlugin([
             "wwwroot/*.*",
@@ -121,8 +96,18 @@ module.exports = {
                 to: "./"
             }
         ]),
-        //new TsConfigPathsPlugin(),
-        new CheckerPlugin(),
-        //new webpack.HotModuleReplacementPlugin(),
-    ]
+    ],
+    optimization: {
+        splitChunks: {
+            chunks: "all",
+            minSize: 0,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/](node_modules|ClientApp[\\/]assets[\\/]lib)[\\/]/,
+                    name: "vendor",
+                    filename: "js/[name].bundle.js"
+                }
+            }
+        }
+    }
 };

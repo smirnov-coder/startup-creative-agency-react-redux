@@ -10,15 +10,25 @@ using StartupCreativeAgency.Infrastructure;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Infrastructure
 {
+    /// <summary>
+    /// Вспомогательный класс для работы с JSON Web Token (JWT).
+    /// </summary>
     public static class JwtHelper
     {
+        /// <summary>
+        /// Асинхронно создаёт JWT для пользователя.
+        /// </summary>
+        /// <param name="user">Идентичность пользователя доменной модели.</param>
+        /// <param name="userManager">Хранилище идентичностей пользователей доменной модели в виде объекта
+        /// класса <see cref="UserManager{UserIdentity}"/>.</param>
+        /// <returns>JWT, закодированный в компактном сериализованном формате.</returns>
         public static async Task<string> GetEncodedJwtAsync(UserIdentity user, UserManager<UserIdentity> userManager)
         {
             var roles = await userManager.GetRolesAsync(user);
             var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
-                };
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
+            };
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role));
@@ -39,30 +49,37 @@ namespace StartupCreativeAgency.Web.ReactRedux.Infrastructure
             return encodedJwt;
         }
 
+        /// <summary>
+        /// Проверяет валидность JSON Web Token (JWT).
+        /// </summary>
+        /// <param name="encodedJwt">JWT, закодированный в компактном сериализованном формате.</param>
+        /// <returns>true, если JWT является валидным; иначе false.</returns>
         public static bool IsValid(string encodedJwt)
         {
             var jwtHandler = new JwtSecurityTokenHandler();
             jwtHandler.ValidateToken(encodedJwt, GetValidationParameters(), out SecurityToken token);
-            return token != null ? true : false;
+            return token != null;
         }
 
+        /// <summary>
+        /// Возвращает параметры проверки валидации JSON Web Token (JWT).
+        /// </summary>
         public static TokenValidationParameters GetValidationParameters() =>
             new TokenValidationParameters
             {
-                // укзывает, будет ли валидироваться издатель при валидации токена
+                // Укзывает, будет ли валидироваться издатель при валидации токена.
                 ValidateIssuer = true,
-                // строка, представляющая издателя
+                // Строка, представляющая издателя.
                 ValidIssuer = JwtOptions.ISSUER,
-                // будет ли валидироваться потребитель токена
+                // Будет ли валидироваться потребитель токена.
                 ValidateAudience = true,
-                // установка потребителя токена
+                // Установка потребителя токена.
                 ValidAudience = JwtOptions.AUDIENCE,
-                // будет ли валидироваться время существования
+                // Будет ли валидироваться время существования.
                 ValidateLifetime = true,
-
-                // установка ключа безопасности
+                // Установка ключа безопасности.
                 IssuerSigningKey = JwtOptions.GetSymmetricSecurityKey(),
-                // валидация ключа безопасности
+                // Валидация ключа безопасности.
                 ValidateIssuerSigningKey = true
             };
     }

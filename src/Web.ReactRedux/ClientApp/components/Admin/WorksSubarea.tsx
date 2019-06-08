@@ -25,7 +25,6 @@ const WorksSubarea: React.SFC = () => {
     );
 }
 
-// Works page
 const WorksPage = compose(
     withInitializer((routeMatch, actionCreator) => actionCreator, fetchWorks),
     withLoader(Loader, state => state.works.isLoading),
@@ -33,14 +32,12 @@ const WorksPage = compose(
     withDataFeed(state => state.works.items, "items")
 )(WorkExampleList);
 
-// AddWorkExample page
 const AddWorkExamplePage = compose(
     withPageContentWrapper("Add Work Example"),
     withSubmitHandler(addWorkExample),
     withDataFeed(state => { return { Id: 0, Name: "", Category: "", ImagePath: "", Description: "" } as WorkExample }, "item")
 )(WorkExampleItemForm);
 
-// EditWorkExample page
 const EditWorkExamplePage = compose(
     withInitializer(
         (routeMatch, actionCreator) => {

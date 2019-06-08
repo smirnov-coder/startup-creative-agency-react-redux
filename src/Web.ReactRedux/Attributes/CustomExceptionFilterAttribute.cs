@@ -9,6 +9,9 @@ using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Attributes
 {
+    /// <summary>
+    /// Пользовательский фильтр обработки исключений.
+    /// </summary>
     public class CustomExceptionFilterAttribute : ExceptionFilterAttribute
     {
         public override void OnException(ExceptionContext context)

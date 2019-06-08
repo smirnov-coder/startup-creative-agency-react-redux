@@ -5,6 +5,12 @@ interface NamedComponent {
     name?: string;
 }
 
+/**
+ * Выполняет поиск компонента в коллекции компонентов. 
+ * @param children Коллеция компонентов.
+ * @param component Искомый компонент.
+ * @returns Коллекция всех вхождений искомого компонента в коллекции.
+ */
 export default function (children: React.ReactNode, component: NamedComponent): React.ReactNodeArray {
     const result: React.ReactNodeArray = [];
     /* This is the array of result since Article can have multiple times the same sub-component */

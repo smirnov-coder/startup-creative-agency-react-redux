@@ -30,8 +30,11 @@ const AuthArea: React.SFC = () => {
 
 const LoginPage = withDocumentTitle("Startup ReactRedux Auth Login")(LoginForm);
 
-const AccessDeniedPageContent: React.SFC = () =>
-    <ErrorPage title="Error 403" subtitle="Access denied." description="You are not authorized for this operation." />;
+const AccessDeniedPageContent: React.SFC = () => {
+    return (
+        <ErrorPage title="Error 403" subtitle="Access denied." description="You are not authorized for this operation." />
+    );
+}
 
 const AccessDeniedPage = withDocumentTitle("Startup ReactRedux Auth Access Denied")(AccessDeniedPageContent);
 

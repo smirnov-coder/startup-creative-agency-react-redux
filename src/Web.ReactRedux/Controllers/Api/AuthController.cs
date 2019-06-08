@@ -5,13 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StartupCreativeAgency.Domain.Abstractions.Services;
-using StartupCreativeAgency.Domain.Entities;
 using StartupCreativeAgency.Infrastructure;
 using StartupCreativeAgency.Web.ReactRedux.Infrastructure;
 using StartupCreativeAgency.Web.ReactRedux.Models;
 
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
 {
+    /// <summary>
+    /// Контроллер для аутентификации пользователей.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -36,6 +38,12 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
         //
         // POST api/auth/token
         //
+        /// <summary>
+        /// Асинхронно выполняет аутентификацию пользователя по идентификационному имени пользователя и паролю.
+        /// Возвращает объект результата аутентификации, содержащий начальное состояние SPA и маркер доступа (access token)
+        /// в виде JSON Web Token (JWT).
+        /// </summary>
+        /// <param name="credentials">Учётные данные пользователя для аутентификациии.</param>
         [HttpPost("token")]
         public async Task<ActionResult<AuthResult>> AccessTokenAsync(UserCredentials credentials)
         {
@@ -66,28 +74,6 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
                 return result;
             }
             return BadRequest(OperationDetails.Error("Invalid password."));
-            //var identityResult = await _userManager.CheckPasswordSignInAsync(identity, credentials.Password, false);
-            //if (identityResult.Succeeded)
-            //{
-            //    var result =  new AuthResult
-            //    {
-            //        AccessToken = await JwtHelper.GetEncodedJwtAsync(identity, userManager),
-            //        AppState = new InitialAppState
-            //        {
-            //            IsAuthenticated = true,
-            //            UserName = user.Identity.UserName,
-            //            Photo = Url.Content(user.Profile.PhotoFilePath),
-            //            IsAdmin = await userManager.IsInRoleAsync(user.Identity as UserIdentity, "Administrator"),
-            //        }
-            //    };
-            //    if (result.AppState.IsAdmin)
-            //    {
-            //        result.AppState.NewMessagesCount = (await _messageService.GetMessagesAsync()).Where(x => !x.IsRead).Count();
-            //        result.AppState.Roles = result.AppState.IsAdmin ? _roleManager.Roles.Select(role => role.Name) : null;
-            //    }
-            //    return result;
-            //}
-            //return BadRequest(OperationDetails.Error($"Unable to authenticate user '{credentials.UserName}'."));
         }
     }
 }
