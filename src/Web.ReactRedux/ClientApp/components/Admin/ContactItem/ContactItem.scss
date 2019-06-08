@@ -1,0 +1,19 @@
+﻿.contact-item {
+    padding: 0;
+
+    &__content {
+        margin: 0;
+        width: 100%;
+    }
+
+    &__line {
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &-delete {
+            margin-top: 6px;
+        }
+    }
+}

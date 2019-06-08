@@ -1,0 +1,19 @@
+﻿@import "../../../styles/_include.scss";
+
+.login-form {
+    margin-bottom: 0;
+    padding: ($gutter-width / 2) $gutter-width;
+    max-width: 500px;
+
+    &__remember-me:hover {
+        cursor: pointer;
+    }
+
+    &__error {
+        margin-bottom: 15px;
+        font-family: $text-font-family;
+        font-size: $default-font-size;
+        font-weight: map-get($font-weights, 'medium');
+        color: $accent-color;
+    }
+}

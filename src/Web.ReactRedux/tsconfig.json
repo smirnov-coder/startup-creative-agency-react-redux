@@ -1,19 +1,29 @@
 {
-    "typeAcquisition": {
-        "enable": true
-    },
-    "compileOnSave": false,
-    "compilerOptions": {
-        "sourceMap": true,
-        "module": "commonjs",
-        "target": "es6",
-        "noImplicitAny": true,
-        "jsx": "react",
-        //"outDir": "wwwroot/dist",
-        "moduleResolution": "node"
-    },
-    "exclude": [
-        "node_modules",
-        "wwwroot"
-    ]
+  "typeAcquisition": {
+    "enable": true
+  },
+  "compileOnSave": false,
+  "compilerOptions": {
+    "sourceMap": true,
+    "module": "commonjs",
+    "target": "es6",
+    "noImplicitAny": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "baseUrl": "./ClientApp",
+    "paths": {
+      "@components/*": [ "components/*" ],
+      "@containers/*": [ "containers/*" ],
+      "@store/*": [ "store/*" ],
+      "@scripts/*": [ "scripts/*" ],
+      "@styles/*": [ "styles/*" ],
+      "@bootstrap/css": [ "assets/lib/bootstrap-customized/css/bootstrap.css" ],
+      "@bootstrap/js": [ "assets/lib/bootstrap-customized/js/bootstrap.js" ],
+      "@owl.carousel/*": [ "assets/lib/owl.carousel-customized/*" ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ]
 }

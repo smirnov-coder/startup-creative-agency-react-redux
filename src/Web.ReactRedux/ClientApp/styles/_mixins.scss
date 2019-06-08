@@ -8,6 +8,7 @@
         clear: both;
     }
 }
+
 // Миксин параметров шрифта.
 @mixin font($family: null, $size: null, $weight: null, $line-height: null, $color: null) {
     font-family: $family;
@@ -16,6 +17,7 @@
     line-height: $line-height;
     color: $color;
 }
+
 // Миксин подключения локальных шрифтов.
 @mixin font-face($font-family, $url, $font-weight) {
     @font-face {
@@ -24,20 +26,24 @@
         font-weight: map-get($font-weights, $font-weight);
     }
 }
+
 // Миксин прямоугольного блока.
 @mixin box($height, $width) {
     height: $height;
     width: $width;
 }
+
 // Миксин квадратного блока.
 @mixin square($size) {
     @include box($size, $size);
 }
+
 // Миксин блока в форме окружности.
 @mixin circle($size) {
     @include square($size);
     border-radius: 50%;
 }
+
 // Миксин обрезки однострочного текста с добавлением трёх точек в
 // месте обрезки.
 @mixin text-crop-ellipsis() {

@@ -1,35 +1,30 @@
 "use strict";
 
+const webpack = require("webpack");
 const path = require("path");
-const CheckerPlugin = require("awesome-typescript-loader").CheckerPlugin;
-const globImporter = require("node-sass-glob-importer");
+const TsConfigPathsPlugin = require("awesome-typescript-loader").TsConfigPathsPlugin;
 const CleanPlugin = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     mode: "development",
-    devtool: "inline-source-map",
+    devtool: "eval", // https://webpack.js.org/configuration/devtool/
     entry: {
-        index: "./ClientApp/index.tsx",
+        app: "./ClientApp/index.tsx",
     },
     output: {
         filename: "js/[name].bundle.js",
         path: path.join(__dirname, "wwwroot"),
         publicPath: "/"
     },
-
-    // Под вопросом
-    //stats: { modules: false },
-    //watchOptions: {
-    //    ignored: /node_modules/
-    //},
-    //devServer: {
-    //    hot: true
-    //},
-
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],
-        alias: { "react-dom": "@hot-loader/react-dom" }
+        alias: {
+            "react-dom": "@hot-loader/react-dom",
+        },
+        plugins: [
+            new TsConfigPathsPlugin()
+        ],
     },
     module: {
         rules: [
@@ -37,34 +32,29 @@ module.exports = {
                 test: /\.tsx?$/,
                 include: /ClientApp/,
                 exclude: /node_modules/,
-                loader: [
-                    {
-                        loader: "awesome-typescript-loader",
-                        options: {
-                            useCache: true,
-                            useBabel: true,
-                            babelOptions: {
-                                babelrc: false,
-                                plugins: ["react-hot-loader/babel"],
-                            }
+                loader: [{
+                    loader: "awesome-typescript-loader",
+                    options: {
+                        useCache: true,
+                        useBabel: true,
+                        babelOptions: {
+                            babelrc: false,
+                            plugins: ["react-hot-loader/babel"],
                         }
                     }
-                ]
+                }]
+            },
+            {
+                test: /\.css$/,
+                use: ["style-loader", "css-loader"]
             },
             {
                 test: /\.s(c|a)ss$/,
                 exclude: /node_modules/,
-                use: [
-                    { loader: "style-loader" },
-                    { loader: "css-loader" },
-                    {
-                        loader: "sass-loader",
-                        options: { importer: globImporter() } // А надо ли?
-                    }
-                ]
+                use: ["style-loader", "css-loader", "sass-loader"]
             },
             {
-                test: /\.(jpe?g|png|gif|svg)$/,
+                test: /\.(jpe?g|png|gif)$/,
                 use: {
                     loader: "url-loader",
                     options: {
@@ -74,7 +64,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(woff|woff2|ttf|otf|eot)$/,
+                test: /\.(woff2?|ttf|otf|eot|svg)$/,
                 use: {
                     loader: "file-loader",
                     options: { name: "fonts/[name].[ext]" }
@@ -82,8 +72,13 @@ module.exports = {
             }
         ]
     },
-
     plugins: [
+        // Twitter Bootstrap и различные плагины jQuery требуют, чтобы функция jQuery была глобальной.
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            "window.jQuery": "jquery"
+        }),
         new CleanPlugin([
             "wwwroot/*.*",
             //"wwwroot/images",
@@ -93,14 +88,26 @@ module.exports = {
         ]),
         new CopyPlugin([
             {
-                from: "./ClientApp/images",
+                from: "./ClientApp/assets/images",
                 to: "./images"
             },
             {
-                from: "./ClientApp/favicon",
+                from: "./ClientApp/assets/favicon",
                 to: "./"
             }
         ]),
-        new CheckerPlugin()
-    ]
+    ],
+    optimization: {
+        splitChunks: {
+            chunks: "all",
+            minSize: 0,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/](node_modules|ClientApp[\\/]assets[\\/]lib)[\\/]/,
+                    name: "vendor",
+                    filename: "js/[name].bundle.js"
+                }
+            }
+        }
+    }
 };

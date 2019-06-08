@@ -4,20 +4,25 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
+    <RootNamespace>StartupCreativeAgency.Web.ReactRedux</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\components\" />
-    <Folder Include="ClientApp\fonts\" />
-    <Folder Include="ClientApp\images\" />
-    <Folder Include="ClientApp\favicon\" />
-    <Folder Include="ClientApp\lib\" />
-    <Folder Include="ClientApp\scripts\" />
+    <Folder Include="ClientApp\assets\fonts\" />
+    <Folder Include="ClientApp\assets\images\" />
+    <Folder Include="ClientApp\assets\favicon\" />
+    <Folder Include="Attributes\" />
+    <Folder Include="ClientApp\assets\lib\owl.carousel-customized\" />
+    <Folder Include="ClientApp\styles\blocks\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="26.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="2.2.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>

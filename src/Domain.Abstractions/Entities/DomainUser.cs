@@ -40,8 +40,6 @@ namespace StartupCreativeAgency.Domain.Entities
 
         protected DomainUser() : base() { /* Для EntityFramework и LazyLoading */ }
 
-        /// TODO: Дополнить комментарии.
-
         public DomainUser(int id, IUserIdentity identity, UserProfile profile, DomainUser createdBy) : base(id, createdBy)
         {
             Identity = identity;
