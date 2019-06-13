@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace StartupCreativeAgency.Web.ReactRedux.Controllers
 {
     /// <summary>
-    /// Котнроллер по умолчанию. Обслуживает главную страницу сайта.
+    /// РљРѕС‚РЅСЂРѕР»Р»РµСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ. РћР±СЃР»СѓР¶РёРІР°РµС‚ РіР»Р°РІРЅСѓСЋ СЃС‚СЂР°РЅРёС†Сѓ СЃР°Р№С‚Р°.
     /// </summary>
     public class HomeController : Controller
     {
@@ -48,7 +48,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
 
         public IActionResult Index() => View();
         
-        // Возвращает начальное состояние SPA.
+        // Р’РѕР·РІСЂР°С‰Р°РµС‚ РЅР°С‡Р°Р»СЊРЅРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ SPA.
         [HttpGet("/api/home/initial-state")]
         public async Task<InitialAppState> AppStateAsync()
         {
@@ -66,7 +66,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers
             return model;
         }
 
-        // Возвращает модель представления главной страницы сайта.
+        // Р’РѕР·РІСЂР°С‰Р°РµС‚ РјРѕРґРµР»СЊ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ РіР»Р°РІРЅРѕР№ СЃС‚СЂР°РЅРёС†С‹ СЃР°Р№С‚Р°.
         [HttpGet("/api/home/model")]
         public async Task<HomePageModel> ModelAsync()
         {

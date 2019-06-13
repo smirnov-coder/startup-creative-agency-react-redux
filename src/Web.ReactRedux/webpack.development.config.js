@@ -73,7 +73,7 @@ module.exports = {
         ]
     },
     plugins: [
-        // Twitter Bootstrap и различные плагины jQuery требуют, чтобы функция jQuery была глобальной.
+        // Twitter Bootstrap Рё СЂР°Р·Р»РёС‡РЅС‹Рµ РїР»Р°РіРёРЅС‹ jQuery С‚СЂРµР±СѓСЋС‚, С‡С‚РѕР±С‹ С„СѓРЅРєС†РёСЏ jQuery Р±С‹Р»Р° РіР»РѕР±Р°Р»СЊРЅРѕР№.
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",
