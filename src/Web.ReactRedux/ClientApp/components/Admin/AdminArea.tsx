@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 import { compose } from "redux";
-import { Switch, Route, Redirect } from "react-router";
+import { Switch, Route, Redirect, RouteComponentProps } from "react-router";
 import { Routes } from "@scripts/constants";
 import { fetchContacts, fetchMe, updateProfile } from "@store/actions";
 import { Layout } from "@components/Shared/Layout";
@@ -26,7 +26,9 @@ import { withPageContentWrapper } from "./withPageContentWrapper";
 import { withSubmitHandler } from "@containers/Admin/withSubmitHandler";
 import { withDataFeed } from "@containers/Admin/withDataFeed";
 
-const AdminArea: React.SFC = () => {
+type AdminAreaProps = RouteComponentProps;
+
+const AdminArea: React.SFC<AdminAreaProps> = () => {
     return (
         <Layout>
             <Layout.Header>
