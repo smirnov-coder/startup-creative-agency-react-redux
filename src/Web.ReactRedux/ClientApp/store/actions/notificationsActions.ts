@@ -23,11 +23,11 @@ export interface DeletedNotificationAction extends Action {
     };
 }
 
-export const deleteNotification = (id: number): DeletedNotificationAction => {
+export const deleteNotification = (notificationId: number): DeletedNotificationAction => {
     return {
         type: ActionTypes.DELETED_NOTIFICATION,
         payload: {
-            notificationId: id
+            notificationId
         }
     };
 }

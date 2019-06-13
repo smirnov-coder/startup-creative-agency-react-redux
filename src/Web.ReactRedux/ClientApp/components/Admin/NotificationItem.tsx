@@ -2,15 +2,15 @@
 import { Notification } from "@store/state";
 import "@bootstrap/css";
 
-interface NotificationProps extends Notification {
+interface NotificationItemProps extends Notification {
     onDismiss: (id: number) => void
 }
 
-const NotificationItem: React.SFC<NotificationProps> = ({ id, type, text, onDismiss }: NotificationProps) => {
+const NotificationItem: React.SFC<NotificationItemProps> = ({ id, type, text, onDismiss }: NotificationItemProps) => {
     let colorClass = type === "success" ? "alert-success" : "alert-danger";
     return (
-        <div className={`notification alert alert-dismissible fade in ${colorClass}`}>
-            <button className="close" type="button" onClick={() => onDismiss(id)} data-dismiss="alert">
+        <div className={`notification alert ${colorClass}`}>
+            <button className="close" type="button" onClick={() => onDismiss(id)}>
                 <span>&times;</span>
             </button>
             {text}
