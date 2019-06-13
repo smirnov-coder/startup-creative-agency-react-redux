@@ -122,7 +122,7 @@ export default class ReactOwlCarousel extends React.Component<OwlCarouselProps> 
 }
 
 const OPTIONS = new Set([
-    'rtl', // Слайды движутся слева направо.
+    'rtl', // вЂ”Р»Р°Р№РґС‹ РґРІРёР¶СѓС‚СЃВ¤ СЃР»РµРІР° РЅР°РїСЂР°РІРѕ.
 
     'items',
     'margin',
