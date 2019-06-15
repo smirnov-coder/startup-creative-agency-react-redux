@@ -12,9 +12,6 @@
   - [O/RM Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
   - [SQLite](https://www.sqlite.org/) (для упрощения развёртывания)
   - [xUnit](https://xunit.net/) + [Microsoft TestServer](https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests/) (модульное, интеграционное, функциональное тестирование)
-  - [Webpack](https://webpack.js.org/)
-  - [TypeScript](https://www.typescriptlang.org/)
-  - [SASS](https://sass-lang.com/) (+ [PostCSS](https://postcss.org/))
 
 - Frontend
   - [React](https://reactjs.org/)
@@ -27,6 +24,9 @@
   - [jQuery Validation](https://jqueryvalidation.org/)
   - [OwlCarousel 2](https://owlcarousel2.github.io/OwlCarousel2/)
   - [FontAwesome 4](https://fontawesome.com/v4.7.0/)
+  - [Webpack](https://webpack.js.org/)
+  - [TypeScript](https://www.typescriptlang.org/)
+  - [SASS](https://sass-lang.com/) (+ [PostCSS](https://postcss.org/))
 
 ## Скриншоты
 
