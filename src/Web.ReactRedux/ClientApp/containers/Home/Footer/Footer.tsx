@@ -1,5 +1,7 @@
 ﻿import * as React from "react";
 import { compose } from "redux";
+import { Link } from "react-router-dom";
+import { Routes } from "@scripts/constants";
 import { SocialLink } from "@store/entities";
 import { Section } from "@components/Home/Section";
 import { SectionHeader } from "@components/Home/SectionHeader";
@@ -47,6 +49,7 @@ const Footer: React.SFC<FooterProps> = ({ items }: FooterProps) => {
                                     &copy; 2015-{new Date().getFullYear()} Startup.
                                     Designed by ShapedTheme. Programmed by Yury Smirnov.
                                 </p>
+                                <Link to={Routes.MY_PROFILE} className="footer__link">Manage Site</Link>
                             </SectionHeader.Subtitle>
                         </SectionHeader>
                     </div>
