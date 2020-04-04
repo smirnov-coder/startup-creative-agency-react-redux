@@ -76,11 +76,7 @@ namespace StartupCreativeAgency.Web.ReactRedux.Controllers.Api
             var profile = user.Profile;
             profile.UpdatePersonalInfo(profile.FirstName, profile.LastName, profile.JobPosition,
                 Url.Content(profile.PhotoFilePath));
-
-            /// TODO: Абсолютно непонятная ошибка с проксями. Если не пощупать вложенные сущности, они не будут включены в 
-            /// результат выборки.
             profile.SocialLinks.First();
-
             return user;
         }
 

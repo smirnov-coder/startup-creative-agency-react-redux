@@ -43,7 +43,7 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState> {
             submitHandler: (form, event) => {
                 event.preventDefault();
                 let { state } = this.props.location;
-                let returnUrl: string = state ? state.returnUrl : null;
+                let returnUrl: string = state ? (state as any).returnUrl : null;
                 this.props.onSubmit({ ...this.state, returnUrl });
             }
         });

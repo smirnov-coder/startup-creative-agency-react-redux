@@ -39,9 +39,12 @@ namespace StartupCreativeAgency.Web.ReactRedux
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = Configuration.GetConnectionString("DefaultConnection");
-            connectionString = connectionString.Replace("{DataDirectory}",
-                Path.Combine(Environment.ContentRootPath, "Data"));
+            string 
+                connectionString = Configuration.GetConnectionString("DefaultConnection"),
+                dataFolder = Path.Combine(Environment.ContentRootPath, "Data");
+            if (!Directory.Exists(dataFolder))
+                Directory.CreateDirectory(dataFolder);
+            connectionString = connectionString.Replace("{DataDirectory}", dataFolder);
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -151,8 +154,8 @@ namespace StartupCreativeAgency.Web.ReactRedux
             {
                 app.UseHsts();
                 app.UseResponseCompression();
-                app.UseHttpsRedirection();
             }
+            app.UseHttpsRedirection();
 
             // Для обслуживания favicon.
             FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();
@@ -168,7 +171,6 @@ namespace StartupCreativeAgency.Web.ReactRedux
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
-
 
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",
